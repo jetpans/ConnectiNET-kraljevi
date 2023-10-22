@@ -17,13 +17,15 @@ def firstRoute():
     # return jsonify("Hello thing!")    
     return [
         {
+            "id": 0,
             "title": "Ludi parti",
-            "image": "https://images.unsplash.com/photo-1500754088824-ce0582cfe45f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTc5Mjc4OTM&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080",
+            "image": "",
             "description": "Ovo je opis",
             "time": "1",
             "priority": "50"
         },
         {
+            "id": 1,
             "title": "Fešta",
             "image": "https://images.unsplash.com/photo-1461696114087-397271a7aedc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTc5Mjg4NTY&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080",
             "description": "Bit ce dobra fešta",
@@ -31,6 +33,7 @@ def firstRoute():
             "priority": "1"
         },
         {
+            "id": 2,
             "title": "Roštilj",
             "image": "https://images.unsplash.com/photo-1541832039-cab7e4310f28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTc5Mjc4ODc&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080",
             "description": "Roštilj je zakon",
@@ -38,6 +41,7 @@ def firstRoute():
             "priority": "12"
         },
         {
+            "id": 3,
             "title": "Zabava",
             "image": "https://images.unsplash.com/photo-1553949285-bdcb31ec5cba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTc5MzA3NDE&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080",
             "description": "Haha zabava malo duži opis da vidimo kako će se prikazati malo duži opis da vidimo kako će se prikazati malo duži opis da vidimo kako će se prikazati malo duži opis da vidimo kako će se prikazati malo duži opis da vidimo kako će se prikazati malo duži opis da vidimo kako će se prikazati malo duži opis da vidimo kako će se prikazati",
@@ -45,6 +49,7 @@ def firstRoute():
             "priority": "1231"
         },
         {
+            "id": 4,
             "title": "Ludi parti pt. 2",
             "image": "https://images.unsplash.com/photo-1559291001-693fb9166cba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8d2FsbHBhcGVyc3x8fHx8fDE2OTc5MzA2NTA&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1080",
             "time": "5",

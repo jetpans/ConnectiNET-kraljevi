@@ -24,15 +24,18 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import LoginIcon from '@mui/icons-material/Login';
-import { green, grey, orange } from '@mui/material/colors';
+import { green, grey, indigo } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Divider, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import EventCard from "../ui/EventCard";
+
 
 export default function EventsPage() {
   const [cards, setCards] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [cardSize, setCardSize] = useState(12); 
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -59,10 +62,10 @@ export default function EventsPage() {
     fetchData();
   }, []);
 
-  const defaultTheme = createTheme({
+  const lightTheme = createTheme({
     palette: {
       primary: {
-        main: green[600],
+        main: indigo[400],
       },
       secondary: {
         main: grey[500],
@@ -73,66 +76,83 @@ export default function EventsPage() {
       default: grey[100]
     }
   });
+  const darkTheme = createTheme({
+    palette: {
+      primary: {
+        main: indigo[300],
+      },
+      secondary: {
+        main: grey[500],
+        other: grey[200]
+      },
+      text: {
+        main: grey[900]
+      }
+    },
+    background: {
+      default: grey[900]
+    }
+  });
+
+  const mainTheme = lightTheme;
 
   return (
-    <Paper sx={{bgcolor:defaultTheme.palette.secondary.other}}>
-      <ThemeProvider theme={defaultTheme}>
+    <Paper sx={{bgcolor: mainTheme.background.default}}>
+      <ThemeProvider theme={mainTheme}>
         <CssBaseline />
         <AppBar position="relative">
           <Toolbar sx={{display:"flex", justifyContent:"space-between"}}>
             <Button onClick={toggleDrawer}>
-              <TableRowsIcon sx={{color: defaultTheme.palette.secondary.other}} />
+              <TableRowsIcon sx={{color: mainTheme.palette.secondary.other}} />
             </Button>
 
-            <Typography variant="h5" color={defaultTheme.palette.secondary.other} noWrap>
+            <Typography variant="h5" color={mainTheme.palette.secondary.other} noWrap>
               Events
             </Typography>
 
             <Button onClick={() => {navigate('/login')}} >
-              <LoginIcon sx={{color: defaultTheme.palette.secondary.other}} />
+              <LoginIcon sx={{color: mainTheme.palette.secondary.other}} />
             </Button>
           </Toolbar>
         </AppBar>
         <>
 
-          {drawerOpen ? 
-            <Drawer
-              open={drawerOpen}
-              onClose={toggleDrawer}
+          <Drawer
+            open={drawerOpen}
+            onClose={toggleDrawer}
+          >
+            <Typography variant="h5" sx={{textAlign:"center", mt:2, mb:2}}>ConnectiNET</Typography>
+            <Box
+              sx={{ width: 350 }}
+              // nClick={toggleDrawer}
+              onKeyDown={toggleDrawer}
             >
-              <Typography variant="h5" sx={{textAlign:"center", mt:2, mb:2}}>ConnectiNET</Typography>
-              <Box
-                sx={{ width: 350 }}
-                // nClick={toggleDrawer}
-                // onKeyDown={toggleDrawer}
-              >
-                <div />
-                <Divider />
-                <List>
-                  {['Profile', 'Events', 'My Events'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>
-                          {index === 1 ? <EventIcon /> :
-                            index === 0 ? <AccountCircleIcon /> :
-                              <EditCalendarIcon />}
-                        </ListItemIcon>
-                        <ListItemText primary={text} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            </Drawer>   
-          : null}
+              <div />
+              <Divider />
+              <List>
+                {['Profile', 'Events', 'My Events'].map((text, index) => (
+                  <ListItem key={text} disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        {index === 1 ? <EventIcon /> :
+                          index === 0 ? <AccountCircleIcon /> :
+                            <EditCalendarIcon />}
+                      </ListItemIcon>
+                      <ListItemText primary={text} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          </Drawer>   
 
           {/* Hero unit */}
-          <Container sx={{ py: 4 }} maxWidth="md">
+          <Container sx={{ py: 4 }} maxWidth="lg">
 
-            <Tabs variant="fullWidth" value={currentTab} onChange={handleTabChange} sx={{bgcolor: defaultTheme.palette.secondary.other}}>
-              <Tab label="Top Picks" />
-              <Tab label="New" />
-              <Tab label="Near You" />
+            <Tabs variant="fullWidth" value={currentTab} onChange={handleTabChange}>
+              <Tab label="Top Picks" sx={{color: mainTheme.palette.text.main}} />
+              <Tab label="New" sx={{color: mainTheme.palette.text.main}} />
+              <Tab label="Near You" sx={{color: mainTheme.palette.text.main}} />
             </Tabs>  
             
             <div>
@@ -142,34 +162,10 @@ export default function EventsPage() {
             {currentTab === 0 ?
               <Grid container spacing={4}>
               {cards && cards !== null ? cards.map((card) => (
-                <Grid item key={card} xs={12} sm={6} md={12}>
-                  <Card
-                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    elevation={24}
-                  >
-                    <CardMedia
-                      component="div"
-                      sx={{
-                        // 16:9
-                        pt: '56.25%',
-                      }}
-                      image={card.image}
-                    />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {card.title}
-                      </Typography>
-                      <Typography>
-                        {card.description}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button size="small">View</Button>
-                      <Button size="small">Edit</Button>
-                    </CardActions>
-                  </Card>
+                <Grid item key={card.id} xs={12} sm={6} md={6}>
+                  <EventCard card={card} />
                 </Grid>
-              )) : <Box sx={{ bgcolor: defaultTheme.palette.secondary.other, height: "1000px" }} component="footer" />}
+              )) : <Box sx={{ bgcolor: mainTheme.palette.secondary.other, height: "1000px" }} component="footer" />}
             </Grid>
             : null}
 
@@ -177,31 +173,7 @@ export default function EventsPage() {
               <Grid container spacing={4}>
               {cards && cards !== null ? cards.slice().sort((a, b) => {return b.priority - a.priority}).map((card) => (
                 <Grid item key={card} xs={12} sm={6} md={12}>
-                  <Card
-                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    elevation={24}
-                  >
-                    <CardMedia
-                      component="div"
-                      sx={{
-                        // 16:9
-                        pt: '56.25%',
-                      }}
-                      image={card.image}
-                    />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {card.title}
-                      </Typography>
-                      <Typography>
-                        {card.description}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button size="small">View</Button>
-                      <Button size="small">Edit</Button>
-                    </CardActions>
-                  </Card>
+                  <EventCard card={card} />
                 </Grid>
               )) : null}
             </Grid>
@@ -211,31 +183,7 @@ export default function EventsPage() {
               <Grid container spacing={4}>
               {cards && cards !== null ? cards.slice().sort((a, b) => {return b.time - a.time}).map((card) => (
                 <Grid item key={card} xs={12} sm={6} md={12}>
-                  <Card
-                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                    elevation={24}
-                  >
-                    <CardMedia
-                      component="div"
-                      sx={{
-                        // 16:9
-                        pt: '56.25%',
-                      }}
-                      image={card.image}
-                    />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {card.title}
-                      </Typography>
-                      <Typography>
-                        {card.description}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button size="small">View</Button>
-                      <Button size="small">Edit</Button>
-                    </CardActions>
-                  </Card>
+                  <EventCard card={card} />
                 </Grid>
               )) : null}
             </Grid>
@@ -245,14 +193,14 @@ export default function EventsPage() {
         </>
         
         {/* Footer */}
-        <Box sx={{ bgcolor: defaultTheme.palette.primary.main, p: 4.5 }} component="footer">
-          <Typography variant="h6" align="center" gutterBottom color={defaultTheme.palette.secondary.other}>
+        <Box sx={{ bgcolor: mainTheme.palette.primary.main, p: 4.5 }} component="footer">
+          <Typography variant="h6" align="center" gutterBottom color={mainTheme.palette.secondary.other}>
             ConnectiNET
           </Typography>
           <Typography
             variant="subtitle1"
             align="center"
-            color={defaultTheme.palette.secondary.other}
+            color={mainTheme.palette.secondary.other}
           >
             by Kraljevi
           </Typography>

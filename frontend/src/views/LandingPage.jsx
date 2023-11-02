@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import Button from '@mui/material/Button';
+import { useNavigate } from "react-router-dom";
 
-export default function HomePage() {
+export default function LandingPage() {
   const [data, setData] = useState(null);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -10,7 +13,7 @@ export default function HomePage() {
       });
       if (resp.ok) {
         const respJson = await resp.json();
-        setData(respJson);
+        // setData(respJson);
       }
     } catch {
       console.error("Bad!");
@@ -21,8 +24,8 @@ export default function HomePage() {
   }, []);
   return (
     <div>
-      HomePage
-      <div>{data ? data : "Loading.."}</div>{" "}
+      {/*<div>{data ? data : "Loading.."}</div>*/}
+      <Button onClick={() => {navigate('/events')}} >Click me to view events</Button>
     </div>
   );
 }

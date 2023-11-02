@@ -54,6 +54,8 @@
 					\item uređivati osobne podatke
 					\item izbrisati svoj korisnički račun
 					\item pregledati javni profil pojedinog organizatora
+					\item odabrati i/ili promijeniti stupanj interesa za događaj („sigurno dolazim“, „možda dolazim“, „ne dolazim“)
+					\item ostaviti i urediti recenziju za posjećeni događaj koji je završio unutar zadnjih 48h (ocjena, komentar)
 				\end{packed_enum}
 
 				\item  \underbar{Organizator (inicijator) može:}
@@ -86,8 +88,7 @@
 				
 				\begin{packed_enum}
 					
-					\item odabrati i/ili promijeniti stupanj interesa za događaj („sigurno dolazim“, „možda dolazim“, „ne dolazim“)
-					\item ostaviti i urediti recenziju za posjećeni događaj koji je završio unutar zadnjih 48h (ocjena, komentar)
+					\item sve što prijavljeni korisnik može
 					
 				\end{packed_enum}
 			
@@ -158,6 +159,209 @@
 							\end{packed_enum}
 							\item[2.b] $<$opis mogućeg scenarija odstupanja u koraku 2$>$
 							\item[3.a] $<$opis mogućeg scenarija odstupanja  u koraku 3$>$
+							
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC9 - Odabir stupnja interesa za događaj}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Posjetitelj
+						\item  \textbf{Cilj:} Odabir interesa
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Odabire događaj
+							\item Odabire stupanj interesa
+						\end{packed_enum}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC10 – Ostavljanje recenzije na dogadaj}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Posjetitelj
+						\item  \textbf{Cilj:} Ostaviti recenziju
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen i nije prošlo 48h od završetka događaja
+
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Odabire događaj
+							\item Posjetitelj odabire opciju "Ostavi recenziju"
+							\item Posjetitelj piše recenziju
+							\item Posjetitelj odabire opciju "Potvrdi recenziju"
+							
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[5.a] korisnik nije ispravno popunio obrazac za recenziju
+							
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC11 – Uvid u recenzije drugih posjetitelja}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Organizator i posjetitelj
+						\item  \textbf{Cilj:} Pregledati recenzije
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator/posjetitelj je prijavljen
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Odabire događaj
+							\item Posjetitelj odabire opciju "Prikaži recenzije"
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[3.a] događaj nema ni jednu recenziju
+							\begin{packed_enum}
+								\item Sustav pokazuje poruku "Nema recenzija za ovaj događaj"
+							\end{packed_enum}
+							
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC12 – Organizacija vlastitog događaja}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Organizator
+						\item  \textbf{Cilj:} Organizacija događaja
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator je prijavljen i ima premium verziju
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator otvara stranicu s popisom događaja
+							\item Organizator odabire opciju "Kreiraj vlastiti događaj"
+							\item Organizator upisuje detalje o događaju
+							\item Organizator odabire opciju "Kreiraj događaj"
+
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[4.a] nisu popunjena sva polja za stvaranje događaja
+							\item[] \begin{packed_enum}
+								
+								\item Sustav obavještvava organizatora da nije popunio sva polja
+								
+							\end{packed_enum}
+							
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC13 – Uređivanje vlastitog dogadaja}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Organizator
+						\item  \textbf{Cilj:} Uređivanje događaja
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator je prijavljen i ima kreirani događaj
+
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator otvara stranicu s popisom događaja
+							\item Organizator odabire opciju "Moji događaji"
+							\item Organizator odabire događaj
+							\item Organizator odabire opciju "Uredi događaj"
+							\item Organizator uređuje detalje o događaju
+							\item Organizator odabire opciju "Pohrani promjene"
+						\end{packed_enum}
+						
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC14 – Pregled podataka o vlastitom dogadaju}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Organizator
+						\item  \textbf{Cilj:} Pregled podataka o kreiranom događaju
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator je prijavljen i ima kreirani događaj
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator otvara stranicu s popisom događaja
+							\item Organizator odabire opciju "Moji događaji"
+							\item Organizator odabire događaj
+
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[2.a] Ne postoji niti jedan kreirani događaj
+							
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC15 – Pregled profila organizatora}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Posjetitelj
+						\item  \textbf{Cilj:} Pregled podataka o organizatoru događaja
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Posjetitelj odabire događaj
+							\item Posjetitelj odabire opciju "Posjeti profil organizatora događaja"
+
+						\end{packed_enum}
+
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC16 – Pretplacivanje}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik: }Organizator
+						\item  \textbf{Cilj:} Pretplacivanje
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator je prijavljen
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator odabire opciju "Osobni podatci"
+							\item Organizator odabire opciju "Pretplata"
+							\item Organizator odabire opciju "Pretplati se na premium"
+							\item Organizator odabire vrstu plaćanja
+							\item Organizator upisuje podatke bankovnog računa
+							\item Organizator odabire opciju "Plaćanje"
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[5.a] Uneseni su neispravni bankovni podatci
+							\item[6.a] Stanje na bankovnom računu je manje od iznosa pretplate
+
 							
 						\end{packed_item}
 					\end{packed_item}

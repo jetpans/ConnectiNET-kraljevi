@@ -332,7 +332,7 @@
 	
 							\item Organizator odabire opciju "Osobni podatci"
 							\item Organizator odabire opciju "Pretplate"
-							\item Organizator odabire opciju "Otkaži pretplatu na premium"
+							\item Organizator odabire opciju "Otkaži Premium pretplatu"
 							\item Organizator odabire opciju "Da, otkaži pretplatu"
 							\item Pretplata je otkazana
 						\end{packed_enum}
@@ -396,8 +396,9 @@
 							\item Administrator odabire opciju "Administratorske postavke"
 							\item Administrator odabire opciju "Korisnici"
 							\item Administrator upisuje ime korisnika u tražilicu
-							\item Svi korisnici (filter je uzet u obzir) s navedenim pretraživanjem u imenu se prikazuju
-							\item Administrator odabire opciju "Ukloni" pored imena korisnika
+							\item Svi korisnici s navedenim pretraživanjem u imenu se prikazuju
+							\item Administrator odabire željenog korisnika
+							\item Administrator odabire opciju "Ukloni korisnika"
 							\item Administrator odabire opciju "Da, ukloni korisnika"
 							\item Korisnik je uklonjen
 						\end{packed_enum}
@@ -409,7 +410,7 @@
 							\item[3.a] Administrator odabire filter "Organizator" ili "Posjetitelj" umjesto "Svi"
 							\item[3.b] Administrator odabire vrstu sortiranja rezultata
 							\item[4.a] Korisnik ne postoji
-							\item[5.a] Administrator ipak ne želi ukloniti korisnika
+							\item[7.a] Administrator ipak ne želi ukloniti korisnika
 							\item[] \begin{packed_enum}
 								
 								\item Administrator odabire opciju "Poništi"
@@ -433,10 +434,12 @@
 							\item Administrator odabire opciju "Korisnici"
 							\item Administrator upisuje ime korisnika u tražilicu
 							\item Svi korisnici s navedenim pretraživanjem u imenu se prikazuju
-							\item Administrator odabire opciju "Recenzije" pored imena korisnika
+							\item Administrator odabire željenog korisnika
+							\item Administrator odabire opciju "Recenzije"
 							\item Administrator upisuje ime događaja u tražilicu
+							\item Administrator odabire željeni događaj
 							\item Korisnikova recenzija odabranog događaja se prikazuje
-							\item Administrator odabire opciju "Ukloni" pored recenzije korisnika
+							\item Administrator odabire opciju "Ukloni recenziju"
 							\item Administrator odabire opciju "Da, ukloni recenziju"
 							\item Recenzija je uklonjena
 						\end{packed_enum}
@@ -448,7 +451,7 @@
 							\item[3.a] Administrator odabire filter "Organizator" ili "Posjetitelj" umjesto "Svi"
 							\item[3.b] Administrator odabire vrstu sortiranja rezultata
 							\item[4.a] Korisnik ne postoji
-							\item[9.a] Administrator ipak ne želi ukloniti korisnika
+							\item[11.a] Administrator ipak ne želi ukloniti korisnika
 							\item[] \begin{packed_enum}
 								
 								\item Administrator odabire opciju "Poništi"
@@ -457,41 +460,134 @@
 						\end{packed_item}
 					\end{packed_item}
 
-					\noindent \underbar{\textbf{UC21 - Uklanjanje recenzija}}
+					\noindent \underbar{\textbf{UC22 - Uklanjanje pretplate}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Administrator
-						\item  \textbf{Cilj:} Uklanjanje korisnika
+						\item  \textbf{Cilj:} Uklanjanje pretplate
 						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Administrator je prijavljen i korisnik postoji
+						\item  \textbf{Preduvjet:} Administrator je prijavljen i organizacija postoji
 						\item  \textbf{Opis osnovnog tijeka:}
 						
 						\item[] \begin{packed_enum}
 	
-							\item $<$opis korak jedan$>$
-							\item $<$opis korak dva$>$
-							\item $<$opis korak tri$>$
-							\item $<$opis korak četiri$>$
-							\item $<$opis korak pet$>$
+							\item Administrator odabire opciju "Administratorske postavke"
+							\item Administrator odabire opciju "Korisnici"
+							\item Administrator odabire filter "Organizator" (preporučeno)
+							\item Administrator upisuje ime organizatora u tražilicu
+							\item Svi organizatori s navedenim pretraživanjem u imenu se prikazuju
+							\item Administrator odabire željenog organizatora
+							\item Administrator odabire opciju "Pretplata"
+							\item Administrator odabire opciju "Ukloni Premium pretplatu"
+							\item Administrator odabire opciju "Da, ukloni pretplatu"
+							\item Pretplata je uklonjena
 						\end{packed_enum}
 						
 						\item  \textbf{Opis mogućih odstupanja:}
 						
 						\item[] \begin{packed_item}
 	
-							\item[2.a] $<$opis mogućeg scenarija odstupanja u koraku 2$>$
+							\item[3.b] Administrator odabire vrstu sortiranja rezultata
+							\item[5.a] Organizator ne postoji
+							\item[8.a] Organizator već nema Premium pretplatu
+							\item[9.a] Administrator ipak ne želi ukloniti pretplatu
 							\item[] \begin{packed_enum}
 								
-								\item $<$opis rješenja mogućeg scenarija korak 1$>$
-								\item $<$opis rješenja mogućeg scenarija korak 2$>$
+								\item Administrator odabire opciju "Poništi"
 								
 							\end{packed_enum}
-							\item[2.b] $<$opis mogućeg scenarija odstupanja u koraku 2$>$
-							\item[3.a] $<$opis mogućeg scenarija odstupanja  u koraku 3$>$
-							
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC23 - Uklanjanje događaja}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Administrator
+						\item  \textbf{Cilj:} Uklanjanje događaja
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Administrator je prijavljen i događaj postoji
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Administrator odabire opciju "Administratorske postavke"
+							\item Administrator odabire opciju "Korisnici"
+							\item Administrator odabire filter "Organizator" (preporučeno)
+							\item Administrator upisuje ime organizatora u tražilicu
+							\item Svi organizatori s navedenim pretraživanjem u imenu se prikazuju
+							\item Administrator odabire željenog organizatora
+							\item Administrator odabire opciju "Događaji"
+							\item Administrator upisuje ime događaja u tražilicu
+							\item Korisnikova recenzija odabranog događaja se prikazuje
+							\item Administrator odabire opciju "Ukloni događaj"
+							\item Administrator odabire opciju "Da, ukloni događaj"
+							\item Događaj je uklonjen
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[3.b] Administrator odabire vrstu sortiranja rezultata
+							\item[5.a] Organizator ne postoji
+							\item[9.a] Administrator ipak ne želi ukloniti pretplatu
+							\item[] \begin{packed_enum}
+								
+								\item Administrator odabire opciju "Poništi"
+								
+							\end{packed_enum}
 						\end{packed_item}
 					\end{packed_item}
 				
+					\noindent \underbar{\textbf{UC24 - Dodavanje administratora}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Administrator
+						\item  \textbf{Cilj:} Dodavanje administratora
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Administrator je prijavljen
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Administrator odabire opciju "Administratorske postavke"
+							\item Administrator odabire opciju "Administratori"
+							\item Administrator odabire opciju "Dodaj novog administratora"
+							\item Administrator upisuje email novog administratora
+							\item Administrator odabire opciju "Dodaj administratora"
+							\item Administrator odabire opciju "Da, dodaj administratora"
+							\item Administrator je dodan
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[6.a] Administrator ipak ne želi dodati administratora
+							\item[] \begin{packed_enum}
+								
+								\item Administrator odabire opciju "Poništi"
+								
+							\end{packed_enum}
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC25 - Pregled statistike}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Administrator
+						\item  \textbf{Cilj:} Pregled statistike
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Administrator je prijavljen
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Administrator odabire opciju "Administratorske postavke"
+							\item Administrator odabire opciju "Statistika"
+							\item Administratoru se prikažu različite statistike vezane za pretplate, događaje i korisnike
+						\end{packed_enum}
+					\end{packed_item}
 					
 				\subsubsection{Dijagrami obrazaca uporabe}
 					

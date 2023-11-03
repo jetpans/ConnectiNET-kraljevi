@@ -318,14 +318,152 @@
 
 
 					\end{packed_item}
-					
-					\noindent \underbar{\textbf{UC$<$broj obrasca$>$ -$<$ime obrasca$>$}}
+
+					\noindent \underbar{\textbf{UC17 - Otkazivanje pretplate}}
 					\begin{packed_item}
 	
-						\item \textbf{Glavni sudionik: }$<$sudionik$>$
-						\item  \textbf{Cilj:} $<$cilj$>$
-						\item  \textbf{Sudionici:} $<$sudionici$>$
-						\item  \textbf{Preduvjet:} $<$preduvjet$>$
+						\item \textbf{Glavni sudionik:} Organizator
+						\item  \textbf{Cilj:} Otkazivanje pretplate
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator je prijavljen i ima pretplatu
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator odabire opciju "Osobni podatci"
+							\item Organizator odabire opciju "Pretplate"
+							\item Organizator odabire opciju "Otkaži pretplatu na premium"
+							\item Organizator odabire opciju "Da, otkaži pretplatu"
+							\item Pretplata je otkazana
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[4.a] Organizator ipak ne želi otkazati pretplatu
+							\item[] \begin{packed_enum}
+								
+								\item Organizator odabire opciju "Poništi"
+								
+							\end{packed_enum}
+						\end{packed_item}
+					\end{packed_item}
+					
+					\noindent \underbar{\textbf{UC18 - Primanje obavijesti o događajima}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Posjetitelj
+						\item  \textbf{Cilj:} Primanje obavijesti o događajima
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen i ***
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item ***Ovdje se moramo kao grupa dogovoriti koliko komplicirat želimo
+						\end{packed_enum}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC19 - Postavljanje cijene pretplate}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Administrator
+						\item  \textbf{Cilj:} Postavljanje cijene pretplate
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Administrator je prijavljen
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Administrator odabire opciju "Administratorske postavke"
+							\item Administrator odabire opciju "Premium pretplate"
+							\item Administrator upisuje željenu cijenu (u eurima) na mjesto "Cijena:"
+						\end{packed_enum}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC20 - Uklanjanje korisnika}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Administrator
+						\item  \textbf{Cilj:} Uklanjanje korisnika
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Administrator je prijavljen i korisnik postoji
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Administrator odabire opciju "Administratorske postavke"
+							\item Administrator odabire opciju "Korisnici"
+							\item Administrator upisuje ime korisnika u tražilicu
+							\item Svi korisnici (filter je uzet u obzir) s navedenim pretraživanjem u imenu se prikazuju
+							\item Administrator odabire opciju "Ukloni" pored imena korisnika
+							\item Administrator odabire opciju "Da, ukloni korisnika"
+							\item Korisnik je uklonjen
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+						
+							\item[3.a] Administrator odabire filter "Organizator" ili "Posjetitelj" umjesto "Svi"
+							\item[3.b] Administrator odabire vrstu sortiranja rezultata
+							\item[4.a] Korisnik ne postoji
+							\item[5.a] Administrator ipak ne želi ukloniti korisnika
+							\item[] \begin{packed_enum}
+								
+								\item Administrator odabire opciju "Poništi"
+								
+							\end{packed_enum}
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC21 - Uklanjanje recenzija}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Administrator
+						\item  \textbf{Cilj:} Uklanjanje recenzija
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Administrator je prijavljen i recenzija postoji
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Administrator odabire opciju "Administratorske postavke"
+							\item Administrator odabire opciju "Korisnici"
+							\item Administrator upisuje ime korisnika u tražilicu
+							\item Svi korisnici s navedenim pretraživanjem u imenu se prikazuju
+							\item Administrator odabire opciju "Recenzije" pored imena korisnika
+							\item Administrator upisuje ime događaja u tražilicu
+							\item Korisnikova recenzija odabranog događaja se prikazuje
+							\item Administrator odabire opciju "Ukloni" pored recenzije korisnika
+							\item Administrator odabire opciju "Da, ukloni recenziju"
+							\item Recenzija je uklonjena
+						\end{packed_enum}
+						
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[3.a] Administrator odabire filter "Organizator" ili "Posjetitelj" umjesto "Svi"
+							\item[3.b] Administrator odabire vrstu sortiranja rezultata
+							\item[4.a] Korisnik ne postoji
+							\item[9.a] Administrator ipak ne želi ukloniti korisnika
+							\item[] \begin{packed_enum}
+								
+								\item Administrator odabire opciju "Poništi"
+								
+							\end{packed_enum}
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC21 - Uklanjanje recenzija}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Administrator
+						\item  \textbf{Cilj:} Uklanjanje korisnika
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Administrator je prijavljen i korisnik postoji
 						\item  \textbf{Opis osnovnog tijeka:}
 						
 						\item[] \begin{packed_enum}

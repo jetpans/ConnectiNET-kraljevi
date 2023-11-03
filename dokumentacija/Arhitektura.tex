@@ -1,6 +1,6 @@
 \chapter{Arhitektura i dizajn sustava}
 		
-		\textbf{\textit{dio 1. revizije}}\\
+		%\textbf{\textit{dio 1. revizije}}\\
 
 		\textit{ Potrebno je opisati stil arhitekture te identificirati: podsustave, preslikavanje na radnu platformu, spremišta podataka, mrežne protokole, globalni upravljački tok i sklopovsko-programske zahtjeve. Po točkama razraditi i popratiti odgovarajućim skicama:}
 	\begin{itemize}
@@ -11,22 +11,42 @@
 
 	
 		
-
+	\pagebreak
 		
 
 				
 		\section{Baza podataka}
 			
-			\textbf{\textit{dio 1. revizije}}\\
+			%\textbf{\textit{dio 1. revizije}}\\
 			
-		\textit{Potrebno je opisati koju vrstu i implementaciju baze podataka ste odabrali, glavne komponente od kojih se sastoji i slično.}
+		%\textit{Potrebno je opisati koju vrstu i implementaciju baze podataka ste odabrali, glavne komponente od kojih se sastoji i slično.}
+		
+		\textrm{Za naš sustav koristit ćemo relacijsku bazu podataka čija je struktura pogodna za modeliranje stvarnog svijeta. Gradivna jedinka baze je relacija, odnosno tablica koja je definirana svojim imenom i skupom atributa. Zadaća baze podataka je brza i jednostavna pohrana, izmjena i dohvat podataka za obradu. Baza podataka naše aplikacije sastoji se od sljedećih entiteta:}
+		
+	\begin{packed_item}
+		
+	\item Račun
+	\item Posjetitelj
+	\item Organizator
+	\item Administrator
+	\item Pretplata
+	\item Plaćanje
+	\item Događanje
+	\item Interes
+	\item Recenzija
+	\item Media-Događanje
+	\item Opcija-Obavijest
+	\end{packed_item}
+		
 		
 			\subsection{Opis tablica}
 			
 
-				\textit{Svaku tablicu je potrebno opisati po zadanom predlošku. Lijevo se nalazi točno ime varijable u bazi podataka, u sredini se nalazi tip podataka, a desno se nalazi opis varijable. Svjetlozelenom bojom označite primarni ključ. Svjetlo plavom označite strani ključ}
+				%\textit{Svaku tablicu je potrebno opisati po zadanom predlošku. Lijevo se nalazi točno ime varijable u bazi podataka, u sredini se nalazi tip podataka, a desno se nalazi opis varijable. Svjetlozelenom bojom označite primarni ključ. Svjetlo plavom označite strani ključ}
 				
-				
+				\textbf{Račun} \newline \textrm{ Ovaj entitet sadržava sve osnovne informacije o registriranom korisniku.
+				Sadrži atribute: identifikator računa, korisničko ime, lozinka, e-mail i profilna slika.
+				Ovaj entitet u vezi je \textit{One-to-One} s entitetima Posjetitelj, Organizator i Administrator preko atributa accountId.}
 				\begin{longtblr}[
 					label=none,
 					entry=none
@@ -35,19 +55,212 @@
 						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
 						rowhead = 1,
 					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \SetCell[c=3]{c}{\textbf{korisnik - ime tablice}}	 \\ \hline[3pt]
-					\SetCell{LightGreen}IDKorisnik & INT	&  	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  	\\ \hline
-					korisnickoIme	& VARCHAR &   	\\ \hline 
-					email & VARCHAR &   \\ \hline 
-					ime & VARCHAR	&  		\\ \hline 
-					\SetCell{LightBlue} primjer	& VARCHAR &   	\\ \hline 
+					\hline \SetCell[c=3]{c}{\textbf{Account}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator računa  	\\ \hline
+					username	& VARCHAR &  jedinstveni identifikator korisnika 	\\ \hline 
+					eMail & VARCHAR & E-Mail korisnika  \\ \hline 
+					passwordHash & VARCHAR	&  	raspršeno kriptirana lozinka korisnika	\\ \hline 
+					profileImage & VARCHAR	&  	lokalna adresa na profilnu sliku korisnika	\\ \hline 
+				\end{longtblr}\pagebreak
+				
+				
+				
+				\textbf{Posjetitelj} \newline \textrm{ Ovaj entitet specijalizacija je entiteta Račun namijenjena za "obične" korisnike.
+					Sadrži atribute: identifikator računa, ime i prezime.
+					Ovaj entitet u vezi je \textit{One-to-One} s entitetom Račun i u
+					vezi \textit{One-to-Many} s entitetima Interes, Recenzija i Opcija-Obavijest preko atributa accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Visitor}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator računa (Račun.accountId)  	\\ \hline
+					firstName	& VARCHAR &  ime posjetitelja 	\\ \hline 
+					lastName & VARCHAR & prezime posjetitelja  \\ \hline 
+					
+				\end{longtblr}
+				
+				\textbf{Organizator} \newline \textrm{ Ovaj entitet specijalizacija je entiteta Račun namijenjena za korisnike koji su organizatori.
+					Sadrži atribute: identifikator računa, ime organizatora.
+					Ovaj entitet u vezi je \textit{One-to-One} s entitetom Račun i u
+					vezi \textit{One-to-Many} s entitetima s entitetima Plaćanje, Pretplata i Događanje preko atributa accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Organiser}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator računa (Račun.accountId)   	\\ \hline
+					organiserName	& VARCHAR &  naziv organizatora ili organizacije 	\\ \hline 
+					
+				\end{longtblr}
+				
+				\textbf{Administrator} \newline \textrm{ Ovaj entitet specijalizacija je entiteta Račun namijenjena za korisnike koji su administratori.
+					Sadrži atribute: identifikator računa.
+					Ovaj entitet u vezi je \textit{One-to-One} s entitetom Račun preko atributa accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Administrator}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator  računa (Račun.accountId) \\ \hline
+					
+				\end{longtblr}
+				
+				\pagebreak
+				\textbf{Subscription} \newline \textrm{ Ovaj entitet opisuje pretplatu koju je organizator nekad imao te koja može biti trenutno aktivna.
+					Sadrži atribute: identifikator pretplate, datum početka pretplate, datum isteka pretplate, identifikator računa organizatora.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Organizator preko atributa accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Pretplata}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}subscriptionId & INT	&  	jedinstveni identifikator instance pretplate  	\\ \hline
+					\SetCell{LightBlue}accountId & INT &  identifikator organizatora na kojeg se pretplata odnosi (Organizator.accountId) 	\\ \hline 
+					startDate	& DATE &  datum početeka pretplate 	\\ \hline 
+					expireDate	& DATE &  datum isteka pretplate 	\\ \hline 
+				\end{longtblr}
+				
+				\textbf{Plaćanje} \newline \textrm{ Ovaj entitet opisuje plaćanje koje je organizator napravio prema našoj aplikaciji.
+					Sadrži atribute: identifikator plaćanja, identifikator organizatora, datum plaćanja, iznos, metoda plaćanja.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Organizator preko atributa accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Payment}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}paymentId & INT	&  	jedinstveni identifikator plaćanja 	\\ \hline
+					\SetCell{LightBlue}accountId & INT &  identifikator organizatora na kojeg se plaćanje odnosi (Organizator.accountId) 	\\ \hline 
+					date	& DATETIME &  datum i vrijeme plaćanja 	\\ \hline 
+					amount	& FLOAT &  plaćen iznos 	\\ \hline 
+					payment- Method	& VARCHAR &  način uplate 	\\ \hline 
+				\end{longtblr}
+				
+				\textbf{Događanje} \newline \textrm{ Ovaj entitet opisuje događanje organizirano od strane organizatora.
+					Sadrži atribute: identifikator događanja, identifikator organizatora, naziv, opis, državu, grad, lokaciju, vrijeme, datum, cijenu, naslovnu sliku događanja.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Organizator preko atributa accountId, vezi \textit{One-to-Many} s entitetom Recenzija preko atributa eventId, vezi \textit{Many-to-Many} s entitetom Posjetitelj preko veze Interes i atributa eventId te u vezi \textit{One-to-Many} s entitetom Media-Događanje također preko atributa eventId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Event}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}eventId & INT	&  	jedinstveni identifikator događanja 	\\ \hline
+					\SetCell{LightBlue}accountId & INT &  identifikator organizatora koji organizira događanje (Organizator.accountId) 	\\ \hline 
+					title	& VARCHAR &  naziv događanja 	\\ \hline 
+					description	& VARCHAR &  opis događanja 	\\ \hline 
+					price	& FLOAT &  cijena događanja 	\\ \hline 
+					display- ImageSource	& VARCHAR &  lokalna adresa naslovne slike događanja 	\\ \hline 
+					date	& DATE &  datum događanja 	\\ \hline 
+					time	& DATETIME &  vrijeme događanja 	\\ \hline 
+					country	& VARCHAR & država u kojoj se događanje održava 	\\ \hline 
+					city	& VARCHAR &  grad u kojem se događanje održava 	\\ \hline 
+					location	& VARCHAR &  lokacija na kojoj se događanje održava	\\ \hline 
+					price	& FLOAT &  cijena događanja 	\\ \hline 
+				\end{longtblr}
+				
+					\textbf{Interes} \newline \textrm{ Ovaj entitet predstavlja \textit{Many-to-Many} vezu interesa od strane Posjetitelja prema Događanju.
+					Sadrži atribute: identifikator događanja, identifikator računa posjetitelja, stupanj zainteresiranosti.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetima Posjetitelj i Događanje preko atributa accountId i eventId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Interest}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}eventId & INT	&  	indetifikator događanja na koje se interes odnosi (Događanje.eventId)	\\ \hline
+					\SetCell{LightGreen}accountId & INT &  identifikator posjetitelja na kojeg se interes odnosi (Posjetitelj.accountId) 	\\ \hline 
+					degree- OfInterest	& VARCHAR &  stupanj interesa 	\\ \hline 
+				\end{longtblr}
+				
+					\textbf{Recenzija} \newline \textrm{ Ovaj entitet modelira recenzije ostavljene od strane Posjetitelja za pojedina Događanja.
+					Sadrži atribute: jedinstveni identifikator recenzije, identifikator događanja, identifikator računa posjetitelja, komentar, datum, vrijeme.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetima Događanje i Posjetitelj preko atributa eventId i accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Review}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}reviewId & INT	&  	jedinstveni identifikator ostavljene recenzije	\\ \hline
+					\SetCell{LightBlue}accountId & INT &  identifikator posjetitelja koji je ostavio recenziju (Posjetitelj.accountId) 	\\ \hline 
+					\SetCell{LightBlue}eventId	& INT &  identifikator događanja na koje se recenzija odnosi (Događanje.eventId) 	\\ \hline 
+					comment	& VARCHAR &  ostavljen komentar 	\\ \hline 
+					date	& DATE &  datum ostavljene recenzije	\\ \hline 
+					time	& DATETIME &  vrijeme ostavljene recenzije 	\\ \hline 
 				\end{longtblr}
 				
 				
-			
+				
+					\textbf{Media-Događanje} \newline \textrm{ Ovaj entitet sprema lokalne adrese foto i video sadržaja koje pripada događanju.
+					Sadrži atribute: jedinstveni identifikator recenzije, identifikator događanja, identifikator računa posjetitelja, komentar, datum, vrijeme.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetima Događanje i Posjetitelj preko atributa eventId i accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{EventMedia}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}mediaId & INT	&  	jedinstveni identifikator materijala	\\ \hline
+					\SetCell{LightBlue}eventId	& INT &  identifikator događanja na koje se materijal odnosi (Događanje.eventId) 	\\ \hline 
+					mediaType	& VARCHAR &  vrsta sadrđaja; slika ili video 	\\ \hline 
+					mediaSource	& VARCHAR &  lokalna adresa sadržaja	\\ \hline 
+				\end{longtblr}
+				
+					\textbf{Opcija-Obavijest} \newline \textrm{ Ovaj entitet sprema informaciju o tome koji korisnik ima aktiviran koji način slanja obavijesti..
+					Sadrži atribute: identifikator posjetitelja, vrsta obavijesti.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Posjetitelj preko atributa accountId.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{NotificationOption}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator posjetitelja (Posjetitelj.accountId)	\\ \hline
+					\SetCell{LightGreen}type & VARCHAR	&  	vrsta obavijesti. (Primarni ključ je uređeni par accountId, type)	\\ \hline
+				\end{longtblr}
+				
+				
+				
 			\subsection{Dijagram baze podataka}
 				\textit{ U ovom potpoglavlju potrebno je umetnuti dijagram baze podataka. Primarni i strani ključevi moraju biti označeni, a tablice povezane. Bazu podataka je potrebno normalizirati. Podsjetite se kolegija "Baze podataka".}
-			
+				
+	
 			\eject
 			
 			

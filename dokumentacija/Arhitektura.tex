@@ -16,17 +16,20 @@
 		\item Baza podataka
 	\end{itemize}
 
-	\underline{Web preglednik} je program koji omogućuje pregled web-stranica i multimedijskih sadržaja na istima s korisničkog računala. Izvorni kod internetskih stranica se interpretira na web preglednika i prikazuje korisniku na pristupačan način i služi kao glavna pristupna točka aplikaciji s korisničke strane. Web preglednik je također zadužen za komunikaciju s web poslužiteljem putem zahtjeva.\\
-	\underline{Web poslužitelj} je program koji obrađuje zahtjeve klijenata i šalje im odgovor, time omogućavajući klijentu komunikaciju s aplikacijom. Web poslužitelj je zadužen za obradu zahtjeva i slanje odgovora putem HTTP-a (engl.\textit{Hyper Text Transfer Protocol}), standardnog protokola za prijenos informacija na webu.\\
-	\underline{Web aplikacija} je program kojemu je glavna svrha pružanje funkcionalnosti i usluga korisniku putem web preglednika u obliku HTML dokumenata. Web aplikacija je izgrađena na web poslužitelju i po potrebi komunicira s bazom podataka.\\
-	\underline{Baza podataka} je sustav za pohranu podataka.\\
+	\underline{Web preglednik} je program koji omogućuje pregled web-stranica i multimedijskih sadržaja na istima s korisničkog računala. Izvorni kod internetskih stranica se interpretira na web preglednika i prikazuje korisniku na pristupačan način i služi kao glavna pristupna točka aplikaciji s korisničke strane. Web preglednik je također zadužen za komunikaciju s web poslužiteljem putem zahtjeva.
+	
+	\underline{Web poslužitelj} je program koji obrađuje zahtjeve klijenata i šalje im odgovor, time omogućavajući klijentu komunikaciju s aplikacijom. Web poslužitelj je zadužen za obradu zahtjeva i slanje odgovora putem HTTP-a (engl.\textit{Hyper Text Transfer Protocol}), standardnog protokola za prijenos informacija na webu.
+	
+	\underline{Web aplikacija} je program kojemu je glavna svrha pružanje funkcionalnosti i usluga korisniku putem web preglednika u obliku HTML dokumenata. Web aplikacija je izgrađena na web poslužitelju i po potrebi komunicira s bazom podataka.
+	
+	\underline{Baza podataka} je sustav za pohranu podataka.
 
-	Programski jezik u kojem smo izradili našu web aplikaciju je Python zajedno s Flask web okvirom, te programski jezik JavaScript zajedno s React web okvirom. Python je interpretirani, objektno orijentirani programski jezik visoke razine. Flask je mikro web okvir za Python koji omogućuje brzo i jednostavno kreiranje web aplikacija. JavaScript je interpretirani, dinamički programski jezik visoke razine. React je JavaScript biblioteka za izgradnju korisničkih sučelja. Odabrano razvojno okruženje je Microsoft Visual Studio Code.\\
-	Arhitektura sustava temeljiti će se na MVC arhitekturi (engl. \textit{Model-View-Controller}). MVC dozvoljava nezavisan razvoj dijelova sustava, što omogućava brži razvoj i održavanje sustava. Njezini dijelovi su:\\
+	Programski jezici u kojem je web aplikacija izrađena su Python zajedno s Flask web okvirom, te JavaScript zajedno s React web okvirom. Python je interpretirani, objektno orijentirani programski jezik visoke razine. Flask je mikro web okvir za Python koji omogućuje brzo i jednostavno kreiranje web aplikacija. JavaScript je interpretirani, dinamički programski jezik visoke razine. React je JavaScript biblioteka za izgradnju korisničkih sučelja. Odabrano razvojno okruženje je Microsoft Visual Studio Code.
+	Arhitektura sustava temeljiti će se na MVC arhitekturi (engl. \textit{Model-View-Controller}). MVC dozvoljava nezavisan razvoj dijelova sustava, što omogućava brži razvoj i održavanje sustava. Njezini dijelovi su:
 	\begin{itemize}
-		\item \textbf{Model} - Komponenta sustava odgovorna za pohranu i dohvat podataka. Predstavljena je dinamičkim strukturama podataka. Ima interakciju s Controller-om, od kojeg prima ulazne podatke te kojemu pruža podatke za prikaz.\\
-		\item \textbf{View} - Komponenta sustava odgovorna za prikaz podataka korisniku. Može biti formatirana u obliku HTML dokumenata, kao JSON ili u drugom formatu. Ima interakciju s Controller-om, od kojeg prima podatke za prikaz.\\
-		\item \textbf{Controller} - Komponenta sustava koja prima ulazne podatke i prosljeđuje ih Model-u ili View-u. Zadužena je za korisničke zahtjeve i odgovore te obavlja interakciju s ostalim komponentama sustava.\\
+		\item \textbf{Model} - Komponenta sustava odgovorna za pohranu i dohvat podataka. Predstavljena je dinamičkim strukturama podataka. Ima interakciju s Controller-om, od kojeg prima ulazne podatke te kojemu pruža podatke za prikaz.
+		\item \textbf{View} - Komponenta sustava odgovorna za prikaz podataka korisniku. Može biti formatirana u obliku HTML dokumenata, kao JSON ili u drugom formatu. Ima interakciju s Controller-om, od kojeg prima podatke za prikaz.
+		\item \textbf{Controller} - Komponenta sustava koja prima ulazne podatke i prosljeđuje ih Model-u ili View-u. Zadužena je za korisničke zahtjeve i odgovore te obavlja interakciju s ostalim komponentama sustava.
 	\end{itemize}
 
 	%Osim navedenih dijelova arhitekture, dio poslovne logike se nalazi u sloju Service.
@@ -291,9 +294,11 @@
 			%\textbf{\textit{dio 2. revizije}}\\			
 			%\textit{Prilikom druge predaje projekta dijagram razreda i opisi moraju odgovarati stvarnom stanju implementacije}
 			
+			\textit{}
+
+			Na slikama 4.3 i 4.4 prikazani su dijagrami razreda za svaki podsustav u backend dijelu MVC arhitekture. Na slici 4.3. prikazani su razredi koji nasljeđuju Controller razred. Metode tih razreda koriste Model razrede za dohvat i spremanje podataka. Metode u razredima Controller vraćaju JSON datoteke u obliku HTML status koda i podatkovnog dijela. Na slici 4.4. prikazani su razredi koji nasljeđuju Model razred i predstavljaju (modeliraju) entitete baze podataka.
 			
-			Na slikama 4.3 i 4.4 prikazani su dijagrami razreda za svaki podsustav u backend dijelu MVC arhitekture. Na slici 4.3. prikazani su razredi koji nasljeđuju Controller razred. Metode tih razreda koriste Model razrede za dohvat i spremanje podataka. Metode u razredima Controller vraćaju JSON datoteke u obliku HTML status koda i podatkovnog dijela. Na slici 4.4. prikazani su razredi koji nasljeđuju Model razred i predstavljaju (modeliraju) entitete baze podataka.\\
-			Zbog lakše organizacije i vidljivosti dijagrama razreda, razredi su podijeljeni u više dijagrama. Razredi su grupirani prema sličnim razinama apstrakcije i srodnim funkcionalnostima u arhitekturi MVC.\\
+			Zbog lakše organizacije i vidljivosti dijagrama razreda, razredi su podijeljeni u više dijagrama. Razredi su grupirani prema sličnim razinama apstrakcije i srodnim funkcionalnostima u arhitekturi MVC.
 			
 			\eject
 		

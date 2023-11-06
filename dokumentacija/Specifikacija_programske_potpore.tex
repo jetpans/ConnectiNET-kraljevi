@@ -73,7 +73,7 @@
 					\item pregledati statistiku za vlastite događaje
 					\item dobiti uvid u recenzije događaja koje je organizirao
 					\item odgovarati na recenzije na događaje koje je organizirao (extra?)
-					\item uređivati ili izbrisati vlastiti javni profil
+					\item stvoriti, uređivati ili izbrisati vlastiti javni profil
 					\item upravljati pretplatom za premium organizatore
 					\begin{packed_enum}
 						
@@ -823,6 +823,98 @@
 							\item Administrator odabire opciju "Statistika"
 							\item Administratoru se prikažu različite statistike vezane za pretplate, događaje i korisnike
 						\end{packed_enum}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC26 - Stvaranje javnog profila}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Organizator
+						\item  \textbf{Cilj:} Stvaranje javnog profila
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator nema kreiran javni profil
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator odabire opciju "Osobni podatci"
+							\item Organizator odabire opciju "Javni profil"
+							\item Organizator odabire opciju "Kreiraj javni profil"
+							\item Organizator unosi podatke o sebi
+							\item Organizator odabire opciju "Kreiraj profil"
+						\end{packed_enum}
+
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[5.a] Organizator nije unio nužne podatke
+							\item[] \begin{packed_enum}
+								
+								\item Sustav prikazuje poruku "Neispravno popunjen obrazac"
+								
+							\end{packed_enum}
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC27 - Uređivanje javnog profila}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Organizator
+						\item  \textbf{Cilj:} Uređivanje javnog profila
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator ima kreiran javni profil
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator odabire opciju "Osobni podatci"
+							\item Organizator odabire opciju "Javni profil"
+							\item Organizator odabire opciju "Uredi javni profil"
+							\item Organizator unosi podatke o sebi
+							\item Organizator odabire opciju "Potvrdi promjene"
+						\end{packed_enum}
+
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[5.a] Organizator je napravio neispravne promjene
+							\item[] \begin{packed_enum}
+								
+								\item Sustav prikazuje poruku "Neispravno popunjen obrazac"
+								
+							\end{packed_enum}
+						\end{packed_item}
+					\end{packed_item}
+
+					\noindent \underbar{\textbf{UC28 - Brisanje javnog profila}}
+					\begin{packed_item}
+	
+						\item \textbf{Glavni sudionik:} Organizator
+						\item  \textbf{Cilj:} Brisanje javnog profila
+						\item  \textbf{Sudionici:} Baza podataka
+						\item  \textbf{Preduvjet:} Organizator ima kreiran javni profil
+						\item  \textbf{Opis osnovnog tijeka:}
+						
+						\item[] \begin{packed_enum}
+	
+							\item Organizator odabire opciju "Osobni podatci"
+							\item Organizator odabire opciju "Javni profil"
+							\item Organizator odabire opciju "Izbriši javni profil"
+							\item Organizator odabire opciju "Potvrdi"
+						\end{packed_enum}
+
+						\item  \textbf{Opis mogućih odstupanja:}
+						
+						\item[] \begin{packed_item}
+	
+							\item[4.a] Organizator ipak ne želi izbrisati javni profil
+							\item[] \begin{packed_enum}
+								
+								\item Organizator odabire opciju "Poništi"
+								
+							\end{packed_enum}
+						\end{packed_item}
 					\end{packed_item}
 					
 				\subsubsection{Dijagrami obrazaca uporabe}

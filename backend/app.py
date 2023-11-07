@@ -1,10 +1,19 @@
 from flask import Flask,jsonify,request,render_template
-
+from models import Account, Visitor, Organiser, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
+import os
+import random
+load_dotenv()
+DB_CONNECT_URL = os.getenv('DB_CONNECT_URL')
 
 ##RUN WITH $ flask --app main run --debug
 
 app = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build")
 app.config["SECRET_KEY"] = "secret"
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONNECT_URL
+
+db = SQLAlchemy(app)
 
 
 @app.route("/")
@@ -14,7 +23,19 @@ def hello():
 
 @app.route("/getThing")
 def firstRoute():
-    # return jsonify("Hello thing!")    
+    # return jsonify("Hello thing!")   
+    dbResp = db.session.query(Event).all() 
+    result_dict = [u.__dict__ for u in dbResp]
+    toList = list(map( lambda event:
+        {
+            "id":event["eventId"],
+            "title":event["title"],
+            "image":event["displayImageSource"],
+            "description":event["description"],
+            "time":str(event["time"]),
+            "priority":str(int(random.random()*50))
+        }, result_dict))
+    return toList
     return [
         {
             "id": 0,

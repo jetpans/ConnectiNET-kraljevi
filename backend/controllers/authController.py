@@ -3,15 +3,13 @@ from models import Account, Visitor, Organiser, Administrator, Event, Review, Pa
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from controllers.controller import Controller
-import random
 
 class AuthController(Controller):
     def __init__(self, app, db):
-        self.db = db
-        self.app = app
+        super().__init__(app, db)
         
-        app.add_url_rule("/register", view_func=self.register)
-        app.add_url_rule("/login", view_func=self.login)
+        self.app.add_url_rule("/register", view_func=self.register)
+        self.app.add_url_rule("/login", view_func=self.login) 
         
     def register(self):
         pass

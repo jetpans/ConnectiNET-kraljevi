@@ -1,2 +1,6 @@
+from flask_sqlalchemy import SQLAlchemy
+
 class Controller:
-    pass
+    def __init__(self, app, db):
+        self.db = db
+        self.app = app

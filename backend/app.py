@@ -32,12 +32,21 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    print('Here')
     return response
+
+# Example if it is necessary to instantiate classes upon request, not as singletons upon startup
+#@app.route("/register")
+#def register():
+#    return AuthController(app, db).register()
+#
+#@app.route("/getThing")
+#def getThing():
+#    return EventController(app, db).getThing()
 
 
 authController = AuthController(app, db)
 eventController = EventController(app, db)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

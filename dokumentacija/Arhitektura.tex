@@ -118,9 +118,9 @@
 						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
 						rowhead = 1,
 					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \SetCell[c=3]{c}{\textbf{Organiser}}	 \\ \hline[3pt]
+					\hline \SetCell[c=3]{c}{\textbf{Organizer}}	 \\ \hline[3pt]
 					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator računa (Račun.accountId)   	\\ \hline
-					organiserName	& VARCHAR &  naziv organizatora ili organizacije 	\\ \hline 
+					OrganizerName	& VARCHAR &  naziv organizatora ili organizacije 	\\ \hline 
 					
 				\end{longtblr}
 				
@@ -300,6 +300,24 @@
 			
 			Zbog lakše organizacije i vidljivosti dijagrama razreda, razredi su podijeljeni u više dijagrama. Razredi su grupirani prema sličnim razinama apstrakcije i srodnim funkcionalnostima u arhitekturi MVC.
 			
+			\begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{dijagrami/dijagram_mvc_controllers.png}
+				\caption{Dijagram klasa, dio Controllers}
+			\label{fig:my_image}
+			\end{figure}
+
+			\pagebreak
+
+			\begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{dijagrami/dijagram_mvc_models.png}
+				\caption{Dijagram klasa, dio Models}
+			\label{fig:my_image}
+			\end{figure}
+
+			\pagebreak
+
 			\eject
 		
 		\section{Dijagram stanja}

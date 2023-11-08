@@ -1,7 +1,7 @@
 from flask import Flask,jsonify,request,render_template
-from models import Account, Visitor, Organiser, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 from controllers.authController import AuthController
 from controllers.eventController import EventController
+from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -22,6 +22,7 @@ db = SQLAlchemy(app)
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 @app.route("/<path:path>")
 def catch_all(path):

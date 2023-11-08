@@ -913,10 +913,11 @@
 
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora.png}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora.jpg}
 						\caption{Dijagram obrasca uporabe, funkcionalnost administratora}
 					\label{fig:my_image}
 					\end{figure}
+
 
 				\eject
 				\pagebreak
@@ -927,6 +928,28 @@
 				%\textbf{\textit{dio 1. revizije}}\\
 				
 				%\textit{Nacrtati sekvencijske dijagrame koji modeliraju najvažnije dijelove sustava (max. 4 dijagrama). Ukoliko postoji nedoumica oko odabira, razjasniti s asistentom. Uz svaki dijagram napisati detaljni opis dijagrama.}
+
+				\noindent \textbf{UC10 - Ostavljanje recenzije na dogadaj}
+
+				\noindent Posjetitelj šalje zahtjev za prikaz događaja na kojima je bio 
+				(kartica "Moji događaji") kako bi mogao odabrati događaj na kojem
+				želi ostaviti recenziju. Poslužitelj dohvaća takve događaje iz baze podataka
+				i prikazuje ih. Odabirom događaja, poslužitelj dohvaća podatke o događaju
+				i prikazuje ih posjetitelju. Posjetitelj odabire opciju "Ostavi recenziju"
+				te mu se prikazuje obrazac za ostavljanje recenzije. Posjetitelj unosi
+				ocjenu i komentar te odabire opciju "Potvrdi recenziju". Poslužitelj
+				sprema recenziju u bazu podataka i prikazuje poruku o uspješnom ostavljanju
+				recenzije. Ako posjetitelj nije odabrao ocjenu ili nije unio komentar,
+				prikazuje se poruka o neispravno popunjenom obrascu. Ako se posjetitelj
+				predomisli, može odabrati opciju "Poništi" te se vraća na stranicu s
+				podacima o događaju.
+
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{dijagrami/seq_diagram_review.jpg}
+					\caption{Sekvencijski dijagram za UC10}
+				\label{fig:my_image}
+				\end{figure}
 				\eject
 	
 		\section{Ostali zahtjevi}

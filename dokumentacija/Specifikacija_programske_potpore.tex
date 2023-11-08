@@ -72,7 +72,6 @@
 					\item izbrisati vlastiti postojeći događaj
 					\item pregledati statistiku za vlastite događaje
 					\item dobiti uvid u recenzije događaja koje je organizirao
-					\item odgovarati na recenzije na događaje koje je organizirao (extra?)
 					\item uređivati ili skriti vlastiti javni profil
 					\item upravljati pretplatom za premium organizatore
 					\begin{packed_enum}
@@ -155,10 +154,8 @@
 							\item[2.a] Odabir vec zauzetog korisničkog imena i/ili e-maila, unos korisničkog podatka u nedozvoljenom formatu ili pruzanje neispravnoga e-maila 
 							\item[] \begin{packed_enum}
 
-								\item Sustav obavjestava korisnika o neuspjelom upisu i vra ˇ ca ga na stra- ´
-								nicu za registraciju
-								\item Korisnik mijenja potrebne podatke te zavrsava unos ili odustaje od ˇ
-								registracije
+								\item Sustav obavjestava korisnika o neuspjelom upisu i vraća ga na stranicu za registraciju
+								\item Korisnik mijenja potrebne podatke te zavrsava unos ili odustaje od registracije
 
 							\end{packed_enum}
 						\end{packed_item}
@@ -240,8 +237,7 @@
 							promjenu”
 							\item[] \begin{packed_enum}
 
-								\item Sustav obavjestava korisnika da nije spremio podatke prije izlaska ˇ
-								iz prozora
+								\item Sustav obavjestava korisnika da nije spremio podatke prije izlaska iz prozora
 
 							\end{packed_enum}
 
@@ -262,7 +258,7 @@
 
 							\item Korisnik pregledava osobne podatke
 							\item Otvara se stranica s osobnim podacima korisnika
-							\item Korisnik brise račun
+							\item Korisnik briše račun
 							\item Korisnicki račun se izbriše iz baze podataka
 							\item Otvara se stranica za registraciju
 						\end{packed_enum}
@@ -597,8 +593,18 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item ***Ovdje se moramo kao grupa dogovoriti koliko komplicirat želimo
+							\item Posjetitelj odabire opciju "Osobni podatci"
+							\item Posjetitelj odabire opciju "Obavijesti"
+							\item Posjetitelj odabire željene opcije za primanje obavijesti
+							\item[] \begin{packed_item}
+	
+								\item Primanje obavijesti putem e-pošte
+								\item Primanje obavijesti putem obavijesti na pregledniku
+								
+							\end{packed_item}
+
 						\end{packed_enum}
+
 					\end{packed_item}
 
 					\noindent \underbar{\textbf{UC19 - Postavljanje cijene pretplate}}
@@ -885,7 +891,8 @@
 							\end{packed_enum}
 						\end{packed_item}
 					\end{packed_item}
-					
+				
+				\newpage
 				\subsubsection{Dijagrami obrazaca uporabe}
 					
 					%\textit{Prikazati odnos aktora i obrazaca uporabe odgovarajućim UML dijagramom. Nije nužno nacrtati sve na jednom dijagramu. Modelirati po razinama apstrakcije i skupovima srodnih funkcionalnosti.}
@@ -911,8 +918,10 @@
 					\label{fig:my_image}
 					\end{figure}
 
-				\eject		
-				
+				\eject
+				\pagebreak
+			
+			\newpage
 			\subsection{Sekvencijski dijagrami}
 				
 				%\textbf{\textit{dio 1. revizije}}\\

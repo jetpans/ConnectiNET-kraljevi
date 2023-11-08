@@ -36,6 +36,7 @@
 	\item Recenzija
 	\item Media-Događanje
 	\item Opcija-Obavijest
+	\item Država
 	\end{packed_item}
 		
 		
@@ -45,8 +46,8 @@
 				%\textit{Svaku tablicu je potrebno opisati po zadanom predlošku. Lijevo se nalazi točno ime varijable u bazi podataka, u sredini se nalazi tip podataka, a desno se nalazi opis varijable. Svjetlozelenom bojom označite primarni ključ. Svjetlo plavom označite strani ključ}
 				
 				\textbf{Račun} \newline \textrm{ Ovaj entitet sadržava sve osnovne informacije o registriranom korisniku.
-				Sadrži atribute: identifikator računa, korisničko ime, lozinka, e-mail i profilna slika.
-				Ovaj entitet u vezi je \textit{One-to-One} s entitetima Posjetitelj, Organizator i Administrator preko atributa accountId.}
+				Sadrži atribute: identifikator računa, korisničko ime, lozinka, e-mail, profilna slika, šifra država(ISO3), pripadna uloga.
+				Ovaj entitet u vezi je \textit{One-to-One} s entitetima Posjetitelj, Organizator i Administrator preko atributa accountId i u vezi \textit{Many-to-One} s entitetom Država preko atributa countryCode.}
 				\begin{longtblr}[
 					label=none,
 					entry=none
@@ -61,7 +62,9 @@
 					eMail & VARCHAR & E-Mail korisnika  \\ \hline 
 					passwordHash & VARCHAR	&  	raspršeno kriptirana lozinka korisnika	\\ \hline 
 					profileImage & VARCHAR	&  	lokalna adresa na profilnu sliku korisnika	\\ \hline 
-				\end{longtblr}\pagebreak
+					\SetCell{LightBlue}countryCode & CHAR(3)	&  	jedinstveni id države kojoj račun pripada u formatu 3 slova (Država.countryCode) 	\\ \hline
+					roleId & INT	&  	šifra uloge pridružene korisniku	\\ \hline 
+				\end{longtblr}
 				
 				
 				
@@ -85,7 +88,7 @@
 				\end{longtblr}
 				
 				\textbf{Organizator} \newline \textrm{ Ovaj entitet specijalizacija je entiteta Račun namijenjena za korisnike koji su organizatori.
-					Sadrži atribute: identifikator računa, ime organizatora.
+					Sadrži atribute: identifikator računa, ime organizatora, vidljivost profila.
 					Ovaj entitet u vezi je \textit{One-to-One} s entitetom Račun i u
 					vezi \textit{One-to-Many} s entitetima s entitetima Plaćanje, Pretplata i Događanje preko atributa accountId.}
 				\begin{longtblr}[
@@ -96,9 +99,11 @@
 						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
 						rowhead = 1,
 					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \SetCell[c=3]{c}{\textbf{Organiser}}	 \\ \hline[3pt]
+					\hline \SetCell[c=3]{c}{\textbf{Organizer}}	 \\ \hline[3pt]
 					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator računa (Račun.accountId)   	\\ \hline
-					organiserName	& VARCHAR &  naziv organizatora ili organizacije 	\\ \hline 
+					organizerName	& VARCHAR &  naziv organizatora ili organizacije 	\\ \hline 
+					hidden	& BOOLEAN &  zastavica koja govori o javnoj vidljivosti profila organizatora	\\ \hline 
+					
 					
 				\end{longtblr}
 				
@@ -118,8 +123,7 @@
 					
 				\end{longtblr}
 				
-				\pagebreak
-				\textbf{Subscription} \newline \textrm{ Ovaj entitet opisuje pretplatu koju je organizator nekad imao te koja može biti trenutno aktivna.
+				\textbf{Pretplata} \newline \textrm{ Ovaj entitet opisuje pretplatu koju je organizator nekad imao te koja može biti trenutno aktivna.
 					Sadrži atribute: identifikator pretplate, datum početka pretplate, datum isteka pretplate, identifikator računa organizatora.
 					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Organizator preko atributa accountId.}
 				\begin{longtblr}[
@@ -130,7 +134,7 @@
 						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
 						rowhead = 1,
 					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \SetCell[c=3]{c}{\textbf{Pretplata}}	 \\ \hline[3pt]
+					\hline \SetCell[c=3]{c}{\textbf{Subscription}}	 \\ \hline[3pt]
 					\SetCell{LightGreen}subscriptionId & INT	&  	jedinstveni identifikator instance pretplate  	\\ \hline
 					\SetCell{LightBlue}accountId & INT &  identifikator organizatora na kojeg se pretplata odnosi (Organizator.accountId) 	\\ \hline 
 					startDate	& DATE &  datum početeka pretplate 	\\ \hline 
@@ -155,10 +159,9 @@
 					amount	& FLOAT &  plaćen iznos 	\\ \hline 
 					payment- Method	& VARCHAR &  način uplate 	\\ \hline 
 				\end{longtblr}
-				
 				\textbf{Događanje} \newline \textrm{ Ovaj entitet opisuje događanje organizirano od strane organizatora.
-					Sadrži atribute: identifikator događanja, identifikator organizatora, naziv, opis, državu, grad, lokaciju, vrijeme, datum, cijenu, naslovnu sliku događanja.
-					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Organizator preko atributa accountId, vezi \textit{One-to-Many} s entitetom Recenzija preko atributa eventId, vezi \textit{Many-to-Many} s entitetom Posjetitelj preko veze Interes i atributa eventId te u vezi \textit{One-to-Many} s entitetom Media-Događanje također preko atributa eventId.}
+					Sadrži atribute: identifikator događanja, identifikator organizatora, naziv, opis, državu, grad, lokaciju, datum i vrijeme, cijenu, naslovnu sliku događanja.
+					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Organizator preko atributa accountId i s entitetom Država preko atributa countryCode, vezi \textit{One-to-Many} s entitetom Recenzija preko atributa eventId, vezi \textit{Many-to-Many} s entitetom Posjetitelj preko veze Interes i atributa eventId te u vezi \textit{One-to-Many} s entitetom Media-Događanje također preko atributa eventId.}
 				\begin{longtblr}[
 					label=none,
 					entry=none
@@ -174,9 +177,8 @@
 					description	& VARCHAR &  opis događanja 	\\ \hline 
 					price	& FLOAT &  cijena događanja 	\\ \hline 
 					display- ImageSource	& VARCHAR &  lokalna adresa naslovne slike događanja 	\\ \hline 
-					date	& DATE &  datum događanja 	\\ \hline 
-					time	& DATETIME &  vrijeme događanja 	\\ \hline 
-					country	& VARCHAR & država u kojoj se događanje održava 	\\ \hline 
+					dateTime	& DATETIME &  vrijeme i datum događanja 	\\ \hline 
+					countryCode	& CHAR(3) & šifra države u kojoj se događanje održava (Država.countryCode)	\\ \hline 
 					city	& VARCHAR &  grad u kojem se događanje održava 	\\ \hline 
 					location	& VARCHAR &  lokacija na kojoj se događanje održava	\\ \hline 
 					price	& FLOAT &  cijena događanja 	\\ \hline 
@@ -215,8 +217,7 @@
 					\SetCell{LightBlue}accountId & INT &  identifikator posjetitelja koji je ostavio recenziju (Posjetitelj.accountId) 	\\ \hline 
 					\SetCell{LightBlue}eventId	& INT &  identifikator događanja na koje se recenzija odnosi (Događanje.eventId) 	\\ \hline 
 					comment	& VARCHAR &  ostavljen komentar 	\\ \hline 
-					date	& DATE &  datum ostavljene recenzije	\\ \hline 
-					time	& DATETIME &  vrijeme ostavljene recenzije 	\\ \hline 
+					dateTime	& DATETIME &  vrijeme i datum ostavljene recenzije 	\\ \hline 
 				\end{longtblr}
 				
 				
@@ -239,7 +240,7 @@
 					mediaSource	& VARCHAR &  lokalna adresa sadržaja	\\ \hline 
 				\end{longtblr}
 				
-					\textbf{Opcija-Obavijest} \newline \textrm{ Ovaj entitet sprema informaciju o tome koji korisnik ima aktiviran koji način slanja obavijesti..
+					\textbf{Opcija-Obavijest} \newline \textrm{ Ovaj entitet sprema informaciju o tome koji korisnik ima aktiviran koji način slanja obavijesti.
 					Sadrži atribute: identifikator posjetitelja, vrsta obavijesti.
 					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Posjetitelj preko atributa accountId.}
 				\begin{longtblr}[
@@ -256,9 +257,34 @@
 				\end{longtblr}
 				
 				
+					\textbf{Država} \newline \textrm{ Ovaj entitet modelira državu sa pripadnim šiframa i nazivom države.
+					Sadrži atribute: identifikator države, sekundarni identifikator države, ime države.
+					Ovaj entitet u vezi je \textit{One-to-Many} s entitetima Događanje i račun preko atributa countryCode.}
+				\begin{longtblr}[
+					label=none,
+					entry=none
+					]{
+						width = \textwidth,
+						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
+						rowhead = 1,
+					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
+					\hline \SetCell[c=3]{c}{\textbf{Country}}	 \\ \hline[3pt]
+					\SetCell{LightGreen}countryCode & CHAR(3)	&  	jedinstveni identifikator države sastavljen od 3 slova	\\ \hline
+					code & CHAR(2)	&  	sekundarni jedinstveni identifikator države sastavljen od 2 slova	\\ \hline
+					name & VARCHAR	&  	naziv države	\\ \hline
+				\end{longtblr}
+				
 				
 			\subsection{Dijagram baze podataka}
-				\textit{ U ovom potpoglavlju potrebno je umetnuti dijagram baze podataka. Primarni i strani ključevi moraju biti označeni, a tablice povezane. Bazu podataka je potrebno normalizirati. Podsjetite se kolegija "Baze podataka".}
+				%\textit{ U ovom potpoglavlju potrebno je umetnuti dijagram baze podataka. Primarni i strani ključevi moraju biti označeni, a tablice povezane. Bazu podataka je potrebno normalizirati. Podsjetite se kolegija "Baze podataka".}
+				
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{dijagrami/rel_dijagram.png}
+					\caption{Relacijski dijagram baze podataka}
+					\label{fig:my_image}
+				\end{figure}
+				
 				
 	
 			\eject

@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request,render_template
-from models import Account, Visitor, Organiser, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import random
@@ -20,7 +20,7 @@ class EventController(Controller):
                 "title":event["title"],
                 "image":event["displayImageSource"],
                 "description":event["description"],
-                "time":str(event["time"]),
+                "time":str(event["dateTime"]),
                 "priority":str(int(random.random()*50))
             }, result_dict))
         return toList

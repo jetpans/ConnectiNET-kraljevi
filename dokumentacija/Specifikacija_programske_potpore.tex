@@ -929,6 +929,24 @@
 				
 				%\textit{Nacrtati sekvencijske dijagrame koji modeliraju najvažnije dijelove sustava (max. 4 dijagrama). Ukoliko postoji nedoumica oko odabira, razjasniti s asistentom. Uz svaki dijagram napisati detaljni opis dijagrama.}
 
+				\noindent \textbf{UC5 - Brisanje računa}
+
+				\noindent Administrator šalje zahtjev za brisanje računa po volji (korisnik šalje za svoj račun). 
+				Poslužitelj provjerava postoji li taj račun u bazi podataka.
+				Baza vraća signal kojim negira ili potvrđuje postojanje računa.
+				U slučaju nepostojanja računa, administratoru/korisniku se 
+				prikazuje poruka da navedeni račun ne postoji. Inače poslužitelj 
+				miče navedeni račun iz baze podataka i šalje administratoru/korisniku 
+				poruku da je račun uspješno izbrisan.
+
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{dijagrami/UC5-seq.jpg}
+					\caption{Sekvencijski dijagram za UC5}
+				\label{fig:my_image}
+				\end{figure}
+				\eject
+
 				\noindent \textbf{UC10 - Ostavljanje recenzije na dogadaj}
 
 				\noindent Posjetitelj šalje zahtjev za prikaz događaja na kojima je bio 

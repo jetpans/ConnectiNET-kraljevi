@@ -913,32 +913,62 @@
 
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora.png}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora.jpg}
 						\caption{Dijagram obrasca uporabe, funkcionalnost administratora}
 					\label{fig:my_image}
 					\end{figure}
+
 
 				\eject
 				\pagebreak
 			
 			\newpage
 			\subsection{Sekvencijski dijagrami}
-				\subsubsection{Obrazac uporabe UC1-Registracija}
+				%\subsubsection{Obrazac uporabe UC1-Registracija}
+        \noindent \textbf{UC1-Registracija}
 				%\textbf{\textit{dio 1. revizije}}\\
 				
 				%\textit{Nacrtati sekvencijske dijagrame koji modeliraju najvažnije dijelove sustava (max. 4 dijagrama). Ukoliko postoji nedoumica oko odabira, razjasniti s asistentom. Uz svaki dijagram napisati detaljni opis dijagrama.}
 				
-				Korisnik odabire opciju za registraciju. Poslužitelj mu vraća obrazac za ispunjavanje osobnih podataka. Nakon unosa poslužitelj provjerava je li korisnik unio neki podatak u neispravnom formatu ili je pružio neispravnu adresu e-pošte. Nakon toga komunicira s bazom podataka kako bi provjerio da li slučajno postoji isto korisničko ime kao ono koje korisnik namjerava unijeti. Ukoliko korisničko ime nije zauzeto i ostali podaci su ispravni dodaje se novi korisnički račun u bazu podataka i korisniku se vraća potvrda o uspješnoj registraciji. U suprotnom prikazuje se početna stranica za registraciju.
+				Korisnik odabire opciju za registraciju. Poslužitelj mu vraća obrazac za ispunjavanje osobnih podataka. 
+        Nakon unosa poslužitelj provjerava je li korisnik unio neki podatak u neispravnom formatu ili je pružio neispravnu adresu e-pošte. 
+        Nakon toga komunicira s bazom podataka kako bi provjerio da li slučajno postoji isto korisničko ime kao ono koje korisnik namjerava unijeti. 
+        Ukoliko korisničko ime nije zauzeto i ostali podaci su ispravni dodaje se novi korisnički račun u bazu podataka i korisniku se vraća potvrda o uspješnoj registraciji. 
+        U suprotnom prikazuje se početna stranica za registraciju.
 				
 				\newpage
 
-			\begin{figure}[htbp]
-				\centering
-				\includegraphics[width=1\textwidth]{dijagrami/uc1_registracija.png}
-				\caption{Sekvencijski dijagram za UC1}
-			\label{fig:my_image}
-			\end{figure}
-				\eject
+        \begin{figure}[htbp]
+          \centering
+          \includegraphics[width=1\textwidth]{dijagrami/uc1_registracija.png}
+          \caption{Sekvencijski dijagram za UC1}
+        \label{fig:my_image}
+        \end{figure}
+
+
+				\noindent \textbf{UC10 - Ostavljanje recenzije na dogadaj}
+
+				\noindent Posjetitelj šalje zahtjev za prikaz događaja na kojima je bio 
+				(kartica "Moji događaji") kako bi mogao odabrati događaj na kojem
+				želi ostaviti recenziju. Poslužitelj dohvaća takve događaje iz baze podataka
+				i prikazuje ih. Odabirom događaja, poslužitelj dohvaća podatke o događaju
+				i prikazuje ih posjetitelju. Posjetitelj odabire opciju "Ostavi recenziju"
+				te mu se prikazuje obrazac za ostavljanje recenzije. Posjetitelj unosi
+				ocjenu i komentar te odabire opciju "Potvrdi recenziju". Poslužitelj
+				sprema recenziju u bazu podataka i prikazuje poruku o uspješnom ostavljanju
+				recenzije. Ako posjetitelj nije odabrao ocjenu ili nije unio komentar,
+				prikazuje se poruka o neispravno popunjenom obrascu. Ako se posjetitelj
+				predomisli, može odabrati opciju "Poništi" te se vraća na stranicu s
+				podacima o događaju.
+
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{dijagrami/seq_diagram_review.jpg}
+					\caption{Sekvencijski dijagram za UC10}
+				\label{fig:my_image}
+				\end{figure}
+
+     \eject
 	
 		\section{Ostali zahtjevi}
 			%\textbf{\textit{dio 1. revizije}}\\

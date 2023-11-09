@@ -1,18 +1,21 @@
-from flask import Flask,jsonify,request,render_template, redirect
-from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
-import re
+from flask import Flask,jsonify,request,render_template, redirect, url_for, session
 from flask_bcrypt import Bcrypt
-from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
+import re
+import uuid
+from dotenv import load_dotenv
 from controllers.controller import Controller
+from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
 
 class AuthController(Controller):
-    def __init__(self, app, db, bcrypt):
+    def __init__(self, app, db, bcrypt, auth_users):
         super().__init__(app, db)
         self.bcrypt = bcrypt
+        self.auth_users = auth_users
+        
         self.app.add_url_rule("/register", view_func=self.register, methods=["POST"])
         self.app.add_url_rule("/login", view_func=self.login, methods=["POST"]) 
-        
+        self.app.add_url_rule("/logout", view_func=self.logout, methods=["POST"]) 
         
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
@@ -39,12 +42,36 @@ class AuthController(Controller):
                 newOrganizer = Organizer(f["organizerName"], newAcc.accountId)
                 self.db.session.add(newOrganizer)
             self.db.session.commit()
+            return redirect("/login")
         return result
 
 
     def login(self):
-        pass
-    
+        result = self.testLoginForm(request.form)
+        if result == "OK":
+            myUser = self.db.session.query(Account).filter_by(username=request.form["username"]).first()
+            userHashedPassword = myUser.passwordHash
+            isCorrect = self.bcrypt.check_password_hash(userHashedPassword, request.form["password"])
+            if (isCorrect):
+                session['sID'] = uuid.uuid4()
+                
+                self.auth_users[session['sID']] = myUser
+                resp = redirect("/")
+                resp.set_cookie("username", myUser.username)
+                return resp
+            else:
+                return redirect("/login")
+        else:
+            return redirect("/login")
+            
+    def logout():
+        response = jsonify({"msg":"Logout successful."})
+        try:
+            session.pop("sID")
+        except:
+            pass
+        return response
+
     
     def testRegForm(self, form):
         
@@ -80,3 +107,10 @@ class AuthController(Controller):
         
         return "OK"
         
+    def testLoginForm(self,form):
+        if "username" not in form.keys() or "password" not in form.keys():
+            return "Missing a field in login package."
+        if form["username"] not in list(map(lambda x: x[0] , self.db.session.query(Account.username).all())):
+            return "Wrong credentials"
+        return "OK"
+

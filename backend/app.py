@@ -1,4 +1,5 @@
 from flask import Flask,jsonify,request,render_template
+from flask_bcrypt import Bcrypt
 from controllers.authController import AuthController
 from controllers.eventController import EventController
 from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
@@ -6,16 +7,15 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
 
-
 load_dotenv()
 DB_CONNECT_URL = os.getenv('DB_CONNECT_URL')
 
-##RUN WITH $ flask --app main run --debug
 
 app = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build")
 app.config["SECRET_KEY"] = "secret"
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONNECT_URL
 
+bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
 
@@ -24,7 +24,7 @@ def home():
     return render_template("index.html")
 
 
-@app.route("/<path:path>")
+@app.route("/<path:path>", methods=["GET"])
 def catch_all(path):
     return render_template("index.html")
 
@@ -45,7 +45,7 @@ def add_cors_headers(response):
 #    return EventController(app, db).getThing()
 
 
-authController = AuthController(app, db)
+authController = AuthController(app, db, bcrypt)
 eventController = EventController(app, db)
 
 

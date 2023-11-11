@@ -1,3 +1,4 @@
+
 from flask import Flask,jsonify,request,render_template, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -5,7 +6,7 @@ import re
 import uuid
 from dotenv import load_dotenv
 from controllers.controller import Controller
-from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
 
 class AuthController(Controller):
     def __init__(self, app, db, bcrypt, auth_users):

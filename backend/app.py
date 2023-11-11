@@ -7,7 +7,7 @@ import os
 import json
 from controllers.authController import AuthController
 from controllers.eventController import EventController
-from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 
 
 load_dotenv()

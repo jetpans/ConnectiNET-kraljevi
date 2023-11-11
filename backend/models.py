@@ -24,7 +24,7 @@ class Account(db.Model):
 
     accountId = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    passwordHash = db.Column(db.String(64), nullable=False)
+    passwordHash = db.Column(db.String(72), nullable=False)
     eMail = db.Column(db.String(200), nullable=False)
     profileImage = db.Column(db.String(150))
     roleId = db.Column(db.Integer, nullable = False)
@@ -32,7 +32,8 @@ class Account(db.Model):
     
     country = db.relationship('Country', backref='accounts')
 
-    def __init__(self, username, passwordHash, eMail,countryCode, profileImage=None):
+    def __init__(self, roleId, username, passwordHash, eMail,countryCode, profileImage=None):
+        self.roleId = roleId
         self.username = username
         self.passwordHash = passwordHash
         self.eMail = eMail

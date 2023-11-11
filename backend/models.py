@@ -65,15 +65,6 @@ class Organizer(db.Model):
     def __init__(self, organizerName, accountId):
         self.organizerName = organizerName
         self.accountId = accountId
-        
-class Administrator(db.Model):
-    __tablename__ = 'administrators'  # Lowercase and plural table name
-
-    accountId = db.Column(db.Integer, db.ForeignKey('accounts.accountId'), primary_key=True)
-    account = db.relationship('Account', backref='administrators')
-    
-    def __init__(self, accountId):
-        self.accountId = accountId
 
 class Event(db.Model):
     __tablename__ = 'events'  # Lowercase and plural table name

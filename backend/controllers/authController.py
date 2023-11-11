@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request,render_template
-from models import Account, Visitor, Organizer, Administrator, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from models import Account, Visitor, Organizer,  Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from controllers.controller import Controller

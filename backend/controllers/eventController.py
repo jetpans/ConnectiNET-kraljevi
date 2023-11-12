@@ -13,8 +13,8 @@ class EventController(Controller):
         self.app.add_url_rule("/getThing", view_func=self.getThing, methods=["GET"])
     
     def getThing(self):
-        if getRole(self.auth_users) not in [-1,1,0]:
-            return "Authentication required!"
+        #if getRole(self.auth_users) not in [-1,1,0]:
+        #    return "Authentication required!"
         dbResp = self.db.session.query(Event).all() 
         result_dict = [u.__dict__ for u in dbResp]
         toList = list(map( lambda event:

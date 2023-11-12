@@ -29,6 +29,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Divider, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import EventCard from "../ui/EventCard";
+import dataController from "../utils/DataController";
+
+import { useUser } from '../context/UserContext';
 
 
 export default function EventsPage() {
@@ -38,16 +41,26 @@ export default function EventsPage() {
   const [cardSize, setCardSize] = useState(12); 
   const navigate = useNavigate();
 
+  const { user, updateUser, logout } = useUser();
+
+  const dc = new dataController();
+
   const fetchData = async () => {
-    try {
-      const resp = await fetch("http://127.0.0.1:5000/getThing", { method: "GET" });
-      if (resp.ok) {
-        const respJson = await resp.json();
-        setCards(respJson);
+    // try {
+    // const resp = await fetch("http://127.0.0.1:5000/getThing", { method: "GET" });
+    // if (resp.ok) {
+    // const respJson = await resp.json();
+    // setCards(respJson);
+    // }
+    // } catch {
+    // console.error("Bad!");
+    // }
+    dc.GetData('http://127.0.0.1:5000/getThing')
+    .then((resp) => {
+      if(resp.success === true) {
+        setCards(resp.data);
       }
-    } catch {
-      console.error("Bad!");
-    }
+    });
   };
 
   function handleTabChange(event, newValue) {
@@ -110,7 +123,7 @@ export default function EventsPage() {
               Events
             </Typography>
 
-            <Button onClick={() => {navigate('/login')}} >
+            <Button onClick={() => {logout()}} >
               <LoginIcon sx={{color: mainTheme.palette.secondary.other}} />
             </Button>
           </Toolbar>

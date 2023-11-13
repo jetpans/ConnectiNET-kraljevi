@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production 
+      - SECRET_KEY=secret 
+      - DB_CONNECT_URL_DEV=postgresql://snnmskyd:3RwBnQ_v0mfD24Jlbzy2xWFpw_wCGcUm@surus.db.elephantsql.com/snnmskyd
+      - DB_CONNECT_URL_PROD=postgres://user:AiIDIwnIj4VSRIC5fiLzlDKQa4lZXlWw@dpg-cl93vatb7ptc73ddomg0-a/progi_db

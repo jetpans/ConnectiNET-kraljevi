@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
-
-
 import os
-load_dotenv()
-DB_CONNECT_URL = os.getenv('DB_CONNECT_URL')
+from config import DevelopmentConfig, ProductionConfig
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONNECT_URL
+env = os.environ.get('FLASK_ENV')
+
+if env == 'production':
+    app.config.from_object(ProductionConfig)
+else:
+    app.config.from_object(DevelopmentConfig)
 
 db = SQLAlchemy(app)
 

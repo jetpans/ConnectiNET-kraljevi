@@ -8,17 +8,17 @@ import json
 from controllers.authController import AuthController
 from controllers.eventController import EventController
 from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from config import DevelopmentConfig, ProductionConfig
 
 
-load_dotenv()
-DB_CONNECT_URL = os.getenv('DB_CONNECT_URL')
+app = Flask(__name__)
 
+env = os.environ.get('FLASK_ENV')
 
-app = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build")
-app.config["SECRET_KEY"] = "secret"
-app.config["JWT_SECRET_KEY"] = "secret"
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONNECT_URL
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=1)
+if env == 'production':
+    app.config.from_object(ProductionConfig)
+else:
+    app.config.from_object(DevelopmentConfig)
 
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
@@ -30,12 +30,14 @@ def do():
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return {"success": True, "data": "API is running"}
+    #return render_template("index.html")
 
 
 @app.route("/<path:path>", methods=["GET"])
 def catch_all(path):
-    return render_template("index.html")
+    return {"success": True, "data": "API is running"}
+    #return render_template("index.html")
 
 @app.after_request
 def add_cors_headers(response):

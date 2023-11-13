@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
-
-
 import os
-load_dotenv()
-DB_CONNECT_URL = os.getenv('DB_CONNECT_URL')
+from config import DevelopmentConfig, ProductionConfig
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = DB_CONNECT_URL
+env = os.environ.get('FLASK_ENV')
+
+if env == 'production':
+    app.config.from_object(ProductionConfig)
+else:
+    app.config.from_object(DevelopmentConfig)
 
 db = SQLAlchemy(app)
 
@@ -24,7 +25,7 @@ class Account(db.Model):
 
     accountId = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    passwordHash = db.Column(db.String(64), nullable=False)
+    passwordHash = db.Column(db.String(72), nullable=False)
     eMail = db.Column(db.String(200), nullable=False)
     profileImage = db.Column(db.String(150))
     roleId = db.Column(db.Integer, nullable = False)
@@ -32,7 +33,8 @@ class Account(db.Model):
     
     country = db.relationship('Country', backref='accounts')
 
-    def __init__(self, username, passwordHash, eMail,countryCode, profileImage=None):
+    def __init__(self, roleId, username, passwordHash, eMail,countryCode, profileImage=None):
+        self.roleId = roleId
         self.username = username
         self.passwordHash = passwordHash
         self.eMail = eMail
@@ -64,15 +66,6 @@ class Organizer(db.Model):
 
     def __init__(self, organizerName, accountId):
         self.organizerName = organizerName
-        self.accountId = accountId
-        
-class Administrator(db.Model):
-    __tablename__ = 'administrators'  # Lowercase and plural table name
-
-    accountId = db.Column(db.Integer, db.ForeignKey('accounts.accountId'), primary_key=True)
-    account = db.relationship('Account', backref='administrators')
-    
-    def __init__(self, accountId):
         self.accountId = accountId
 
 class Event(db.Model):

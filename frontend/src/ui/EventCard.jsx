@@ -13,7 +13,7 @@ export default function EventCard(props) {
         <Card
             sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
             elevation={24}
-            onMouseEnter={() => {console.log("Mouse enter")}}
+            onMouseEnter={() => {/*console.log("Mouse enter")*/}}
         >
             <CardMedia
                 component="div"

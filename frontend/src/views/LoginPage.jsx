@@ -21,6 +21,8 @@ import { useUser } from '../context/UserContext';
 import { useState, useContext, useEffect } from 'react';
 
 export default function LoginPage() {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [error, setError] = useState([false, false]);
   const navigate = useNavigate();
 
@@ -48,7 +50,7 @@ export default function LoginPage() {
       password: data.get('password')
     }
 
-    dc.PostData('http://127.0.0.1:5000/login', loginData)
+    dc.PostData(API_URL + '/login', loginData)
     .then((resp) => {
       if(resp.success === true && resp.data.success === true) {
         // console.log('Success!');

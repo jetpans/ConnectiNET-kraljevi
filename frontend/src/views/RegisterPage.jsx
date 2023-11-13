@@ -21,6 +21,8 @@ import { useUser } from '../context/UserContext';
 import { useState, useContext, useEffect } from 'react';
 
 export default function RegisterPage() {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [formState, setFormState] = useState('Visitor');
 
   const { user, updateUser } = useUser();
@@ -49,7 +51,7 @@ export default function RegisterPage() {
       loginData.organizerName = data.get('organizerName');
     }
 
-    dc.PostData('http://127.0.0.1:5000/register', loginData)
+    dc.PostData(API_URL + '/register', loginData)
     .then((resp) => {
       if(resp.success === true && resp.data.success === true) {
         // console.log('Success!');

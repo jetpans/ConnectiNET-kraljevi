@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/config.prod.js", "src/config.dev.js"  ]
 }

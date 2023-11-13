@@ -35,6 +35,8 @@ import { useUser } from '../context/UserContext';
 
 
 export default function EventsPage() {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [cards, setCards] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -55,7 +57,7 @@ export default function EventsPage() {
     // } catch {
     // console.error("Bad!");
     // }
-    dc.GetData('http://127.0.0.1:5000/getEvents')
+    dc.GetData(API_URL + '/getEvents')
     .then((resp) => {
       if(resp.success === true) {
         setCards(resp.data);
@@ -72,7 +74,7 @@ export default function EventsPage() {
   }
 
   function handleLogout() {
-    dc.PostData('http://127.0.0.1:5000/logout')
+    dc.PostData(API_URL + '/logout')
     .then((resp) => {
       if(resp.success === true) {
         logout();

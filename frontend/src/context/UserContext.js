@@ -11,14 +11,17 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }) => {
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
     // Check for user in local storage on component mount
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setLoading(false);
   }, []);
 
   const updateUser = (userData) => {
@@ -32,7 +35,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, updateUser, logout }}>
+    <UserContext.Provider value={{ user, updateUser, logout, loading }}>
       {children}
     </UserContext.Provider>
   );

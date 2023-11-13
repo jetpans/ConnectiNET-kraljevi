@@ -23,7 +23,7 @@ import EventIcon from '@mui/icons-material/Event';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import TableRowsIcon from '@mui/icons-material/TableRows';
-import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { green, grey, indigo } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Divider, Paper } from "@mui/material";
@@ -47,7 +47,7 @@ export default function EventsPage() {
 
   const fetchData = async () => {
     // try {
-    // const resp = await fetch("http://127.0.0.1:5000/getThing", { method: "GET" });
+    // const resp = await fetch("http://127.0.0.1:5000/getEvents", { method: "GET" });
     // if (resp.ok) {
     // const respJson = await resp.json();
     // setCards(respJson);
@@ -55,7 +55,7 @@ export default function EventsPage() {
     // } catch {
     // console.error("Bad!");
     // }
-    dc.GetData('http://127.0.0.1:5000/getThing')
+    dc.GetData('http://127.0.0.1:5000/getEvents')
     .then((resp) => {
       if(resp.success === true) {
         setCards(resp.data);
@@ -71,9 +71,27 @@ export default function EventsPage() {
     setDrawerOpen((prevState) => !prevState);
   }
 
+  function handleLogout() {
+    dc.PostData('http://127.0.0.1:5000/logout')
+    .then((resp) => {
+      if(resp.success === true) {
+        logout();
+        navigate("/login");
+      }
+    });
+  }
+
   useEffect(() => {
+    if(user === null) {
+      navigate("/login");
+    }
     fetchData();
   }, []);
+  useEffect(() => {
+    if(user === null) {
+      navigate("/login");
+    }
+  }, [user]);
 
   const lightTheme = createTheme({
     palette: {
@@ -123,9 +141,13 @@ export default function EventsPage() {
               Events
             </Typography>
 
-            <Button onClick={() => {logout()}} >
-              <LoginIcon sx={{color: mainTheme.palette.secondary.other}} />
-            </Button>
+            <div>
+              <Button onClick={handleLogout} >
+                <LogoutIcon sx={{color: mainTheme.palette.secondary.other}} />
+              </Button>
+              <Typography variant="h6" color={mainTheme.palette.secondary.other}>Log out</Typography>
+
+            </div>
           </Toolbar>
         </AppBar>
         <>

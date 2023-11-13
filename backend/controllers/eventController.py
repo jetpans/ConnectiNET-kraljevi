@@ -10,9 +10,9 @@ class EventController(Controller):
         super().__init__(app, db)
         self.auth_users = auth_users
         
-        self.app.add_url_rule("/getThing", view_func=self.getThing, methods=["GET"])
+        self.app.add_url_rule("/getEvents", view_func=self.getEvents, methods=["GET"])
     
-    def getThing(self):
+    def getEvents(self):
         #if getRole(self.auth_users) not in [-1,1,0]:
         #    return "Authentication required!"
         dbResp = self.db.session.query(Event).all() 

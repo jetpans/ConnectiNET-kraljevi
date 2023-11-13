@@ -46,7 +46,7 @@ class AuthController(Controller):
                 newOrganizer = Organizer(f["organizerName"], newAcc.accountId)
                 self.db.session.add(newOrganizer)
             self.db.session.commit()
-            return {"success":True, "data":"Registration successful."}
+            return {"success": True, "data": "Registration successful."}
         
         return result
 
@@ -63,16 +63,25 @@ class AuthController(Controller):
                 session['sID'] = uuid.uuid4()
                 
                 self.auth_users[session['sID']] = myUser
-                resp = {"success":True, "data":"Login successful."}
+                
+                account = self.db.session.query(Account).where(Account.username == data["username"]).all()           
+                user = {
+                    "username": account[0].username,
+                    "email": account[0].eMail,
+                    "roleId": account[0].roleId,
+                    "countryCode": account[0].countryCode
+                }
+                
+                resp = {"success": True, "data": user}
                 #resp.set_cookie("username", myUser.username)
                 return resp
             else:
-                return {"success":False, "data":"Wrong credentials."}
+                return {"success": False, "data": "Wrong credentials."}
         else:
             return result
             
-    def logout():
-        response = jsonify({"msg":"Logout successful."})
+    def logout(self):
+        response = {"success": True, "data": "Logout successful."}
         try:
             session.pop("sID")
         except:
@@ -83,40 +92,40 @@ class AuthController(Controller):
     def testRegForm(self, form):
         for k in self.REGISTER_REQUIRED_FIELDS:
             if k not in form.keys():
-                return {"success":False, "data":f"{k} argument is missing!"}
+                return {"success": False, "data": f"{k} argument is missing!"}
             
         if form["roleId"] not in [0, 1]:
-            return {"success":False, "data":"Illegal role id."}
+            return {"success":False, "data": "Illegal role id."}
         
         if not re.match(self.email_regex, form["email"]):
-            return {"success":False, "data":"Mail is of wrong format."}
+            return {"success": False, "data": "Mail is of wrong format."}
         
         if not re.match(self.password_regex, form["password"]):
-            return {"success":False, "data":"Password is bad."}
+            return {"success": False, "data": "Password is bad."}
         
         if len(form["username"]) < self.username_range[0] or len(form["username"]) > self.username_range[1]:
-            return {"success":False, "data":"Username is too short or too long."}
+            return {"success": False, "data": "Username is too short or too long."}
         
         if form["roleId"] == 0:
             if "firstName" not in form.keys() or "lastName" not in form.keys():
-                return {"success":False, "data":"Role is visitor but name or surname is missing."}
+                return {"success": False, "data": "Role is visitor but name or surname is missing."}
             
         if form["roleId"] == 1:
             if "organizerName" not in form.keys():
-                return {"success":False, "data":"Role is organizer but organizer name is missing."}
+                return {"success": False, "data": "Role is organizer but organizer name is missing."}
             
         if form["countryCode"] not in list(map(lambda x: x[0], self.db.session.query(Country.countryCode).all())):
-            return {"success":False, "data":"Invalid country code."}
+            return {"success": False, "data": "Invalid country code."}
         
         if form["username"] in list(map(lambda x: x[0] , self.db.session.query(Account.username).all())):
-            return {"success":False, "data":"Username already in use."}
+            return {"success": False, "data": "Username already in use."}
         
         return "OK"
         
     def testLoginForm(self,form):
         if "username" not in form.keys() or "password" not in form.keys():
-            {"success":False, "data":"Missing a field in login package."}
+            {"success": False, "data": "Missing a field in login package."}
         if form["username"] not in list(map(lambda x: x[0] , self.db.session.query(Account.username).all())):
-            {"success":False, "data":"Wrong credentials."}
+            {"success": False, "data": "Wrong credentials."}
         return "OK"
 

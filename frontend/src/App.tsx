@@ -1,14 +1,18 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./views/HomePage";
-import OtherPage from "./views/OtherPage";
+import LoginPage from "./views/LoginPage";
+import LandingPage from "./views/LandingPage";
+import EventsPage from "./views/EventsPage";
+import RegisterPage from "./views/RegisterPage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/other" element={<OtherPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="*" element={<h1>404</h1>} />
       </Routes>
     </BrowserRouter>

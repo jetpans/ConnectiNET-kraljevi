@@ -47,7 +47,6 @@
 	\item Račun
 	\item Posjetitelj
 	\item Organizator
-	\item Administrator
 	\item Pretplata
 	\item Plaćanje
 	\item Događanje
@@ -66,7 +65,7 @@
 				
 				\textbf{Račun} \newline \textrm{ Ovaj entitet sadržava sve osnovne informacije o registriranom korisniku.
 				Sadrži atribute: identifikator računa, korisničko ime, lozinka, e-mail, profilna slika, šifra država(ISO3), pripadna uloga.
-				Ovaj entitet u vezi je \textit{One-to-One} s entitetima Posjetitelj, Organizator i Administrator preko atributa accountId i u vezi \textit{Many-to-One} s entitetom Država preko atributa countryCode.}
+				Ovaj entitet u vezi je \textit{One-to-One} s entitetima Posjetitelj i Organizator preko atributa accountId i u vezi \textit{Many-to-One} s entitetom Država preko atributa countryCode.}
 				\begin{longtblr}[
 					label=none,
 					entry=none
@@ -125,22 +124,7 @@
 					hidden	& BOOLEAN &  zastavica koja govori o javnoj vidljivosti profila organizatora	\\ \hline 
 										
 				\end{longtblr}
-				
-				\textbf{Administrator} \newline \textrm{ Ovaj entitet specijalizacija je entiteta Račun namijenjena za korisnike koji su administratori.
-					Sadrži atribute: identifikator računa.
-					Ovaj entitet u vezi je \textit{One-to-One} s entitetom Račun preko atributa accountId.}
-				\begin{longtblr}[
-					label=none,
-					entry=none
-					]{
-						width = \textwidth,
-						colspec={|X[6,l]|X[6, l]|X[20, l]|}, 
-						rowhead = 1,
-					} %definicija širine tablice, širine stupaca, poravnanje i broja redaka naslova tablice
-					\hline \SetCell[c=3]{c}{\textbf{Administrator}}	 \\ \hline[3pt]
-					\SetCell{LightGreen}accountId & INT	&  	jedinstveni identifikator  računa (Račun.accountId) \\ \hline
-					
-				\end{longtblr}
+				\pagebreak
 				
 				\textbf{Pretplata} \newline \textrm{ Ovaj entitet opisuje pretplatu koju je organizator nekad imao te koja može biti trenutno aktivna.
 					Sadrži atribute: identifikator pretplate, datum početka pretplate, datum isteka pretplate, identifikator računa organizatora.
@@ -178,6 +162,8 @@
 					amount	& FLOAT &  plaćen iznos 	\\ \hline 
 					payment- Method	& VARCHAR &  način uplate 	\\ \hline 
 				\end{longtblr}
+				
+				\pagebreak
 				\textbf{Događanje} \newline \textrm{ Ovaj entitet opisuje događanje organizirano od strane organizatora.
 					Sadrži atribute: identifikator događanja, identifikator organizatora, naziv, opis, državu, grad, lokaciju, datum i vrijeme, cijenu, naslovnu sliku događanja.
 					Ovaj entitet u vezi je \textit{Many-to-One} s entitetom Organizator preko atributa accountId i s entitetom Država preko atributa countryCode, vezi \textit{One-to-Many} s entitetom Recenzija preko atributa eventId, vezi \textit{Many-to-Many} s entitetom Posjetitelj preko veze Interes i atributa eventId te u vezi \textit{One-to-Many} s entitetom Media-Događanje također preko atributa eventId.}
@@ -293,13 +279,13 @@
 					name & VARCHAR	&  	naziv države	\\ \hline
 				\end{longtblr}
 				
-				
+				\pagebreak
 			\subsection{Dijagram baze podataka}
 				%\textit{ U ovom potpoglavlju potrebno je umetnuti dijagram baze podataka. Primarni i strani ključevi moraju biti označeni, a tablice povezane. Bazu podataka je potrebno normalizirati. Podsjetite se kolegija "Baze podataka".}
 				
 				\begin{figure}[htbp]
 					\centering
-					\includegraphics[width=1\textwidth]{dijagrami/rel_dijagram.png}
+					\includegraphics[width=1\textwidth]{dijagrami/relacijski_dijagram.png}
 					\caption{Relacijski dijagram baze podataka}
 					\label{fig:my_image}
 				\end{figure}

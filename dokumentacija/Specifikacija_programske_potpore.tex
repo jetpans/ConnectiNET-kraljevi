@@ -417,6 +417,7 @@
 							\item Organizator odabire opciju "Kreiraj novi događaj"
 							\item Organizator upisuje detalje o događaju
 							\item Organizator odabire opciju "Kreiraj događaj"
+							\item Ukoliko je obrazac ispravno popunjen ispisuje se poruka "Događaj uspješno kreiran"
 
 						\end{packed_enum}
 						
@@ -924,10 +925,19 @@
 			
 			\newpage
 			\subsection{Sekvencijski dijagrami}
-				
+				%\subsubsection{Obrazac uporabe UC1-Registracija}
+        \noindent \textbf{UC1-Registracija}
 				%\textbf{\textit{dio 1. revizije}}\\
 				
 				%\textit{Nacrtati sekvencijske dijagrame koji modeliraju najvažnije dijelove sustava (max. 4 dijagrama). Ukoliko postoji nedoumica oko odabira, razjasniti s asistentom. Uz svaki dijagram napisati detaljni opis dijagrama.}
+				
+				Korisnik odabire opciju za registraciju. Poslužitelj mu vraća obrazac za ispunjavanje osobnih podataka. 
+        Nakon unosa poslužitelj provjerava je li korisnik unio neki podatak u neispravnom formatu ili je pružio neispravnu adresu e-pošte. 
+        Nakon toga komunicira s bazom podataka kako bi provjerio da li slučajno postoji isto korisničko ime kao ono koje korisnik namjerava unijeti. 
+        Ukoliko korisničko ime nije zauzeto i ostali podaci su ispravni dodaje se novi korisnički račun u bazu podataka i korisniku se vraća potvrda o uspješnoj registraciji. 
+        U suprotnom prikazuje se početna stranica za registraciju.
+				
+				\newpage
 
 				\noindent \textbf{UC5 - Brisanje računa}
 
@@ -947,7 +957,15 @@
 				\end{figure}
 				\eject
 
-				\noindent \textbf{UC10 - Ostavljanje recenzije na dogadaj}
+        \begin{figure}[htbp]
+          \centering
+          \includegraphics[width=1\textwidth]{dijagrami/UC1-Registracija_novi.png}
+          \caption{Sekvencijski dijagram za UC1}
+        \label{fig:my_image}
+        \end{figure}
+
+		\newpage
+				\noindent \textbf{UC10 - Ostavljanje recenzije na događaj}
 
 				\noindent Posjetitelj šalje zahtjev za prikaz događaja na kojima je bio 
 				(kartica "Moji događaji") kako bi mogao odabrati događaj na kojem
@@ -961,14 +979,31 @@
 				prikazuje se poruka o neispravno popunjenom obrascu. Ako se posjetitelj
 				predomisli, može odabrati opciju "Poništi" te se vraća na stranicu s
 				podacima o događaju.
-
+		\newpage
 				\begin{figure}[htbp]
 					\centering
 					\includegraphics[width=1\textwidth]{dijagrami/seq_diagram_review.jpg}
 					\caption{Sekvencijski dijagram za UC10}
 				\label{fig:my_image}
 				\end{figure}
-				\eject
+		\newpage
+
+		\noindent \textbf{UC12 - Uređivanje vlastitog događaja}
+
+				\noindent Organizator objavljuje vlastiti događaj odabirom opcije "Kreiraj novi događaj".
+				Potom u dobiveni obrazac upisuje detalje o događaju koji želi organizirati. Nakon provjere ispravnosti unesenih podataka
+				poslužitelj dobivene podatke prosljeđuje bazi gdje ostaju zapamćeni.
+				Organizator prima poruku "Događaj uspješno kreiran" te ponovo može pristupiti objavljivanju novog događaja.
+				Ako obrazac nije ispravno popunjen, poslužitelj upozorava organizatora porukom "Neispravno popunjen obrazac".
+		\newpage
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{dijagrami/UC12-Organizacija_vlastitog_dogadaja.png}
+					\caption{Sekvencijski dijagram za UC12}
+				\label{fig:my_image}
+				\end{figure}
+		\newpage
+     \eject
 	
 		\section{Ostali zahtjevi}
 			%\textbf{\textit{dio 1. revizije}}\\

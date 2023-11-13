@@ -54,7 +54,3 @@ def add_cors_headers(response):
 authController = AuthController(app, db, bcrypt, auth_users)
 eventController = EventController(app, db, auth_users)
 
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
-    

@@ -1,25 +1,43 @@
-from flask import Flask,jsonify,request,render_template
+from flask import Flask,jsonify,request,render_template,redirect,session
+from flask_bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+from datetime import datetime, timedelta, timezone
+import os
+import json
+from controllers.authController import AuthController
+from controllers.eventController import EventController
+from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from config import DevelopmentConfig, ProductionConfig
 
 
-##RUN WITH $ flask --app main run --debug
+app = Flask(__name__)
 
-app = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build")
-app.config["SECRET_KEY"] = "secret"
+env = os.environ.get('FLASK_ENV')
 
+if env == 'production':
+    app.config.from_object(ProductionConfig)
+else:
+    app.config.from_object(DevelopmentConfig)
+
+bcrypt = Bcrypt(app)
+db = SQLAlchemy(app)
+auth_users = {}
+
+@app.before_request
+def do():
+    print(request.headers)
 
 @app.route("/")
-def hello():
-    return render_template('index.html')
+def home():
+    return {"success": True, "data": "API is running"}
+    #return render_template("index.html")
 
 
-@app.route("/getThing")
-def firstRoute():
-    return jsonify("Hello thing!")    
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route("/<path:path>", methods=["GET"])
 def catch_all(path):
-    return render_template("index.html")
+    return {"success": True, "data": "API is running"}
+    #return render_template("index.html")
 
 @app.after_request
 def add_cors_headers(response):
@@ -28,9 +46,11 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
-    
-    
-    
-    
+
+
+
+
+
+authController = AuthController(app, db, bcrypt, auth_users)
+eventController = EventController(app, db, auth_users)
+

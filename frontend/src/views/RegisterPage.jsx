@@ -1,0 +1,256 @@
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import RadioGroup from '@mui/material/RadioGroup';
+import Radio from '@mui/material/Radio';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import { Paper } from '@mui/material';
+import dataController from '../utils/DataController';
+
+import { Navigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useUser } from '../context/UserContext';
+
+import { useState, useContext, useEffect } from 'react';
+
+export default function RegisterPage() {
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const [formState, setFormState] = useState('Visitor');
+
+  const { user, updateUser } = useUser();
+
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const data = new FormData(event.currentTarget);
+
+    const loginData = {
+      username: data.get('username'),
+      email: data.get('email'),
+      password: data.get('password'),
+      countryCode: data.get('country'),
+      roleId: data.get('role') === 'Organizer' ? 1 : 0
+    }
+
+    const dc = new dataController();
+
+    if(data.get('role') === 'Visitor') {
+      loginData.firstName = data.get('firstName');
+      loginData.lastName = data.get('lastName');
+    } else {
+      loginData.organizerName = data.get('organizerName');
+    }
+
+    dc.PostData(API_URL + '/register', loginData)
+    .then((resp) => {
+      if(resp.success === true && resp.data.success === true) {
+        // console.log('Success!');
+        // todo: add "token": resp.data.token
+        // updateUser({
+        // "username": loginData.username, 
+        // "roleId": loginData.roleId,
+        // "countryCode": loginData.countryCode, 
+        // "email": loginData.email
+        // });
+        alert('Registration successful! Please log in.');
+        navigate('/login');
+      } else {
+        // console.log('Error!');
+        // console.log(resp.data);
+        if(resp.data.data === 'Username already in use.') {
+          alert('Registration unsuccessful. Username already exists.');
+          return;
+        }
+        alert('Registration unsuccessful.');
+      }
+    }).catch((resp) => {
+      alert('Registration unsuccessful.');
+    });
+  }
+
+  useEffect(() => {
+    if(user !== null) {
+      navigate("/events");
+    }
+  }, []);
+  useEffect(() => {
+    if(user !== null) {
+      navigate("/events");
+    }
+  }, [user]);
+
+  return (
+    <>
+      {user ? <Navigate to="/events" /> : 
+      <div>
+        <Grid container component="main" sx={{ height: '100vh' }}>
+          <CssBaseline />
+          <Grid
+            item
+            xs={false}
+            sm={3}
+            md={6}
+            sx={{
+              backgroundImage: 'url(https://images.unsplash.com/photo-1698281941670-27b48d066475?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY5OTg4MzkxOA&ixlib=rb-4.0.3&q=80&w=1080)',
+              backgroundRepeat: 'no-repeat',
+              backgroundColor: (t) =>
+                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+          <Grid item xs={12} sm={9} md={6} component={Paper} elevation={6} square>
+            <Box
+              sx={{
+                my: 8,
+                mx: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign up
+              </Typography>
+              <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sx={{
+                    marginTop: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }} required>
+                    <Typography component="h1" variant="h5">Account Type:</Typography>
+                    <RadioGroup
+                      aria-labelledby="row-radio-buttons-role"
+                      name="role"
+                      onChange={(event) => setFormState(event.target.value)}
+                      defaultValue={'Visitor'}
+                    >
+                      <FormControlLabel value="Visitor" control={<Radio />} label="Visitor" />
+                      <FormControlLabel value="Organizer" control={<Radio />} label="Organizer" />
+                    </RadioGroup>
+                  </Grid>
+                  {formState === 'Visitor' ? 
+                    <>
+                      <Grid item xs={12} sm={6}>
+                        <TextField
+                          autoComplete="first-name"
+                          name="firstName"
+                          required
+                          fullWidth
+                          id="firstName"
+                          label="First Name"
+                          autoFocus
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <TextField
+                          required
+                          fullWidth
+                          id="lastName"
+                          label="Last Name"
+                          name="lastName"
+                          autoComplete="family-name"
+                        />
+                      </Grid> 
+                    </>
+                  : null}
+                  {formState === 'Organizer' ? 
+                    <>
+                      <Grid item xs={12}>
+                        <TextField
+                          autoComplete="organizer-name"
+                          name="organizerName"
+                          required
+                          fullWidth
+                          id="organizerName"
+                          label="Organizer Name"
+                          autoFocus
+                        />
+                      </Grid>
+                    </>
+                  : null}
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="username"
+                      label="Username"
+                      type="username"
+                      id="username"
+                      autoComplete="username"
+                      helperText="Must be between 6 and 20 characters long"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      autoComplete="new-password"
+                      helperText="Must contain at least one lowercase letter, digit and be at least 8 characters long"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="country"
+                      label="Country code"
+                      type="country"
+                      id="country"
+                      autoComplete="country"
+                    />
+                  </Grid>
+                  </Grid>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Sign Up
+                </Button>
+                <Grid container justifyContent="flex-end">
+                  <Grid item>
+                    <Link href="/login" variant="body2">
+                      Already have an account? Sign in
+                    </Link>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      </div>
+      }
+    </>
+  );
+}

@@ -1,4 +1,4 @@
-from flask import Flask,jsonify,request,render_template
+from flask import Flask,jsonify,request,render_template, session
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 from dotenv import load_dotenv
 from controllers.controller import Controller
@@ -13,8 +13,9 @@ class EventController(Controller):
         self.app.add_url_rule("/getEvents", view_func=self.getEvents, methods=["GET"])
     
     def getEvents(self):
-        #if getRole(self.auth_users) not in [-1,1,0]:
-        #    return "Authentication required!"
+        if getRole(self.auth_users) not in [-1,1,0]:
+            return {"success": False, "data": "Authentication required"}
+   
         dbResp = self.db.session.query(Event).all() 
         result_dict = [u.__dict__ for u in dbResp]
         toList = list(map( lambda event:
@@ -26,5 +27,5 @@ class EventController(Controller):
                 "time":str(event["dateTime"]),
                 "priority":str(int(random.random()*50))
             }, result_dict))
-        return toList
+        return {"success":True, "data": toList}
         

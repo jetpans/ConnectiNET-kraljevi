@@ -12,3 +12,5 @@
 *.toc
 
 .temp-doc
+
+backend/docker-compose.yml

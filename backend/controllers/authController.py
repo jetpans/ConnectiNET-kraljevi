@@ -63,16 +63,15 @@ class AuthController(Controller):
                 session['sID'] = uuid.uuid4()
                 
                 self.auth_users[session['sID']] = myUser
-                
-                account = self.db.session.query(Account).where(Account.username == data["username"]).all()           
+                         
                 user = {
-                    "username": account[0].username,
-                    "email": account[0].eMail,
-                    "roleId": account[0].roleId,
-                    "countryCode": account[0].countryCode
+                    "username": myUser.username,
+                    "email": myUser.eMail,
+                    "roleId": myUser.roleId,
+                    "countryCode": myUser.countryCode
                 }
                 
-                resp = {"success": True, "data": user}
+                resp = {"success": True, "data": list(self.auth_users.keys())}
                 #resp.set_cookie("username", myUser.username)
                 return resp
             else:

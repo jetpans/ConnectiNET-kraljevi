@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import dataController from '../utils/DataController';
 
 const UserContext = createContext();
 
@@ -11,6 +12,8 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }) => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [loading, setLoading] = useState(true);
   // TODO: Implement loading
   const [user, setUser] = useState(null);
@@ -36,6 +39,12 @@ export const UserProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('jwt');
     localStorage.removeItem('user');
+    const dc = new dataController();
+    dc.PostData(API_URL + "/logout", null).then((resp) => {
+      if(resp.success === true) {
+        console.log("Logout successful");
+      }
+    });
   };
 
   return (

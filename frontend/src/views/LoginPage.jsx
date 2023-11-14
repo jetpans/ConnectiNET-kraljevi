@@ -20,9 +20,10 @@ import { useUser } from "../context/UserContext";
 
 import { useState, useContext, useEffect } from "react";
 
-export default function LoginPage() {
+export default function LoginPage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
   const [error, setError] = useState([false, false]);
+
   const navigate = useNavigate();
 
   const { user, updateUser } = useUser();
@@ -52,8 +53,10 @@ export default function LoginPage() {
     dc.PostData(API_URL + "/login", loginData)
       .then((resp) => {
         if (resp.success === true && resp.data.success === true) {
-          console.log("Success!");
-          console.log("User is", resp.data.data);
+          // console.log("Success!");
+          // console.log("User is", resp.data);
+          props.setAccessToken(resp.data.data.access_token);
+          // console.log("Set acess token to", resp.data.data.access_token);
           updateUser({
             username: resp.data.username,
             roleId: resp.data.roleId,
@@ -62,13 +65,13 @@ export default function LoginPage() {
           });
         } else {
           // console.log('Error!');
-          console.log(resp.data);
+          // console.log(resp.data);
           alert("Login unsuccessful. Please check your credentials.");
           setError([false, false]);
         }
       })
       .catch((resp) => {
-        console.log(resp.data);
+        // console.log(resp.data);
         alert("Login unsuccessful. Please check your credentials.");
         setError([false, false]);
       });

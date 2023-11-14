@@ -33,7 +33,7 @@ import dataController from "../utils/DataController";
 
 import { useUser } from "../context/UserContext";
 
-export default function EventsPage() {
+export default function EventsPage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [cards, setCards] = useState(null);
@@ -47,20 +47,11 @@ export default function EventsPage() {
   const dc = new dataController();
 
   const fetchData = async () => {
-    // try {
-    // const resp = await fetch("http://127.0.0.1:5000/getEvents", { method: "GET" });
-    // if (resp.ok) {
-    // const respJson = await resp.json();
-    // setCards(respJson);
-    // }
-    // } catch {
-    // console.error("Bad!");
-    // }
-    dc.GetData(API_URL + "/getEvents").then((resp) => {
-      console.log("THIS:", resp.data);
-      if (resp.data.data.success) {
-        console.log("Cards set to :", resp.data.data);
-        setCards(resp.data);
+    dc.GetData(API_URL + "/getEvents", props.token).then((resp) => {
+      // console.log("THIS:", resp.data);
+      if (resp.data.success === true) {
+        // console.log("Cards set to :", resp.data.data);
+        setCards(resp.data.data);
       }
     });
   };

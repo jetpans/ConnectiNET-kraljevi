@@ -8,13 +8,15 @@ from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
+from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
+                               unset_jwt_cookies, jwt_required, JWTManager
+
 
 class AuthController(Controller):
-    def __init__(self, app, db, bcrypt, auth_users):
+    def __init__(self, app, db, bcrypt, jwt):
         super().__init__(app, db)
         self.bcrypt = bcrypt
-        self.auth_users = auth_users
-        
+        self.jwt = jwt
         self.app.add_url_rule("/register", view_func=self.register, methods=["POST"])
         self.app.add_url_rule("/login", view_func=self.login, methods=["POST"]) 
         self.app.add_url_rule("/logout", view_func=self.logout, methods=["POST"]) 
@@ -60,10 +62,8 @@ class AuthController(Controller):
             userHashedPassword = myUser.passwordHash
             isCorrect = self.bcrypt.check_password_hash(userHashedPassword, data["password"])
             if (isCorrect):
-                session['sID'] = uuid.uuid4()
                 
-                self.auth_users[session['sID']] = myUser
-                         
+                access_token = create_access_token(identity=myUser.username, additional_claims={"roleId":myUser.roleId})       
                 user = {
                     "username": myUser.username,
                     "email": myUser.eMail,
@@ -71,7 +71,7 @@ class AuthController(Controller):
                     "countryCode": myUser.countryCode
                 }
                 
-                resp = {"success": True, "data": list(self.auth_users.keys())}
+                resp = {"success": True, "data": {"user":user, "access_token":access_token}}
                 #resp.set_cookie("username", myUser.username)
                 return resp
             else:
@@ -81,7 +81,9 @@ class AuthController(Controller):
             
     def logout(self):
         response = {"success": True, "data": "Logout successful."}
+        
         try:
+            unset_jwt_cookies(response)
             session.pop("sID")
         except:
             pass

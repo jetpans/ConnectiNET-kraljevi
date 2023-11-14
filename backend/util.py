@@ -15,15 +15,16 @@ def admin_required():
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
-
-            verify_jwt_in_request(optional=True)
-            
-            claims = get_jwt()
-            if claims["roleId"] == -1:
-                return fn(*args, **kwargs)
-            else:
+            try:
+                verify_jwt_in_request(optional=True)
+                claims = get_jwt()
+                if claims["roleId"] in [-1]:
+                    return fn(*args, **kwargs)
+                else:
+                    return {"success": False, "data": "Authentication required"}
+            except Exception as e:
+                # Handle the scenario when JWT is not present or any other exception
                 return {"success": False, "data": "Authentication required"}
-
         return decorator
 
     return wrapper
@@ -50,13 +51,16 @@ def organiser_required():
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
-            verify_jwt_in_request(optional=True)
-            claims = get_jwt()
-            if claims["roleId"] in [-1, 1]:
-                return fn(*args, **kwargs)
-            else:
+            try:
+                verify_jwt_in_request(optional=True)
+                claims = get_jwt()
+                if claims["roleId"] in [1, -1]:
+                    return fn(*args, **kwargs)
+                else:
+                    return {"success": False, "data": "Authentication required"}
+            except Exception as e:
+                # Handle the scenario when JWT is not present or any other exception
                 return {"success": False, "data": "Authentication required"}
-
         return decorator
 
     return wrapper

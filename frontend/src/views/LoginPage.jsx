@@ -26,7 +26,7 @@ export default function LoginPage(props) {
 
   const navigate = useNavigate();
 
-  const { user, updateUser } = useUser();
+  const { user, updateUser, logout, loading } = useUser();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -55,14 +55,17 @@ export default function LoginPage(props) {
         if (resp.success === true && resp.data.success === true) {
           // console.log("Success!");
           // console.log("User is", resp.data);
-          props.setAccessToken(resp.data.data.access_token);
+          localStorage.setItem("jwt", resp.data.data.access_token);
           // console.log("Set acess token to", resp.data.data.access_token);
+
           updateUser({
-            username: resp.data.username,
-            roleId: resp.data.roleId,
-            countryCode: resp.data.countryCode,
-            email: resp.data.email,
+            username: resp.data.data.user.username,
+            roleId: resp.data.data.user.roleId,
+            countryCode: resp.data.data.user.countryCode,
+            email: resp.data.data.user.email,
           });
+
+          navigate("/events");
         } else {
           // console.log('Error!');
           // console.log(resp.data);
@@ -78,19 +81,15 @@ export default function LoginPage(props) {
   };
 
   useEffect(() => {
-    if (user !== null) {
+    const accessToken = localStorage.getItem("jwt");
+    if (accessToken !== null) {
       navigate("/events");
     }
   }, []);
-  useEffect(() => {
-    if (user !== null) {
-      navigate("/events");
-    }
-  }, [user]);
 
   return (
     <>
-      {user ? (
+      {false ? (
         <Navigate to="/events" />
       ) : (
         <div>

@@ -42,12 +42,13 @@ export default function EventsPage(props) {
   const [cardSize, setCardSize] = useState(12);
   const navigate = useNavigate();
 
-  const { user, updateUser, logout } = useUser();
+  const { user, updateUser, logout, loading } = useUser();
 
   const dc = new dataController();
 
   const fetchData = async () => {
-    dc.GetData(API_URL + "/getEvents", props.token).then((resp) => {
+    const accessToken = localStorage.getItem('jwt');
+    dc.GetData(API_URL + "/getEvents", accessToken).then((resp) => {
       // console.log("THIS:", resp.data);
       if (resp.data.success === true) {
         // console.log("Cards set to :", resp.data.data);
@@ -74,16 +75,13 @@ export default function EventsPage(props) {
   }
 
   useEffect(() => {
-    if (user === null) {
+    const accessToken = localStorage.getItem("jwt");
+    if (accessToken === null) {
       navigate("/login");
+    } else {
+      fetchData();
     }
-    fetchData();
   }, []);
-  useEffect(() => {
-    if (user === null) {
-      navigate("/login");
-    }
-  }, [user]);
 
   const lightTheme = createTheme({
     palette: {

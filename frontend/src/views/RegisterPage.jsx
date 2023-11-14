@@ -25,7 +25,7 @@ export default function RegisterPage() {
 
   const [formState, setFormState] = useState('Visitor');
 
-  const { user, updateUser } = useUser();
+  const { user, updateUser, logout, loading } = useUser();
 
   const navigate = useNavigate();
 
@@ -79,19 +79,15 @@ export default function RegisterPage() {
   }
 
   useEffect(() => {
-    if(user !== null) {
+    const accessToken = localStorage.getItem("jwt");
+    if (accessToken !== null) {
       navigate("/events");
     }
   }, []);
-  useEffect(() => {
-    if(user !== null) {
-      navigate("/events");
-    }
-  }, [user]);
 
   return (
     <>
-      {user ? <Navigate to="/events" /> : 
+      {false ? <Navigate to="/events" /> : 
       <div>
         <Grid container component="main" sx={{ height: '100vh' }}>
           <CssBaseline />

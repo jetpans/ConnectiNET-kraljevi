@@ -84,7 +84,6 @@ class AuthController(Controller):
         
         try:
             unset_jwt_cookies(response)
-            session.pop("sID")
         except:
             pass
         return response

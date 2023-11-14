@@ -1,11 +1,11 @@
-version: '3'
+version: "3"
 services:
   web:
     build: .
     ports:
       - "5000:5000"
     environment:
-      - FLASK_ENV=${FLASK_ENV} 
-      - SECRET_KEY=${SECRET_KEY} 
+      - FLASK_ENV=${FLASK_ENV}
+      - SECRET_KEY=${SECRET_KEY}
       - DB_CONNECT_URL_DEV=${DB_CONNECT_URL_DEV}
       - DB_CONNECT_URL_PROD=${DB_CONNECT_URL_PROD}

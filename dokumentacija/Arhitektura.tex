@@ -305,16 +305,23 @@
 			
 			\textit{}
 
-			Na slikama 4.3 i 4.4 prikazani su dijagrami razreda za podsustave u backend dijelu arhitekture. Na slici 4.3. prikazani su razredi koji nasljeđuju Controller razred. Metode tih razreda koriste Model razrede za dohvat i spremanje podataka. Metode u razredima Controller vraćaju JSON datoteke u obliku HTML status koda i podatkovnog dijela. Na slici 4.4. prikazani su razredi koji nasljeđuju Model razred i predstavljaju (modeliraju) entitete baze podataka.
+			Na slikama 4.2, 4.3 i 4.4 prikazani su dijagrami razreda za podsustave u backend dijelu arhitekture. Na slici 4.3. prikazani su razredi koji nasljeđuju Controller razred. Metode tih razreda koriste Model razrede za dohvat i spremanje podataka. Metode u razredima Controller vraćaju JSON datoteke u obliku HTML status koda i podatkovnog dijela. Na slici 4.4 prikazani su Data Transfer objekti. Na slici 4.5. prikazani su razredi koji nasljeđuju Model razred i predstavljaju (modeliraju) entitete baze podataka.
 			
 			Zbog lakše organizacije i vidljivosti dijagrama razreda, razredi su podijeljeni u više dijagrama. Razredi su grupirani prema sličnim razinama apstrakcije i srodnim funkcionalnostima u arhitekturi MVC.
 			
-			\newpage
-
 			\begin{figure}[htbp]
 				\centering
 				\includegraphics[width=1\textwidth]{dijagrami/dijagram_mvc_controllers.png}
 				\caption{Dijagram klasa, dio Controllers}
+			\label{fig:my_image}
+			\end{figure}
+
+			\newpage
+
+			\begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{dijagrami/dijagram_mvc_dto.png}
+				\caption{Dijagram klasa, dio DTO}
 			\label{fig:my_image}
 			\end{figure}
 

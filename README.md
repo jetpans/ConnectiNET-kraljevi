@@ -10,14 +10,19 @@ FER Programsko Inžinjerstvo ak. godina 2023./2024. Tim-3 Kraljevi
 # Start instructions
 Backend:
 -------------
+- Legacy:
 * `pip install -r requirements.txt`
 * `flask --app app run` (`--debug` za live reload)
+- Novo:
+* `docker-compose up --build` (nuzno imati instaliran docker i docker-compose)
+
 
 Frontend:
 -------------
 * `npm install`
 * `npm start` (development server)
 * `npm run build` (build za serving sa serverom)
+* `node app.js` (frontend server)
 
 
 # Git

@@ -9,6 +9,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { Paper } from '@mui/material';
@@ -21,9 +22,12 @@ import { useUser } from '../context/UserContext';
 import { useState, useContext, useEffect } from 'react';
 
 export default function RegisterPage() {
-  const [formState, setFormState] = useState('Visitor');
+  const API_URL = process.env.REACT_APP_API_URL;
 
-  const { user, updateUser } = useUser();
+  const [formState, setFormState] = useState('Visitor');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { user, updateUser, logout, loading } = useUser();
 
   const navigate = useNavigate();
 
@@ -42,14 +46,14 @@ export default function RegisterPage() {
 
     const dc = new dataController();
 
-    if(data.get('role') === 'Visitor') {
+    if(data.get('role') === 'Visitor' && data.get('firstName') !== '' && data.get('lastName') !== '') {
       loginData.firstName = data.get('firstName');
       loginData.lastName = data.get('lastName');
-    } else {
+    } else if(data.get('role') === 'Organizer' && data.get('organizerName') !== '') {
       loginData.organizerName = data.get('organizerName');
     }
 
-    dc.PostData('http://127.0.0.1:5000/register', loginData)
+    dc.PostData(API_URL + '/register', loginData)
     .then((resp) => {
       if(resp.success === true && resp.data.success === true) {
         // console.log('Success!');
@@ -69,27 +73,23 @@ export default function RegisterPage() {
           alert('Registration unsuccessful. Username already exists.');
           return;
         }
-        alert('Registration unsuccessful.');
+        alert('Registration unsuccessful. ' + resp.data.data);
       }
     }).catch((resp) => {
-      alert('Registration unsuccessful.');
+      alert('Registration unsuccessful. ' + resp.data.data);
     });
   }
 
   useEffect(() => {
-    if(user !== null) {
+    const accessToken = localStorage.getItem("jwt");
+    if (accessToken !== null) {
       navigate("/events");
     }
   }, []);
-  useEffect(() => {
-    if(user !== null) {
-      navigate("/events");
-    }
-  }, [user]);
 
   return (
     <>
-      {user ? <Navigate to="/events" /> : 
+      {false ? <Navigate to="/events" /> : 
       <div>
         <Grid container component="main" sx={{ height: '100vh' }}>
           <CssBaseline />
@@ -210,11 +210,17 @@ export default function RegisterPage() {
                       fullWidth
                       name="password"
                       label="Password"
-                      type="password"
+                      type={showPassword === true ? "" : "password"}
                       id="password"
                       autoComplete="new-password"
                       helperText="Must contain at least one lowercase letter, digit and be at least 8 characters long"
                     />
+                     {/* TODO: Show password button
+                      <FormControlLabel
+                        control={<Checkbox value="show-password" color="primary" />}
+                        label="Show Password"
+                        onClick={() => setShowPassword(!showPassword)}
+                      /> */}
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
@@ -225,6 +231,7 @@ export default function RegisterPage() {
                       type="country"
                       id="country"
                       autoComplete="country"
+                      helperText="3-letter country code, ex: HRV, AUT..."
                     />
                   </Grid>
                   </Grid>

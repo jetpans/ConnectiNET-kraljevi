@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import dataController from '../utils/DataController';
 
 const UserContext = createContext();
 
@@ -11,27 +12,39 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }) => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [loading, setLoading] = useState(true);
+  // TODO: Implement loading
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     setLoading(true);
+
     // Check for user in local storage on component mount
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
     setLoading(false);
   }, []);
 
   const updateUser = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('jwt');
     localStorage.removeItem('user');
+    const dc = new dataController();
+    dc.PostData(API_URL + "/logout", null).then((resp) => {
+      if(resp.success === true) {
+        console.log("Logout successful");
+      }
+    });
   };
 
   return (

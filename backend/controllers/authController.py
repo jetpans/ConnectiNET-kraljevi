@@ -20,7 +20,7 @@ class AuthController(Controller):
         self.app.add_url_rule("/register", view_func=self.register, methods=["POST"])
         self.app.add_url_rule("/login", view_func=self.login, methods=["POST"]) 
         self.app.add_url_rule("/logout", view_func=self.logout, methods=["POST"]) 
-        
+        self.app.add_url_rule("/api/countries", view_func = self.countries, methods =["GET"])
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
         self.REGISTER_REQUIRED_FIELDS = ["email", "username", "password", "roleId", "countryCode"]
@@ -30,7 +30,7 @@ class AuthController(Controller):
     def register(self):
         data = request.get_json()
         result = self.testRegForm(data)
-        
+        print(f"Result is {data}")
         if result == "OK":
             roleId = data["roleId"]
             passwordHash = self.bcrypt.generate_password_hash(data["password"]).decode("utf-8")
@@ -122,6 +122,18 @@ class AuthController(Controller):
         
         return "OK"
         
+    
+    def countries(self):
+        
+        dbResp = self.db.session.query(Country).all() 
+        result_dict = [u.__dict__ for u in dbResp]
+        toList = list(map( lambda country:
+            {
+                "countryCode":country["countryCode"],
+                "name":country["name"],
+            }, result_dict))
+        return {"success":True, "data": toList}
+        
     def testLoginForm(self,form):
         if "username" not in form.keys() or "password" not in form.keys():
             {"success": False, "data": "Missing a field in login package."}
@@ -129,3 +141,4 @@ class AuthController(Controller):
             {"success": False, "data": "Wrong credentials."}
         return "OK"
 
+    

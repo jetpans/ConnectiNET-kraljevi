@@ -7,6 +7,7 @@ import os
 import json
 from controllers.authController import AuthController
 from controllers.eventController import EventController
+from controllers.imageController import ImageController
 from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
@@ -19,6 +20,11 @@ app = Flask(__name__)
 env = os.environ.get('FLASK_ENV')
 app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["IMAGE_DIRECTORY"] = "images"
+
+app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
+
+
 if env == 'production':
     app.config.from_object(ProductionConfig)
 else:
@@ -74,4 +80,4 @@ def refresh_expiring_jwts(response):
 
 authController = AuthController(app, db, bcrypt, jwt)
 eventController = EventController(app, db, jwt)
-
+imageController = ImageController(app,db,jwt)

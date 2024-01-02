@@ -30,7 +30,7 @@ class dataController {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
       },
-      body: data,
+      body: JSON.stringify(data),
     })
       .then(handleRequest)
       .then((data) => {

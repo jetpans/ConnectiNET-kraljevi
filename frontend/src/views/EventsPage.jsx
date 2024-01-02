@@ -47,7 +47,7 @@ export default function EventsPage(props) {
   const dc = new dataController();
 
   const fetchData = async () => {
-    const accessToken = localStorage.getItem('jwt');
+    const accessToken = localStorage.getItem("jwt");
     dc.GetData(API_URL + "/getEvents", accessToken).then((resp) => {
       // console.log("THIS:", resp.data);
       if (resp.data.success === true) {

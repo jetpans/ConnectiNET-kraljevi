@@ -30,7 +30,7 @@ class dataController {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
       },
-      body: JSON.stringify(data),
+      body: data,
     })
       .then(handleRequest)
       .then((data) => {
@@ -40,6 +40,34 @@ class dataController {
         return Promise.reject({ success: false, error: err });
       })
       .finally(() => {});
+  }
+
+  PostFile(path, file, token) {
+    return fetch(path, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      body: file,
+    })
+      .then(handleRequest)
+      .then((data) => {
+        return Promise.resolve({ success: true, data: data });
+      })
+      .catch((err) => {
+        return Promise.reject({ success: false, error: err });
+      })
+      .finally(() => {});
+  }
+
+  FetchFile(path, data, token) {
+    return fetch(path, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      body: data,
+    });
   }
 }
 

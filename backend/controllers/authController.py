@@ -14,9 +14,9 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
 
 class AuthController(Controller):
     def __init__(self, app, db, bcrypt, jwt):
-        super().__init__(app, db)
+        super().__init__(app, db, jwt)
         self.bcrypt = bcrypt
-        self.jwt = jwt
+
         self.app.add_url_rule("/register", view_func=self.register, methods=["POST"])
         self.app.add_url_rule("/login", view_func=self.login, methods=["POST"]) 
         self.app.add_url_rule("/logout", view_func=self.logout, methods=["POST"]) 

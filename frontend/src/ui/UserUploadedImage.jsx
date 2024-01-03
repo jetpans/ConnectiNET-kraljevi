@@ -8,7 +8,7 @@ export default function UserUploadedImage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    dc.FetchFile(API_URL + props.route, null)
+    dc.FetchFile(API_URL + "/api/image" + props.src, null)
       .then((resp) => {
         return resp.blob();
       })

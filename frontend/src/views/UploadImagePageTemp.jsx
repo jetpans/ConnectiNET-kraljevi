@@ -6,10 +6,10 @@ export default function UploadImagePageTemp() {
   return (
     <div>
       <ImageUploadButton
-        route="/user/upload"
+        route="/api/upload"
         style={{ width: "200px", outerHeight: "100px" }}
       ></ImageUploadButton>
-      <UserUploadedImage route="/user/fetch"></UserUploadedImage>
+      <UserUploadedImage src="/image-demso.png"></UserUploadedImage>
     </div>
   );
 }

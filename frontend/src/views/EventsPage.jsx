@@ -33,12 +33,13 @@ import dataController from "../utils/DataController";
 
 import { useUser } from "../context/UserContext";
 
+import MainHeader from "../ui/MainHeader";
+import MainFooter from "../ui/MainFooter";
 export default function EventsPage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [cards, setCards] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [cardSize, setCardSize] = useState(12);
   const navigate = useNavigate();
 
@@ -59,19 +60,6 @@ export default function EventsPage(props) {
 
   function handleTabChange(event, newValue) {
     setCurrentTab(newValue);
-  }
-
-  function toggleDrawer() {
-    setDrawerOpen((prevState) => !prevState);
-  }
-
-  function handleLogout() {
-    dc.PostData(API_URL + "/logout").then((resp) => {
-      if (resp.success === true) {
-        logout();
-        navigate("/login");
-      }
-    });
   }
 
   useEffect(() => {
@@ -121,68 +109,8 @@ export default function EventsPage(props) {
     <Paper sx={{ bgcolor: mainTheme.background.default }}>
       <ThemeProvider theme={mainTheme}>
         <CssBaseline />
-        <AppBar position="relative">
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button onClick={toggleDrawer}>
-              <TableRowsIcon
-                sx={{ color: mainTheme.palette.secondary.other }}
-              />
-            </Button>
-
-            <Typography
-              variant="h5"
-              color={mainTheme.palette.secondary.other}
-              noWrap
-            >
-              Events
-            </Typography>
-
-            <div>
-              <Button onClick={handleLogout}>
-                <LogoutIcon sx={{ color: mainTheme.palette.secondary.other }} />
-              </Button>
-              <Typography
-                variant="h6"
-                color={mainTheme.palette.secondary.other}
-              >
-                Log out
-              </Typography>
-            </div>
-          </Toolbar>
-        </AppBar>
+        <MainHeader></MainHeader>
         <>
-          <Drawer open={drawerOpen} onClose={toggleDrawer}>
-            <Typography variant="h5" sx={{ textAlign: "center", mt: 2, mb: 2 }}>
-              ConnectiNET
-            </Typography>
-            <Box
-              sx={{ width: 350 }}
-              // nClick={toggleDrawer}
-              onKeyDown={toggleDrawer}
-            >
-              <div />
-              <Divider />
-              <List>
-                {["Profile", "Events", "My Events"].map((text, index) => (
-                  <ListItem key={text} disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        {index === 1 ? (
-                          <EventIcon />
-                        ) : index === 0 ? (
-                          <AccountCircleIcon />
-                        ) : (
-                          <EditCalendarIcon />
-                        )}
-                      </ListItemIcon>
-                      <ListItemText primary={text} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          </Drawer>
-
           {/* Hero unit */}
           <Container sx={{ py: 4 }} maxWidth="lg">
             <Tabs
@@ -262,26 +190,7 @@ export default function EventsPage(props) {
         </>
 
         {/* Footer */}
-        <Box
-          sx={{ bgcolor: mainTheme.palette.primary.main, p: 4.5 }}
-          component="footer"
-        >
-          <Typography
-            variant="h6"
-            align="center"
-            gutterBottom
-            color={mainTheme.palette.secondary.other}
-          >
-            ConnectiNET
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            align="center"
-            color={mainTheme.palette.secondary.other}
-          >
-            by Kraljevi
-          </Typography>
-        </Box>
+        <MainFooter></MainFooter>
         {/* End footer */}
       </ThemeProvider>
     </Paper>

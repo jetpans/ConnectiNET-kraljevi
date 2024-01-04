@@ -24,9 +24,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { createTheme } from "@mui/material/styles";
 import { green, grey, indigo } from "@mui/material/colors";
 
-export default function MainHeader() {
+export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const tabs = ["Profile", "Events", "My Events", "Account", "Temp"];
   const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -36,8 +36,19 @@ export default function MainHeader() {
 
   const dc = new dataController();
 
-  function handleTabChange(event, newValue) {
-    setCurrentTab(newValue);
+  function handleTabChange(event) {
+    const value = event.currentTarget.getAttribute("value");
+    switch (value) {
+      case "Account":
+        navigate("/account");
+        break;
+      case "Temp":
+        navigate("/temp");
+        break;
+      case "Events":
+        navigate("/events");
+        break;
+    }
   }
 
   function toggleDrawer() {
@@ -106,7 +117,7 @@ export default function MainHeader() {
             color={mainTheme.palette.secondary.other}
             noWrap
           >
-            Events
+            {props.for}
           </Typography>
 
           <div>
@@ -132,9 +143,13 @@ export default function MainHeader() {
           <div />
           <Divider />
           <List>
-            {["Profile", "Events", "My Events"].map((text, index) => (
+            {tabs.map((text, index) => (
               <ListItem key={text} disablePadding>
-                <ListItemButton>
+                <ListItemButton
+                  name="text"
+                  value={text}
+                  onClick={(e) => handleTabChange(e)}
+                >
                   <ListItemIcon>
                     {index === 1 ? (
                       <EventIcon />

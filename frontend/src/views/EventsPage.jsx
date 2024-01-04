@@ -1,29 +1,13 @@
 import React, { useEffect, useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import EventIcon from "@mui/icons-material/Event";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import EditCalendarIcon from "@mui/icons-material/EditCalendar";
-import TableRowsIcon from "@mui/icons-material/TableRows";
-import LogoutIcon from "@mui/icons-material/Logout";
+
 import { green, grey, indigo } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Divider, Paper } from "@mui/material";
@@ -109,7 +93,7 @@ export default function EventsPage(props) {
     <Paper sx={{ bgcolor: mainTheme.background.default }}>
       <ThemeProvider theme={mainTheme}>
         <CssBaseline />
-        <MainHeader></MainHeader>
+        <MainHeader for="Events"></MainHeader>
         <>
           {/* Hero unit */}
           <Container sx={{ py: 4 }} maxWidth="lg">

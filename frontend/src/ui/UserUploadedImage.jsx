@@ -19,7 +19,7 @@ export default function UserUploadedImage(props) {
   }, []);
 
   return (
-    <div>
+    <div {...props}>
       {image && (
         <img
           src={image}

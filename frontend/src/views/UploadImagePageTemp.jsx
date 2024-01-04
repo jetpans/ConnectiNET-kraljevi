@@ -2,9 +2,9 @@ import React from "react";
 import ImageUploadButton from "../ui/ImageUploadButton";
 import UserUploadedImage from "../ui/UserUploadedImage";
 
-export default function UploadImagePageTemp() {
+export default function UploadImagePageTemp(props) {
   return (
-    <div>
+    <div {...props}>
       <ImageUploadButton
         route="/api/upload"
         style={{ width: "200px", outerHeight: "100px" }}

@@ -151,12 +151,7 @@ export default function RegisterPage() {
                 <Typography component="h1" variant="h5">
                   Sign up
                 </Typography>
-                <Box
-                  component="form"
-                  noValidate
-                  onSubmit={handleSubmit}
-                  sx={{ mt: 3 }}
-                >
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
                   <Grid container spacing={2}>
                     <Grid
                       item
@@ -194,6 +189,10 @@ export default function RegisterPage() {
                       <>
                         <Grid item xs={12} sm={6}>
                           <TextField
+                            inputProps={{
+                              pattern: "[A-Za-z]+",
+                              title: "Must contain only letters.",
+                            }}
                             autoComplete="first-name"
                             name="firstName"
                             required
@@ -205,6 +204,10 @@ export default function RegisterPage() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <TextField
+                            inputProps={{
+                              pattern: "[A-Za-z]+",
+                              title: "Must contain only letters.",
+                            }}
                             required
                             fullWidth
                             id="lastName"
@@ -219,6 +222,10 @@ export default function RegisterPage() {
                       <>
                         <Grid item xs={12}>
                           <TextField
+                            inputProps={{
+                              pattern: "[A-Za-z]+",
+                              title: "Must contain only letters.",
+                            }}
                             autoComplete="organizer-name"
                             name="organizerName"
                             required
@@ -232,6 +239,10 @@ export default function RegisterPage() {
                     ) : null}
                     <Grid item xs={12}>
                       <TextField
+                        inputProps={{
+                          pattern: ".{6,20}",
+                          title: "Must be between 6 and 20 characters long",
+                        }}
                         required
                         fullWidth
                         name="username"
@@ -244,6 +255,9 @@ export default function RegisterPage() {
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
+                        inputProps={{
+                          type: "email",
+                        }}
                         required
                         fullWidth
                         id="email"
@@ -254,6 +268,11 @@ export default function RegisterPage() {
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
+                        inputProps={{
+                          pattern: "[a-zA-Z0-9]*[a-z]+[0-9]+[a-zA-Z0-9]*",
+                          title:
+                            "Must contain at least one lowercase letter, digit and be at least 8 characters long.",
+                        }}
                         required
                         fullWidth
                         name="password"
@@ -272,6 +291,7 @@ export default function RegisterPage() {
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
+                        required
                         labelId="country-label"
                         name="country"
                         id="country"

@@ -10,28 +10,23 @@ import logging
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
+from util import *
 
-
-class AuthController(Controller):
+class UserController(Controller):
     def __init__(self, app, db, bcrypt, jwt):
         super().__init__(app, db, jwt)
         self.bcrypt = bcrypt
 
-        self.app.add_url_rule("/register", view_func=self.register, methods=["POST"])
-        self.app.add_url_rule("/login", view_func=self.login, methods=["POST"]) 
-        self.app.add_url_rule("/logout", view_func=self.logout, methods=["POST", "GET"]) 
-        self.app.add_url_rule("/api/countries", view_func = self.countries, methods =["GET"])
+        self.app.add_url_rule("/api/changeInformation", view_func=self.changeInformation, methods=["POST"])
+        self.app.add_url_rule("/api/getInformation", view_func=self.getMoreInfo, methods=["GET"])
 
 
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
-        self.REGISTER_REQUIRED_FIELDS = ["email", "username", "password", "roleId", "countryCode"]
-        self.LOGIN_REQUIRED_FIELDS = ["email", "username", "password", "roleId", "profileImage", "countryCode"]
-        self.username_range = (6,20)
         
-    def register(self):
+    def changeInformation(self):
         data = request.get_json()
-        result = self.testRegForm(data)
+        result = self.testChangeForm(data)
         
         if result == "OK":
             roleId = data["roleId"]
@@ -42,64 +37,49 @@ class AuthController(Controller):
             self.db.session.add(newAcc)
             self.db.session.commit()
             
-            if roleId == 0:
+            if roleId == "0":
                 newVisitor = Visitor(f["firstName"], f["lastName"], newAcc.accountId)
                 self.db.session.add(newVisitor)
                 
-            elif roleId == 1:
+            elif roleId == "1":
                 newOrganizer = Organizer(f["organizerName"], newAcc.accountId)
                 self.db.session.add(newOrganizer)
             self.db.session.commit()
             return {"success": True, "data": "Registration successful."}
         
         return result
+    
+    @jwt_required()
+    def getMoreInfo(self):
+        claims = get_jwt()
+        r  = {}
+        if claims["roleId"] == 0:
+            r = self.db.session.query(Account,Visitor.firstName, Visitor.lastName).join(Visitor, Account.accountId == Visitor.accountId).filter(Account.username == get_jwt_identity()).first()
+            dict = r[0].__dict__
+            dict["firstName"] = r[1]
+            dict["lastName"] = r[2]
+        elif claims["roleId"] == 1:
+            r = self.db.session.query(Account, Organizer.organizerName, Organizer.hidden).join(Organizer, Account.accountId == Organizer.accountId).filter(Account.username == get_jwt_identity()).first()
+            dict = r[0].__dict__
+            dict["organiserName"] = r[1]
+            dict["hidden"] = str(r[2])
 
-
-    def login(self):
-        data = request.get_json()
-        result = self.testLoginForm(data)
-        
-        if result == "OK":
-            myUser = self.db.session.query(Account).filter_by(username=data["username"]).first()
-            userHashedPassword = myUser.passwordHash
-            isCorrect = self.bcrypt.check_password_hash(userHashedPassword, data["password"])
-            if (isCorrect):
-                
-                access_token = create_access_token(identity=myUser.username, additional_claims={"roleId":myUser.roleId})       
-                user = {
-                    "username": myUser.username,
-                    "email": myUser.eMail,
-                    "roleId": myUser.roleId,
-                    "countryCode": myUser.countryCode
-                }
-                
-                resp = {"success": True, "data": {"user":user, "access_token":access_token}}
-                #resp.set_cookie("username", myUser.username)
-                return resp
-            else:
-                return {"success": False, "data": "Wrong credentials."}
         else:
-            return result
-            
-    def logout(self):
-        response = {"success": True, "data": "Logout successful."}
-        
-        try:
-            unset_jwt_cookies(response)
-        except:
-            pass
-        return response
+            return {"success": True, "data": "Invalid role"}
+        print(r)
+        del dict['_sa_instance_state']
+        del dict['passwordHash']
+        del dict['accountId']
+        return {"success": True, "data": dict}
+
 
     
-    def testRegForm(self, form):
-        for k in self.REGISTER_REQUIRED_FIELDS:
-            if k not in form.keys():
-                return {"success": False, "data": f"{k} argument is missing!"}
+    def testChangeForm(self, form):
             
-        if form["roleId"] not in [0, 1]:
+        if "roleId" in form.keys() and form["roleId"] not in [0, 1]:
             return {"success":False, "data": "Illegal role id."}
         
-        if not re.match(self.email_regex, form["email"]):
+        if "email" in form.keys() and not re.match(self.email_regex, form["email"]):
             return {"success": False, "data": "Mail is of wrong format."}
         
         if not re.match(self.password_regex, form["password"]):

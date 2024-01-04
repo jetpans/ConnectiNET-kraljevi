@@ -30,6 +30,7 @@ export default function AccountPage() {
   const [editMode, setEditMode] = useState(false);
   const [countries, setCountries] = useState(null);
   const [countryCode, setCountryCode] = useState("");
+  const [hidden, setHidden] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL;
   const dc = new dataController();
@@ -78,12 +79,21 @@ export default function AccountPage() {
 
   const mainTheme = lightTheme;
 
+  const fetchUserData = async () => {
+    const accessToken = localStorage.getItem("jwt");
+    dc.GetData(API_URL + "/api/getInformation", accessToken).then((resp) => {
+      setUserData(resp.data.data);
+      setCountryCode(resp.data.data.countryCode);
+      setHidden(resp.data.data.hidden == "True");
+    });
+  };
   useEffect(() => {
     const accessToken = localStorage.getItem("jwt");
     if (accessToken == null) {
       navigate("/login");
     }
     fetchCountries();
+    fetchUserData();
   }, []);
 
   return (
@@ -154,7 +164,7 @@ export default function AccountPage() {
                         <TextField
                           inputProps={{
                             type: "email",
-                            placeholder: userData.email,
+                            value: userData.eMail,
                           }}
                           required
                           id="email"
@@ -164,7 +174,7 @@ export default function AccountPage() {
                           autoComplete="email"
                         />
                       ) : (
-                        <TableCell>{userData.email}</TableCell>
+                        <TableCell>{userData.eMail}</TableCell>
                       )}
                     </TableRow>
                     <TableRow>
@@ -175,13 +185,14 @@ export default function AccountPage() {
                           labelId="country-label"
                           name="country"
                           id="country"
-                          value={countryCode}
+                          inputProps={{ value: countryCode }}
                           label="Country"
                           fullWidth
+                          value={countryCode}
                           onChange={(event) =>
                             setCountryCode(event.target.value)
                           }
-                          placeholder="Country"
+                          placeholder={countryCode}
                           select
                         >
                           {countries != null ? (
@@ -211,6 +222,7 @@ export default function AccountPage() {
                               inputProps={{
                                 pattern: "[A-Za-z]+",
                                 title: "Must contain only letters.",
+                                value: userData.organiserName,
                               }}
                               fullWidth
                               autoComplete="organizer-name"
@@ -221,12 +233,32 @@ export default function AccountPage() {
                               autoFocus
                             />
                           ) : (
-                            <TableCell>{userData.username}</TableCell>
+                            <TableCell>{userData.organiserName}</TableCell>
                           )}
                         </TableRow>
                         <TableRow>
                           <TableCell>Hidden profile</TableCell>
-                          <TableCell>{userData.countryCode}</TableCell>
+                          {editMode ? (
+                            <TextField
+                              required
+                              name="hidden"
+                              id="hidden"
+                              inputProps={{ value: hidden }}
+                              label="Hide"
+                              fullWidth
+                              value={hidden}
+                              onChange={(event) =>
+                                setHidden(event.target.value)
+                              }
+                              placeholder={hidden}
+                              select
+                            >
+                              <MenuItem value={true}>True</MenuItem>
+                              <MenuItem value={false}>False</MenuItem>
+                            </TextField>
+                          ) : (
+                            <TableCell>{userData.hidden}</TableCell>
+                          )}
                         </TableRow>
                       </>
                     ) : (
@@ -238,6 +270,7 @@ export default function AccountPage() {
                               inputProps={{
                                 pattern: "[A-Za-z]+",
                                 title: "Must contain only letters.",
+                                value: userData.firstName,
                               }}
                               autoComplete="first-name"
                               name="firstName"
@@ -248,7 +281,7 @@ export default function AccountPage() {
                               autoFocus
                             />
                           ) : (
-                            <TableCell>{userData.username}</TableCell>
+                            <TableCell>{userData.firstName}</TableCell>
                           )}
                         </TableRow>
                         <TableRow>
@@ -258,6 +291,7 @@ export default function AccountPage() {
                               inputProps={{
                                 pattern: "[A-Za-z]+",
                                 title: "Must contain only letters.",
+                                value: userData.lastName,
                               }}
                               required
                               fullWidth
@@ -267,7 +301,7 @@ export default function AccountPage() {
                               autoComplete="family-name"
                             />
                           ) : (
-                            <TableCell>{userData.countryCode}</TableCell>
+                            <TableCell>{userData.lastName}</TableCell>
                           )}
                         </TableRow>
 

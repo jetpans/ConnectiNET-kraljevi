@@ -12,8 +12,8 @@ class ImageController(Controller):
     def __init__(self, app, db,jwt):
         super().__init__(app, db, jwt)
 
-        self.app.add_url_rule("/user/upload", view_func=self.upload_image, methods=["POST"])
-        self.app.add_url_rule("/user/fetch", view_func = self.fetch_image, methods= ["GET"])
+        self.app.add_url_rule("/api/upload", view_func=self.upload_image, methods=["POST"])
+        self.app.add_url_rule("/api/image/<image_name>", view_func = self.fetch_image, methods= ["GET"])
         
     # @visitor_required()
     def upload_image(self):
@@ -33,11 +33,18 @@ class ImageController(Controller):
         return jsonify({'success': False, 'error': 'No image data received'})    
     
     # @visitor_required()
-    def fetch_image(self):
+    def fetch_image(self, image_name):
         print("Image is being fetched!")
-        image_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] , "image-demo.png")
-        try:
-            return send_file(image_path, mimetype='image/png')  # Adjust mimetype based on your image type
-        except Exception as e:
-            return str(e)
+        image_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] ,image_name)
+        if os.path.isfile(image_path):
+            try:
+                return send_file(image_path, mimetype='image/png')  # Adjust mimetype based on your image type
+            except Exception as e:
+                return str(e)
+        else:
+            placeholder_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] ,"placeholder.png")
+            try:
+                return send_file(placeholder_path, mimetype='image/png')  # Adjust mimetype based on your image type
+            except Exception as e:
+                return str(e)
         

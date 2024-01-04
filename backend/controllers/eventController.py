@@ -17,7 +17,7 @@ class EventController(Controller):
         
     
     
-    #@visitor_required()
+    @visitor_required()
     def getEvents(self):
         # if getRole(self.auth_users) not in [-1,1,0]:
         #     return {"success": False, "data": "Authentication required"}

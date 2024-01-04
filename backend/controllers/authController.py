@@ -40,11 +40,11 @@ class AuthController(Controller):
             self.db.session.add(newAcc)
             self.db.session.commit()
             
-            if roleId == "0":
+            print(f"role id {roleId}")
+            if roleId == 0:
                 newVisitor = Visitor(f["firstName"], f["lastName"], newAcc.accountId)
                 self.db.session.add(newVisitor)
-                
-            elif roleId == "1":
+            elif roleId == 1:
                 newOrganizer = Organizer(f["organizerName"], newAcc.accountId)
                 self.db.session.add(newOrganizer)
             self.db.session.commit()

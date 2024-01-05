@@ -17,7 +17,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
@@ -25,11 +25,12 @@ import { useState, useContext, useEffect } from "react";
 import { Block, Pattern } from "@mui/icons-material";
 
 export default function SubscribePage(props) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const dc = new dataController();
   const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const accessToken = localStorage.getItem("jwt");
-  /*
+
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("user"))
   );
@@ -38,8 +39,8 @@ export default function SubscribePage(props) {
     isSubscribed: "True",
     startDate: "",
     expireDate: "",
-  }); */
-  const dateData = true;
+  });
+
   const handleClickCard = (event) => {
     const kartica = document.getElementById("kartica");
     const opcija = document.getElementById("opcija");
@@ -60,40 +61,45 @@ export default function SubscribePage(props) {
     const data = new FormData(event.currentTarget);
 
     const payDataCard = {
+      method: "card",
       cardNumber: data.get("card_number"),
       cardDate: data.get("card_date"),
       cvv: data.get("cvv"),
     };
     console.log(payDataCard);
     const dc = new dataController();
+    if (dateData.isSubscribed == "True") {
+      dc.PostData(API_URL + "/api/extendSubscribe", payDataCard, accessToken)
+        .then((resp) => {
+          if (resp.success == true && resp.data.success === true) {
+            navigate(0);
 
-   
-    dc.PostData(API_URL + "/subscribe", payDataCard)
-      .then((resp) => {
-        if (resp.success === true && resp.data.success === true) {
-          // console.log('Success!');
-          // todo: add "token": resp.data.token
-          // updateCard({
-          // "cardNumber": payDataCard.cardNumber,
-          // "cardDate": payDataCard.cardDate,
-          // "cvv": payDataCard.cvv,
-          
-          // });
-          alert("Registration successful! Please log in.");
-          navigate("/subscribe");
-        }/* else {
-          // console.log('Error!');
-          // console.log(resp.data);
-          if (resp.data.data === "Username already in use.") {
-            alert("Registration unsuccessful. Username already exists.");
-            return;
+            alert("Payment successful");
+          } else if (resp.success == true && resp.data.success == false) {
+            alert(resp.data.message);
+          } else {
+            alert("Failed");
           }
-          alert("Registration unsuccessful. " + resp.data.data);
-        }*/
-      })
-      .catch((resp) => {
-        alert("Registration unsuccessful. " + resp.data.data);
-      });
+        })
+        .catch((resp) => {
+          alert("Failed.");
+        });
+    } else {
+      dc.PostData(API_URL + "/api/subscribe", payDataCard, accessToken)
+        .then((resp) => {
+          if (resp.success == true && resp.data.success === true) {
+            alert("Payment successful");
+            navigate(0);
+          } else if (resp.success == true && resp.data.success == false) {
+            alert(resp.data.message);
+          } else {
+            alert("Failed");
+          }
+        })
+        .catch((resp) => {
+          alert("Failed.");
+        });
+    }
   };
 
   const handleSubmitPayPal = (event) => {
@@ -102,41 +108,64 @@ export default function SubscribePage(props) {
     const data = new FormData(event.currentTarget);
 
     const payDataPayPal = {
+      method: "paypal",
       payPalUsername: data.get("paypal_username"),
       payPalPassword: data.get("paypal_password"),
-      cvv: data.get("cvv"),
     };
     console.log(payDataPayPal);
     const dc = new dataController();
 
-   
-    dc.PostData(API_URL + "/subscribe", payDataPayPal)
+    if (dateData.isSubscribed) {
+      dc.PostData(API_URL + "/api/extendSubscribe", payDataPayPal, accessToken)
+        .then((resp) => {
+          if (resp.success == true && resp.data.success === true) {
+            navigate(0);
+
+            alert("Payment successful");
+          } else if (resp.success == true && resp.data.success == false) {
+            alert(resp.data.message);
+          } else {
+            alert("Failed");
+          }
+        })
+        .catch((resp) => {
+          alert("Failed.");
+        });
+    } else {
+      dc.PostData(API_URL + "/api/subscribe", payDataPayPal, accessToken)
+        .then((resp) => {
+          if (resp.success === true && resp.data.success === true) {
+            alert("Payment successful");
+            navigate(0);
+          } else if (resp.success === false) {
+            alert(resp.data.message);
+          } else {
+            alert("Failed");
+          }
+        })
+        .catch((resp) => {
+          alert("Failed.");
+        });
+    }
+  };
+
+  const handleCancelSubscription = (event) => {
+    dc.PostData(API_URL + "/api/unsubscribe", "", accessToken)
       .then((resp) => {
         if (resp.success === true && resp.data.success === true) {
-          // console.log('Success!');
-          // todo: add "token": resp.data.token
-          // updateCard({
-          // "payPalUsername": payDataPayPal.payPalUsername,
-          // "payPalPassword": payDataPayPal.payPalPassword,
-          
-          // });
-          alert("Registration successful! Please log in.");
-          navigate("/subscribe");
-        }/* else {
-          // console.log('Error!');
-          // console.log(resp.data);
-          if (resp.data.data === "Username already in use.") {
-            alert("Registration unsuccessful. Username already exists.");
-            return;
-          }
-          alert("Registration unsuccessful. " + resp.data.data);
-        }*/
+          alert("Successfuly canceled subscription.");
+          navigate(0);
+        } else if (resp.success === false) {
+          alert(resp.data.message);
+        } else {
+          alert("Failed.");
+        }
       })
       .catch((resp) => {
-        alert("Registration unsuccessful. " + resp.data.data);
+        alert("Failed.");
       });
   };
-  /*
+
   const fetchData = async () => {
     dc.GetData(
       API_URL + "/api/getSubscriberInfo",
@@ -148,12 +177,13 @@ export default function SubscribePage(props) {
   };
 
   useEffect(() => {
+    setDialogOpen(false);
     if (accessToken === null) {
       navigate("/login");
     } else {
       fetchData();
     }
-  }, []);*/
+  }, [navigate]);
   return (
     <div
       style={{
@@ -162,7 +192,7 @@ export default function SubscribePage(props) {
         alignItems: "center",
       }}
     >
-      {dateData /*.isSubscribed */ ? (
+      {dateData.isSubscribed ? (
         <Card
           variant="outlined"
           sx={{ width: 345, minHeight: "350px", marginTop: "25vh" }}
@@ -181,7 +211,7 @@ export default function SubscribePage(props) {
               component="div"
               sx={{ marginBottom: "45px" }}
             >
-              Welcome {/*userData.username*/}
+              Welcome {userData.username}
             </Typography>
 
             <Typography
@@ -189,14 +219,13 @@ export default function SubscribePage(props) {
               color="text.secondary"
               sx={{ marginBottom: "15px" }}
             >
-              Subscription status: Subscribed
-              {/*dateData.isSubscribed === "True"
+              Subscription status:
+              {dateData.isSubscribed === "True"
                 ? "Subscribed"
-          : "Nije pretplaćen"*/}
+                : "Nije pretplaćen"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Subscribed from {/*dateData.startDate*/} to{" "}
-              {/*dateData.expireDate*/}
+              Subscribed from {dateData.startDate} to {dateData.expireDate}
             </Typography>
           </CardContent>
 
@@ -207,8 +236,12 @@ export default function SubscribePage(props) {
               marginTop: "20px",
             }}
           >
-            <Button size="small">Cancle subscription</Button>
-            <Button size="small">Change payment</Button>
+            <Button size="small" onClick={() => handleCancelSubscription()}>
+              Cancel subscription
+            </Button>
+            <Button size="small" onClick={() => setDialogOpen(true)}>
+              Extend subscription
+            </Button>
           </CardActions>
         </Card>
       ) : (
@@ -230,7 +263,7 @@ export default function SubscribePage(props) {
               component="div"
               sx={{ marginBottom: "45px" }}
             >
-              Welcome {/*userData.username*/}
+              Welcome {userData.username}
             </Typography>
 
             <Typography
@@ -252,48 +285,59 @@ export default function SubscribePage(props) {
               marginTop: "20px",
             }}
           >
-            <Button size="small">Subscribe</Button>
+            <Button
+              size="small"
+              onClick={() => {
+                setDialogOpen(true);
+              }}
+            >
+              Subscribe
+            </Button>
           </CardActions>
         </Card>
       )}
-      <Card
-        id="opcija"
-        variant="outlined"
-        sx={{ width: 345, minHeight: "350px", marginTop: "25vh" }}
-      >
-        <CardContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "30px",
-          }}
+      {dialogOpen ? (
+        <Card
+          id="opcija"
+          variant="outlined"
+          sx={{ width: 345, minHeight: "350px", marginTop: "25vh" }}
         >
-          <Typography
-            gutterBottom
-            variant="h5"
-            component="div"
-            sx={{ marginBottom: "45px" }}
+          <CardContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "30px",
+            }}
           >
-            Choose a payment option
-          </Typography>
-        </CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              sx={{ marginBottom: "45px" }}
+            >
+              Choose a payment option
+            </Typography>
+          </CardContent>
 
-        <CardActions
-          sx={{
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "20px",
-          }}
-        >
-          <Button onClick={handleClickCard} size="small">
-            Pay by card
-          </Button>
-          <Button onClick={handleClickPayPal} size="small">
-            Pay with PayPal
-          </Button>
-        </CardActions>
-      </Card>
+          <CardActions
+            sx={{
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button onClick={handleClickCard} size="small">
+              Pay by card
+            </Button>
+            <Button onClick={handleClickPayPal} size="small">
+              Pay with PayPal
+            </Button>
+          </CardActions>
+        </Card>
+      ) : (
+        <></>
+      )}
       <Card
         id="kartica"
         variant="outlined"

@@ -22,14 +22,14 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 import { useState, useContext, useEffect } from "react";
-import { Block } from "@mui/icons-material";
+import { Block, Pattern } from "@mui/icons-material";
 
 export default function SubscribePage(props) {
   const dc = new dataController();
   const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const accessToken = localStorage.getItem("jwt");
-
+  /*
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("user"))
   );
@@ -38,8 +38,8 @@ export default function SubscribePage(props) {
     isSubscribed: "True",
     startDate: "",
     expireDate: "",
-  });
-
+  }); */
+  const dateData = true;
   const handleClickCard = (event) => {
     const kartica = document.getElementById("kartica");
     const opcija = document.getElementById("opcija");
@@ -54,6 +54,89 @@ export default function SubscribePage(props) {
     opcija.style.display = "none";
   };
 
+  const handleSubmitCard = (event) => {
+    event.preventDefault();
+    console.log("bok");
+    const data = new FormData(event.currentTarget);
+
+    const payDataCard = {
+      cardNumber: data.get("card_number"),
+      cardDate: data.get("card_date"),
+      cvv: data.get("cvv"),
+    };
+    console.log(payDataCard);
+    const dc = new dataController();
+
+   
+    dc.PostData(API_URL + "/subscribe", payDataCard)
+      .then((resp) => {
+        if (resp.success === true && resp.data.success === true) {
+          // console.log('Success!');
+          // todo: add "token": resp.data.token
+          // updateCard({
+          // "cardNumber": payDataCard.cardNumber,
+          // "cardDate": payDataCard.cardDate,
+          // "cvv": payDataCard.cvv,
+          
+          // });
+          alert("Registration successful! Please log in.");
+          navigate("/subscribe");
+        }/* else {
+          // console.log('Error!');
+          // console.log(resp.data);
+          if (resp.data.data === "Username already in use.") {
+            alert("Registration unsuccessful. Username already exists.");
+            return;
+          }
+          alert("Registration unsuccessful. " + resp.data.data);
+        }*/
+      })
+      .catch((resp) => {
+        alert("Registration unsuccessful. " + resp.data.data);
+      });
+  };
+
+  const handleSubmitPayPal = (event) => {
+    event.preventDefault();
+    console.log("bok");
+    const data = new FormData(event.currentTarget);
+
+    const payDataPayPal = {
+      payPalUsername: data.get("paypal_username"),
+      payPalPassword: data.get("paypal_password"),
+      cvv: data.get("cvv"),
+    };
+    console.log(payDataPayPal);
+    const dc = new dataController();
+
+   
+    dc.PostData(API_URL + "/subscribe", payDataPayPal)
+      .then((resp) => {
+        if (resp.success === true && resp.data.success === true) {
+          // console.log('Success!');
+          // todo: add "token": resp.data.token
+          // updateCard({
+          // "payPalUsername": payDataPayPal.payPalUsername,
+          // "payPalPassword": payDataPayPal.payPalPassword,
+          
+          // });
+          alert("Registration successful! Please log in.");
+          navigate("/subscribe");
+        }/* else {
+          // console.log('Error!');
+          // console.log(resp.data);
+          if (resp.data.data === "Username already in use.") {
+            alert("Registration unsuccessful. Username already exists.");
+            return;
+          }
+          alert("Registration unsuccessful. " + resp.data.data);
+        }*/
+      })
+      .catch((resp) => {
+        alert("Registration unsuccessful. " + resp.data.data);
+      });
+  };
+  /*
   const fetchData = async () => {
     dc.GetData(
       API_URL + "/api/getSubscriberInfo",
@@ -70,7 +153,7 @@ export default function SubscribePage(props) {
     } else {
       fetchData();
     }
-  }, []);
+  }, []);*/
   return (
     <div
       style={{
@@ -79,7 +162,7 @@ export default function SubscribePage(props) {
         alignItems: "center",
       }}
     >
-      {dateData.isSubscribed ? (
+      {dateData /*.isSubscribed */ ? (
         <Card
           variant="outlined"
           sx={{ width: 345, minHeight: "350px", marginTop: "25vh" }}
@@ -98,7 +181,7 @@ export default function SubscribePage(props) {
               component="div"
               sx={{ marginBottom: "45px" }}
             >
-              Dobrodošao {userData.username}
+              Welcome {/*userData.username*/}
             </Typography>
 
             <Typography
@@ -106,13 +189,14 @@ export default function SubscribePage(props) {
               color="text.secondary"
               sx={{ marginBottom: "15px" }}
             >
-              Stanje pretplaćenosti:{" "}
-              {dateData.isSubscribed === "True"
-                ? "Pretplaćen"
-                : "Nije pretplaćen"}
+              Subscription status: Subscribed
+              {/*dateData.isSubscribed === "True"
+                ? "Subscribed"
+          : "Nije pretplaćen"*/}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Pretplaćen od {dateData.startDate} do {dateData.expireDate}
+              Subscribed from {/*dateData.startDate*/} to{" "}
+              {/*dateData.expireDate*/}
             </Typography>
           </CardContent>
 
@@ -123,8 +207,8 @@ export default function SubscribePage(props) {
               marginTop: "20px",
             }}
           >
-            <Button size="small">Otkaži pretplatu</Button>
-            <Button size="small">Promjeni plaćanje</Button>
+            <Button size="small">Cancle subscription</Button>
+            <Button size="small">Change payment</Button>
           </CardActions>
         </Card>
       ) : (
@@ -146,7 +230,7 @@ export default function SubscribePage(props) {
               component="div"
               sx={{ marginBottom: "45px" }}
             >
-              Dobrodošao {userData.username}
+              Welcome {/*userData.username*/}
             </Typography>
 
             <Typography
@@ -154,10 +238,10 @@ export default function SubscribePage(props) {
               color="text.secondary"
               sx={{ marginBottom: "15px" }}
             >
-              Stanje pretplaćenosti: Nema pretplatu
+              Subscription status: Not subscribed
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Cijena: 10$/mth
+              Price: 10$/mth
             </Typography>
           </CardContent>
 
@@ -168,7 +252,7 @@ export default function SubscribePage(props) {
               marginTop: "20px",
             }}
           >
-            <Button size="small">Pretplati se</Button>
+            <Button size="small">Subscribe</Button>
           </CardActions>
         </Card>
       )}
@@ -191,7 +275,7 @@ export default function SubscribePage(props) {
             component="div"
             sx={{ marginBottom: "45px" }}
           >
-            Odaberite opciju plaćanja
+            Choose a payment option
           </Typography>
         </CardContent>
 
@@ -203,10 +287,10 @@ export default function SubscribePage(props) {
           }}
         >
           <Button onClick={handleClickCard} size="small">
-            Plati karticom
+            Pay by card
           </Button>
           <Button onClick={handleClickPayPal} size="small">
-            Plati pay-palom
+            Pay with PayPal
           </Button>
         </CardActions>
       </Card>
@@ -234,31 +318,70 @@ export default function SubscribePage(props) {
             component="div"
             sx={{ marginBottom: "45px" }}
           >
-            Plaćanje katicom
+            Payment by card
           </Typography>
-
-          <TextField
-            id="outlined-textarea"
-            label="Card number"
-            placeholder="xxxxxxxxxxxxxxx"
-            sx={{ marginBottom: "10px" }}
-          />
-          <TextField
-            id="outlined-textarea"
-            label="Card date"
-            placeholder="xx/xx"
-          />
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmitCard}
+            sx={{
+              mt: 3,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <TextField
+              id="card_number"
+              name="card_number"
+              required
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                maxLength: 16,
+              }}
+              label="Card number"
+              placeholder="xxxxxxxxxxxxxxx"
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              required
+              id="card_date"
+              name="card_date"
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "",
+                maxLength: 5,
+              }}
+              label="Card date"
+              placeholder="MM/YY"
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              required
+              id="cvv"
+              name="cvv"
+              label="Cvv"
+              placeholder="xxx"
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                maxLength: 3,
+              }}
+            />
+            <CardActions
+              sx={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "5px",
+              }}
+            >
+              <Button size="small" type="submit">
+                Confirm transaction
+              </Button>
+            </CardActions>
+          </Box>
         </CardContent>
-
-        <CardActions
-          sx={{
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "5px",
-          }}
-        >
-          <Button size="small">Plati</Button>
-        </CardActions>
       </Card>
       <Card
         id="paypal"
@@ -275,6 +398,7 @@ export default function SubscribePage(props) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
             marginTop: "30px",
           }}
         >
@@ -284,26 +408,48 @@ export default function SubscribePage(props) {
             component="div"
             sx={{ marginBottom: "45px" }}
           >
-            Plaćanje pay-palom
+            Payment by PayPal
           </Typography>
-
-          <TextField
-            id="outlined-textarea"
-            label="Paypal username"
-            placeholder="Enter paypal username"
-            sx={{ marginBottom: "10px" }}
-          />
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmitPayPal}
+            sx={{
+              mt: 3,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <TextField
+              id="paypal_username"
+              name="paypal_username"
+              label="Paypal username"
+              type="email"
+              placeholder="Enter paypal username"
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              id="paypal_password"
+              name="paypal_password"
+              label="Paypal password"
+              placeholder="Enter paypal password"
+              type="password"
+              sx={{ marginBottom: "10px" }}
+            />
+            <CardActions
+              sx={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "5px",
+              }}
+            >
+              <Button size="small" type="submit">
+                Confirm transaction
+              </Button>
+            </CardActions>
+          </Box>
         </CardContent>
-
-        <CardActions
-          sx={{
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "5px",
-          }}
-        >
-          <Button size="small">Plati</Button>
-        </CardActions>
       </Card>
     </div>
   );

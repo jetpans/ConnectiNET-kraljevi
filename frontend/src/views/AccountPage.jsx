@@ -206,7 +206,6 @@ export default function AccountPage() {
                           defaultValue={userData.eMail}
                           id="email"
                           fullWidth
-                          label="Email Address"
                           name="email"
                           autoComplete="email"
                         />
@@ -223,7 +222,6 @@ export default function AccountPage() {
                           name="country"
                           id="country"
                           inputProps={{ value: countryCode }}
-                          label="Country"
                           fullWidth
                           value={countryCode}
                           onChange={(event) =>
@@ -267,7 +265,6 @@ export default function AccountPage() {
                               name="organizerName"
                               required
                               id="organizerName"
-                              label="Organizer Name"
                               autoFocus
                             />
                           ) : (
@@ -282,7 +279,6 @@ export default function AccountPage() {
                               name="hidden"
                               id="hidden"
                               inputProps={{ value: hidden }}
-                              label="Hide"
                               fullWidth
                               value={hidden}
                               onChange={(event) =>
@@ -315,7 +311,6 @@ export default function AccountPage() {
                               required
                               fullWidth
                               id="firstName"
-                              label="First Name"
                               autoFocus
                             />
                           ) : (
@@ -334,7 +329,6 @@ export default function AccountPage() {
                               required
                               fullWidth
                               id="lastName"
-                              label="Last Name"
                               name="lastName"
                               autoComplete="family-name"
                             />
@@ -354,7 +348,6 @@ export default function AccountPage() {
                               }}
                               fullWidth
                               name="password"
-                              label="Password"
                               type={"password"}
                               id="password"
                               autoComplete="new-password"

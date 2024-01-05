@@ -11,6 +11,8 @@ from models import Account, Visitor, Organizer, Event, Review, Payment, Subscrip
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from util import *
+import os
+
 
 class UserController(Controller):
     def __init__(self, app, db, bcrypt, jwt):
@@ -24,32 +26,46 @@ class UserController(Controller):
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
         
+    @visitor_required()
     def changeInformation(self):
         data = request.get_json()
+        print(f"recieved {data}")
         result = self.testChangeForm(data)
-        
-        if result == "OK":
-            roleId = data["roleId"]
-            passwordHash = self.bcrypt.generate_password_hash(data["password"]).decode("utf-8")
-            f = data
+        print(f"result {result}")
 
-            newAcc = Account(f["roleId"],f["username"], passwordHash, f["email"], f["countryCode"])
-            self.db.session.add(newAcc)
-            self.db.session.commit()
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+        myOrganiser = self.db.session.query(Organizer).filter(Organizer.accountId == myUser.accountId).first()
+        myVisitor = self.db.session.query(Visitor).filter(Visitor.accountId == myUser.accountId).first()
+        if result == "OK":
+            temp_image_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] , "temp_"+get_jwt_identity()+".png")
+            profile_image_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] , get_jwt_identity()+".png")
+            if os.path.isfile(temp_image_path):
+                myUser.profileImage = get_jwt_identity()+".png"
+                if os.path.exists(profile_image_path):
+                    os.remove(profile_image_path)
+                os.rename(temp_image_path, profile_image_path)
             
-            if roleId == "0":
-                newVisitor = Visitor(f["firstName"], f["lastName"], newAcc.accountId)
-                self.db.session.add(newVisitor)
-                
-            elif roleId == "1":
-                newOrganizer = Organizer(f["organizerName"], newAcc.accountId)
-                self.db.session.add(newOrganizer)
+            roleId = get_jwt()["roleId"]
+            if data["password"] != None and len(data["password"])>0:
+                passwordHash = self.bcrypt.generate_password_hash(data["password"]).decode("utf-8")
+                myUser.passwordHash = passwordHash
+            f = data
+            
+            myUser.eMail =  f["email"]
+            myUser.countryCode = f["countryCode"]
+            
+            if roleId == 0:
+                myVisitor.firstName = f["firstName"]
+                myVisitor.lastName = f["lastName"]
+            elif roleId == 1:
+                myOrganiser.organizerName = f["organizerName"]
+                myOrganiser.hidden = f["hidden"]
             self.db.session.commit()
-            return {"success": True, "data": "Registration successful."}
+            return {"success": True, "data": "Changed data successfuly"}
         
-        return result
+        return {"success": False, "message": "Something is wrong with form."}
     
-    @jwt_required()
+    @visitor_required()
     def getMoreInfo(self):
         claims = get_jwt()
         r  = {}
@@ -82,11 +98,10 @@ class UserController(Controller):
         if "email" in form.keys() and not re.match(self.email_regex, form["email"]):
             return {"success": False, "data": "Mail is of wrong format."}
         
-        if not re.match(self.password_regex, form["password"]):
+        if (form["password"] != None and len(form["password"]) > 0 )and not re.match(self.password_regex, form["password"]):
             return {"success": False, "data": "Password is bad."}
         
-        if len(form["username"]) < self.username_range[0] or len(form["username"]) > self.username_range[1]:
-            return {"success": False, "data": "Username is too short or too long."}
+        form["roleId"] = get_jwt()["roleId"]
         
         if form["roleId"] == 0:
             if "firstName" not in form.keys() or "lastName" not in form.keys():
@@ -98,9 +113,7 @@ class UserController(Controller):
             
         if form["countryCode"] not in list(map(lambda x: x[0], self.db.session.query(Country.countryCode).all())):
             return {"success": False, "data": "Invalid country code."}
-        
-        if form["username"] in list(map(lambda x: x[0] , self.db.session.query(Account.username).all())):
-            return {"success": False, "data": "Username already in use."}
+
         
         return "OK"
         

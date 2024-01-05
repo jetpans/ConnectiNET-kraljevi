@@ -31,20 +31,20 @@ export default function AccountPage() {
   const [countries, setCountries] = useState(null);
   const [countryCode, setCountryCode] = useState("");
   const [hidden, setHidden] = useState(false);
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
 
   const API_URL = process.env.REACT_APP_API_URL;
   const dc = new dataController();
   const navigate = useNavigate();
-
+  const accessToken = localStorage.getItem("jwt");
   const fetchCountries = async () => {
     await dc
       .GetData(API_URL + "/api/countries")
       .then((resp) => setCountries(resp.data.data));
   };
 
-  const [userData, setUserData] = useState(
-    JSON.parse(localStorage.getItem("user"))
-  );
   const lightTheme = createTheme({
     palette: {
       primary: {
@@ -79,9 +79,40 @@ export default function AccountPage() {
 
   const mainTheme = lightTheme;
 
+  const handleSubmitChange = (event) => {
+    event.preventDefault();
+
+    const data = new FormData(event.currentTarget);
+
+    const loginData = {
+      email: data.get("email"),
+      password: data.get("password"),
+      countryCode: data.get("country"),
+      roleId: data.get("role") === "Organizer" ? 1 : 0,
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      organizerName: data.get("organizerName"),
+      hidden: data.get("hidden"),
+    };
+
+    dc.PostData(API_URL + "/api/changeInformation", loginData, accessToken)
+      .then((resp) => {
+        if (resp.success === true && resp.data.success === true) {
+          alert("Change successful!");
+          navigate(0);
+        } else {
+          alert("Change unsuccessful. " + resp.data);
+        }
+      })
+      .catch((resp) => {
+        alert("Change unsuccessful. " + resp.data);
+      });
+  };
+
   const fetchUserData = async () => {
     const accessToken = localStorage.getItem("jwt");
     dc.GetData(API_URL + "/api/getInformation", accessToken).then((resp) => {
+      console.log(resp.data.data);
       setUserData(resp.data.data);
       setCountryCode(resp.data.data.countryCode);
       setHidden(resp.data.data.hidden == "True");
@@ -113,12 +144,18 @@ export default function AccountPage() {
         <TableContainer
           sx={{
             bgcolor: mainTheme.background.default,
+            padding: "2rem 20rem",
           }}
         >
           <Table aria-label="user-data-table" component={Paper}>
             <TableBody>
               <TableCell>
-                <Table style={{ tableLayout: "fixed" }}>
+                <Table
+                  style={{ tableLayout: "fixed" }}
+                  component="form"
+                  onSubmit={handleSubmitChange}
+                  id="edit-form"
+                >
                   <TableBody>
                     <TableRow>
                       <TableCell
@@ -164,9 +201,9 @@ export default function AccountPage() {
                         <TextField
                           inputProps={{
                             type: "email",
-                            value: userData.eMail,
                           }}
                           required
+                          defaultValue={userData.eMail}
                           id="email"
                           fullWidth
                           label="Email Address"
@@ -192,6 +229,7 @@ export default function AccountPage() {
                           onChange={(event) =>
                             setCountryCode(event.target.value)
                           }
+                          defaultValue={countryCode}
                           placeholder={countryCode}
                           select
                         >
@@ -222,8 +260,8 @@ export default function AccountPage() {
                               inputProps={{
                                 pattern: "[A-Za-z]+",
                                 title: "Must contain only letters.",
-                                value: userData.organiserName,
                               }}
+                              defaultValue={userData.organiserName}
                               fullWidth
                               autoComplete="organizer-name"
                               name="organizerName"
@@ -270,9 +308,9 @@ export default function AccountPage() {
                               inputProps={{
                                 pattern: "[A-Za-z]+",
                                 title: "Must contain only letters.",
-                                value: userData.firstName,
                               }}
                               autoComplete="first-name"
+                              defaultValue={userData.firstName}
                               name="firstName"
                               required
                               fullWidth
@@ -291,8 +329,8 @@ export default function AccountPage() {
                               inputProps={{
                                 pattern: "[A-Za-z]+",
                                 title: "Must contain only letters.",
-                                value: userData.lastName,
                               }}
+                              defaultValue={userData.lastName}
                               required
                               fullWidth
                               id="lastName"
@@ -314,7 +352,6 @@ export default function AccountPage() {
                                 title:
                                   "Must contain at least one lowercase letter, digit and be at least 8 characters long.",
                               }}
-                              required
                               fullWidth
                               name="password"
                               label="Password"
@@ -328,35 +365,51 @@ export default function AccountPage() {
                         </TableRow>
                       </>
                     )}
+                    <TableRow>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          bgcolor: "green",
+                          margin: "1rem",
+                          opacity: editMode ? 1 : 0,
+                        }}
+                        type="submit"
+                        form="edit-form"
+                      >
+                        Save changes
+                      </Button>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </TableCell>
-              <TableCell style={{ width: "30%" }}>
+              <TableCell
+                style={{
+                  width: "200px",
+                  display: "grid",
+                }}
+              >
                 <Typography component="h4" variant="h5">
                   Current profile image
                 </Typography>
                 <UserUploadedImage
-                  style={{ border: "1px solid black" }}
-                  src="/image-demso.png"
+                  style={{
+                    border: "1px solid black",
+                  }}
+                  src={"/" + userData.profileImage}
                 ></UserUploadedImage>
-                <Typography component="h4" variant="h5">
-                  Upload new profile image
-                </Typography>
-                <ImageUploadButton></ImageUploadButton>
+
+                {editMode ? (
+                  <>
+                    <Typography component="h4" variant="h5">
+                      Upload new profile image
+                    </Typography>
+                    <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
+                  </>
+                ) : (
+                  <></>
+                )}
               </TableCell>
             </TableBody>
-            <TableRow>
-              <Button
-                variant="contained"
-                sx={{
-                  bgcolor: "green",
-                  margin: "1rem",
-                  opacity: editMode ? 1 : 0,
-                }}
-              >
-                Save changes
-              </Button>
-            </TableRow>
           </Table>
         </TableContainer>
 

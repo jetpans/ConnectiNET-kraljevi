@@ -59,7 +59,7 @@ class UserController(Controller):
                 myVisitor.lastName = f["lastName"]
             elif roleId == 1:
                 myOrganiser.organizerName = f["organizerName"]
-                myOrganiser.hidden = f["hidden"]
+                myOrganiser.hidden = f["hidden"] == "true"
             self.db.session.commit()
             return {"success": True, "data": "Changed data successfuly"}
         

@@ -10,6 +10,7 @@ import logging
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
+from datetime import timedelta
 
 
 class AuthController(Controller):
@@ -19,8 +20,10 @@ class AuthController(Controller):
 
         self.app.add_url_rule("/register", view_func=self.register, methods=["POST"])
         self.app.add_url_rule("/login", view_func=self.login, methods=["POST"]) 
-        self.app.add_url_rule("/logout", view_func=self.logout, methods=["POST"]) 
-        
+        self.app.add_url_rule("/logout", view_func=self.logout, methods=["POST", "GET"]) 
+        self.app.add_url_rule("/api/countries", view_func = self.countries, methods =["GET"])
+
+
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
         self.REGISTER_REQUIRED_FIELDS = ["email", "username", "password", "roleId", "countryCode"]
@@ -63,7 +66,7 @@ class AuthController(Controller):
             isCorrect = self.bcrypt.check_password_hash(userHashedPassword, data["password"])
             if (isCorrect):
                 
-                access_token = create_access_token(identity=myUser.username, additional_claims={"roleId":myUser.roleId})       
+                access_token = create_access_token(identity=myUser.username, additional_claims={"roleId":myUser.roleId}, expires_delta=timedelta(hours=1))       
                 user = {
                     "username": myUser.username,
                     "email": myUser.eMail,
@@ -128,4 +131,15 @@ class AuthController(Controller):
         if form["username"] not in list(map(lambda x: x[0] , self.db.session.query(Account.username).all())):
             {"success": False, "data": "Wrong credentials."}
         return "OK"
+    
+    def countries(self):
+        
+        dbResp = self.db.session.query(Country).all() 
+        result_dict = [u.__dict__ for u in dbResp]
+        toList = list(map( lambda country:
+            {
+                "countryCode":country["countryCode"],
+                "name":country["name"],
+            }, result_dict))
+        return {"success":True, "data": toList}
 

@@ -4,7 +4,7 @@ import dataController from "../utils/DataController";
 import { Button, InputLabel, Chip } from "@mui/material";
 export default function ImageUploadButton(props) {
   const API_URL = process.env.REACT_APP_API_URL;
-
+  const accessToken = localStorage.getItem("jwt");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -36,14 +36,16 @@ export default function ImageUploadButton(props) {
     formData.append("image", selectedImage);
 
     try {
-      await dc.PostFile(API_URL + props.route, formData).then((resp) => {
-        // console.log("THIS:", resp.data);
-        if (resp.data.success === true) {
-          alert("Success");
-        } else {
-          alert("Fail");
-        }
-      });
+      await dc
+        .PostFile(API_URL + props.route, formData, accessToken)
+        .then((resp) => {
+          // console.log("THIS:", resp.data);
+          if (resp.data.success === true) {
+            alert("Success");
+          } else {
+            alert("Fail");
+          }
+        });
     } catch (e) {
       alert(e);
     }

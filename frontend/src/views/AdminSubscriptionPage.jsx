@@ -26,6 +26,8 @@ import {
 } from "@mui/base/Unstable_NumberInput";
 
 import { useState, useContext, useEffect } from "react";
+import MainHeader from "../ui/MainHeader.jsx";
+import MainFooter from "../ui/MainFooter";
 
 export default function AdminSubscription(props) {
   const [value, setValue] = React.useState();
@@ -237,23 +239,25 @@ export default function AdminSubscription(props) {
   return (
     <Box
       sx={{
-        my: 8,
-        mx: 4,
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
+        justifyContent: "space-between",
+        minHeight: "100vh",
+        width: "100vw",
+        bgcolor: "#f5f5f5",
       }}
     >
-      <Box
+      <MainHeader for="Subscription"></MainHeader>
+
+      <Paper
         sx={{
-          my: 8,
-          mx: 4,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          width: "65vw",
-          border: "2px solid #3399FF",
+          justifyContent: "center",
           borderRadius: "10px",
+          width: "60rem",
+          alignSelf: "center",
         }}
       >
         <Typography variant="h6" noWrap sx={{ marginTop: "15px" }}>
@@ -271,7 +275,8 @@ export default function AdminSubscription(props) {
           <Typography variant="h6" noWrap>
             Enter new subscription price:
           </Typography>
-          <NumberInput
+          <TextField
+            inputProps={{ type: "number", min: 0 }}
             aria-label="Demo number input"
             placeholder="Type a number…"
             value={value}
@@ -280,29 +285,9 @@ export default function AdminSubscription(props) {
           />
           <SvgButton>Button</SvgButton>
         </Box>
-      </Box>
-      <TableRow sx={{display:"flex", width:"65vw"}}>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-      </TableRow>
+      </Paper>
+
+      <MainFooter></MainFooter>
     </Box>
   );
 }

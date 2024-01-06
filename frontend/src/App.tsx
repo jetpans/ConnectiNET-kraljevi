@@ -7,7 +7,7 @@ import RegisterPage from "./views/RegisterPage";
 import UploadImagePageTemp from "./views/UploadImagePageTemp";
 import AccountPage from "./views/AccountPage";
 import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
-
+import AdminBrowseUsers from "./views/AdminBrowseUsers";
 
 export default function App() {
   return (
@@ -15,8 +15,11 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/events" element={<EventsPage />} />
-        <Route path="/adminsubscription" element={<AdminSubscriptionPage />} />
-    
+        <Route path="/admin/subscription" element={<AdminSubscriptionPage />} />
+        <Route
+          path="admin/browseUsers"
+          element={<AdminBrowseUsers></AdminBrowseUsers>}
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/temp" element={<UploadImagePageTemp />} />

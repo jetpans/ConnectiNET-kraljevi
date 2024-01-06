@@ -26,7 +26,15 @@ import { green, grey, indigo } from "@mui/material/colors";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
-  const tabs = ["Profile", "Events", "My Events", "Account", "Temp"];
+  const tabs = [
+    "Profile",
+    "Events",
+    "My Events",
+    "Account",
+    "Temp",
+    "Browse users",
+    "Payment",
+  ];
   const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -47,6 +55,12 @@ export default function MainHeader(props) {
         break;
       case "Events":
         navigate("/events");
+        break;
+      case "Browse users":
+        navigate("/admin/browseUsers");
+        break;
+      case "Payment":
+        navigate("/admin/subscription");
         break;
     }
   }

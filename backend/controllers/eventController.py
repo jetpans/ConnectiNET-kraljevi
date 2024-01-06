@@ -20,7 +20,7 @@ class EventController(Controller):
     def getEvents(self):
         # if getRole(self.auth_users) not in [-1,1,0]:
         #     return {"success": False, "data": "Authentication required"}
-   
+        
         dbResp = self.db.session.query(Event).all() 
         result_dict = [u.__dict__ for u in dbResp]
         toList = list(map( lambda event:
@@ -30,7 +30,8 @@ class EventController(Controller):
                 "image":event["displayImageSource"],
                 "description":event["description"],
                 "time":str(event["dateTime"]),
-                "priority":str(int(random.random()*50))
+                "priority":str(int(random.random()*50)),
+                "accountId":event["accountId"]
             }, result_dict))
         return {"success":True, "data": toList}
         

@@ -9,7 +9,6 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { green, grey, indigo } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Divider, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import EventCard from "../ui/EventCard";
@@ -19,6 +18,7 @@ import { useUser } from "../context/UserContext";
 
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
+import { useTheme } from "../context/ThemeContext";
 export default function EventsPage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -55,128 +55,95 @@ export default function EventsPage(props) {
     }
   }, []);
 
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
-
-  const mainTheme = lightTheme;
+  const { theme, toggleTheme } = useTheme();
+  const mainTheme = theme;
 
   return (
-    <Paper sx={{ bgcolor: mainTheme.background.default }}>
-      <ThemeProvider theme={mainTheme}>
-        <CssBaseline />
-        <MainHeader for="Events"></MainHeader>
-        <>
-          {/* Hero unit */}
-          <Container sx={{ py: 4 }} maxWidth="lg">
-            <Tabs
-              variant="fullWidth"
-              value={currentTab}
-              onChange={handleTabChange}
-            >
-              <Tab
-                label="Top Picks"
-                sx={{ color: mainTheme.palette.text.main }}
-              />
-              <Tab label="New" sx={{ color: mainTheme.palette.text.main }} />
-              <Tab
-                label="Near You"
-                sx={{ color: mainTheme.palette.text.main }}
-              />
-            </Tabs>
+    <Paper sx={{ bgcolor: mainTheme.palette.background.default }}>
+      <CssBaseline />
+      <MainHeader for="Events"></MainHeader>
+      <>
+        {/* Hero unit */}
+        <Container sx={{ py: 4 }} maxWidth="lg">
+          <Tabs
+            variant="fullWidth"
+            value={currentTab}
+            onChange={handleTabChange}
+          >
+            <Tab
+              label="Top Picks"
+              sx={{ color: mainTheme.palette.text.main }}
+            />
+            <Tab label="New" sx={{ color: mainTheme.palette.text.main }} />
+            <Tab
+              label="Near You"
+              sx={{ color: mainTheme.palette.text.main }}
+            />
+          </Tabs>
 
-            <div>
-              <br></br>
-            </div>
+          <div>
+            <br></br>
+          </div>
 
-            {currentTab === 0 ? (
-              <Grid container spacing={4}>
-                {cards && cards !== null ? (
-                  cards.map((card) => (
-                    <Grid item key={card.id} xs={12} sm={6} md={6}>
-                      <EventCard card={card} />
-                    </Grid>
-                  ))
-                ) : (
-                  <Box
-                    sx={{
-                      bgcolor: mainTheme.palette.secondary.other,
-                      height: "1000px",
-                    }}
-                    component="footer"
-                  />
-                )}
-              </Grid>
-            ) : null}
+          {currentTab === 0 ? (
+            <Grid container spacing={4}>
+              {cards && cards !== null ? (
+                cards.map((card) => (
+                  <Grid item key={card.id} xs={12} sm={6} md={6}>
+                    <EventCard card={card} />
+                  </Grid>
+                ))
+              ) : (
+                <Box
+                  sx={{
+                    bgcolor: mainTheme.palette.secondary.light,
+                    height: "1000px",
+                  }}
+                  component="footer"
+                />
+              )}
+            </Grid>
+          ) : null}
 
-            {currentTab === 1 ? (
-              <Grid container spacing={4}>
-                {cards && cards !== null
-                  ? cards
-                      .slice()
-                      .sort((a, b) => {
-                        return b.priority - a.priority;
-                      })
-                      .map((card) => (
-                        <Grid item key={card} xs={12} sm={6} md={12}>
-                          <EventCard card={card} />
-                        </Grid>
-                      ))
-                  : null}
-              </Grid>
-            ) : null}
+          {currentTab === 1 ? (
+            <Grid container spacing={4}>
+              {cards && cards !== null
+                ? cards
+                    .slice()
+                    .sort((a, b) => {
+                      return b.priority - a.priority;
+                    })
+                    .map((card) => (
+                      <Grid item key={card} xs={12} sm={6} md={12}>
+                        <EventCard card={card} />
+                      </Grid>
+                    ))
+                : null}
+            </Grid>
+          ) : null}
 
-            {currentTab === 2 ? (
-              <Grid container spacing={4}>
-                {cards && cards !== null
-                  ? cards
-                      .slice()
-                      .sort((a, b) => {
-                        return b.time - a.time;
-                      })
-                      .map((card) => (
-                        <Grid item key={card} xs={12} sm={6} md={12}>
-                          <EventCard card={card} />
-                        </Grid>
-                      ))
-                  : null}
-              </Grid>
-            ) : null}
-          </Container>
-        </>
+          {currentTab === 2 ? (
+            <Grid container spacing={4}>
+              {cards && cards !== null
+                ? cards
+                    .slice()
+                    .sort((a, b) => {
+                      return b.time - a.time;
+                    })
+                    .map((card) => (
+                      <Grid item key={card} xs={12} sm={6} md={12}>
+                        <EventCard card={card} />
+                      </Grid>
+                    ))
+                : null}
+            </Grid>
+          ) : null}
+        </Container>
+      </>
 
-        {/* Footer */}
-        <MainFooter></MainFooter>
-        {/* End footer */}
-      </ThemeProvider>
+      {/* Footer */}
+      <MainFooter></MainFooter>
+      {/* End footer */}
     </Paper>
   );
 }

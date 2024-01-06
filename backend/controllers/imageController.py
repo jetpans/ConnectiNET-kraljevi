@@ -62,4 +62,4 @@ class ImageController(Controller):
 
             return jsonify({'success': True, 'message': 'Image uploaded and saved successfully'})
         
-        return jsonify({'success': False, 'error': 'No image data received'})
+        return jsonify({'success': False, 'error': 'No image data received'})     

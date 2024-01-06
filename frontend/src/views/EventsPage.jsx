@@ -1,29 +1,13 @@
 import React, { useEffect, useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+
 import Container from "@mui/material/Container";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import EventIcon from "@mui/icons-material/Event";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import EditCalendarIcon from "@mui/icons-material/EditCalendar";
-import TableRowsIcon from "@mui/icons-material/TableRows";
-import LogoutIcon from "@mui/icons-material/Logout";
+
 import { green, grey, indigo } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Divider, Paper } from "@mui/material";
@@ -33,12 +17,13 @@ import dataController from "../utils/DataController";
 
 import { useUser } from "../context/UserContext";
 
+import MainHeader from "../ui/MainHeader";
+import MainFooter from "../ui/MainFooter";
 export default function EventsPage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [cards, setCards] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [cardSize, setCardSize] = useState(12);
   const navigate = useNavigate();
 
@@ -59,19 +44,6 @@ export default function EventsPage(props) {
 
   function handleTabChange(event, newValue) {
     setCurrentTab(newValue);
-  }
-
-  function toggleDrawer() {
-    setDrawerOpen((prevState) => !prevState);
-  }
-
-  function handleLogout() {
-    dc.PostData(API_URL + "/logout").then((resp) => {
-      if (resp.success === true) {
-        logout();
-        navigate("/login");
-      }
-    });
   }
 
   useEffect(() => {
@@ -121,68 +93,8 @@ export default function EventsPage(props) {
     <Paper sx={{ bgcolor: mainTheme.background.default }}>
       <ThemeProvider theme={mainTheme}>
         <CssBaseline />
-        <AppBar position="relative">
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button onClick={toggleDrawer}>
-              <TableRowsIcon
-                sx={{ color: mainTheme.palette.secondary.other }}
-              />
-            </Button>
-
-            <Typography
-              variant="h5"
-              color={mainTheme.palette.secondary.other}
-              noWrap
-            >
-              Events
-            </Typography>
-
-            <div>
-              <Button onClick={handleLogout}>
-                <LogoutIcon sx={{ color: mainTheme.palette.secondary.other }} />
-              </Button>
-              <Typography
-                variant="h6"
-                color={mainTheme.palette.secondary.other}
-              >
-                Log out
-              </Typography>
-            </div>
-          </Toolbar>
-        </AppBar>
+        <MainHeader for="Events"></MainHeader>
         <>
-          <Drawer open={drawerOpen} onClose={toggleDrawer}>
-            <Typography variant="h5" sx={{ textAlign: "center", mt: 2, mb: 2 }}>
-              ConnectiNET
-            </Typography>
-            <Box
-              sx={{ width: 350 }}
-              // nClick={toggleDrawer}
-              onKeyDown={toggleDrawer}
-            >
-              <div />
-              <Divider />
-              <List>
-                {["Profile", "Events", "My Events"].map((text, index) => (
-                  <ListItem key={text} disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        {index === 1 ? (
-                          <EventIcon />
-                        ) : index === 0 ? (
-                          <AccountCircleIcon />
-                        ) : (
-                          <EditCalendarIcon />
-                        )}
-                      </ListItemIcon>
-                      <ListItemText primary={text} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          </Drawer>
-
           {/* Hero unit */}
           <Container sx={{ py: 4 }} maxWidth="lg">
             <Tabs
@@ -262,26 +174,7 @@ export default function EventsPage(props) {
         </>
 
         {/* Footer */}
-        <Box
-          sx={{ bgcolor: mainTheme.palette.primary.main, p: 4.5 }}
-          component="footer"
-        >
-          <Typography
-            variant="h6"
-            align="center"
-            gutterBottom
-            color={mainTheme.palette.secondary.other}
-          >
-            ConnectiNET
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            align="center"
-            color={mainTheme.palette.secondary.other}
-          >
-            by Kraljevi
-          </Typography>
-        </Box>
+        <MainFooter></MainFooter>
         {/* End footer */}
       </ThemeProvider>
     </Paper>

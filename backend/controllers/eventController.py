@@ -16,7 +16,9 @@ class EventController(Controller):
         self.app.add_url_rule("/getEvents", view_func=self.getEvents, methods=["GET"])
         
     
+    
     # @visitor_required()
+    @jwt_required()
     def getEvents(self):
         # if getRole(self.auth_users) not in [-1,1,0]:
         #     return {"success": False, "data": "Authentication required"}

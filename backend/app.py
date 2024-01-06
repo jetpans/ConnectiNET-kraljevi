@@ -8,6 +8,7 @@ import json
 from controllers.authController import AuthController
 from controllers.eventController import EventController
 from controllers.imageController import ImageController
+from controllers.userController import UserController
 from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
 from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
@@ -81,3 +82,4 @@ def refresh_expiring_jwts(response):
 authController = AuthController(app, db, bcrypt, jwt)
 eventController = EventController(app, db, jwt)
 imageController = ImageController(app,db,jwt)
+userController = UserController(app,db,bcrypt,jwt)

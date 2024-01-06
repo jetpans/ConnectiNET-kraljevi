@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import dataController from "../utils/DataController";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button, InputLabel, Chip } from "@mui/material";
 export default function ImageUploadButton(props) {
@@ -7,6 +9,7 @@ export default function ImageUploadButton(props) {
   const accessToken = localStorage.getItem("jwt");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
+  const navigate = useNavigate();
 
   const dc = new dataController();
 
@@ -41,6 +44,7 @@ export default function ImageUploadButton(props) {
         .then((resp) => {
           // console.log("THIS:", resp.data);
           if (resp.data.success === true) {
+            navigate(0);
             alert("Success");
           } else {
             alert("Fail");

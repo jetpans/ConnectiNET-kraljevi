@@ -134,6 +134,7 @@ export default function AccountPage() {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
+        flexWrap: "wrap",
         justifyContent: "space-between",
       }}
     >
@@ -144,10 +145,19 @@ export default function AccountPage() {
         <TableContainer
           sx={{
             bgcolor: mainTheme.background.default,
-            padding: "2rem 20rem",
+            padding: "1rem 1vw",
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: "1rem",
           }}
         >
-          <Table aria-label="user-data-table" component={Paper}>
+          <Table
+            aria-label="user-data-table"
+            component={Paper}
+            sx={{ maxWidth: "40rem", flex: "1 1 auto" }}
+          >
             <TableBody>
               <TableCell>
                 <Table
@@ -375,35 +385,37 @@ export default function AccountPage() {
                   </TableBody>
                 </Table>
               </TableCell>
-              <TableCell
-                style={{
-                  width: "200px",
-                  display: "grid",
-                }}
-              >
-                <Typography component="h4" variant="h5">
-                  Current profile image
-                </Typography>
-                <UserUploadedImage
-                  style={{
-                    border: "1px solid black",
-                  }}
-                  src={"/" + userData.profileImage}
-                ></UserUploadedImage>
-
-                {editMode ? (
-                  <>
-                    <Typography component="h4" variant="h5">
-                      Upload new profile image
-                    </Typography>
-                    <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </TableCell>
             </TableBody>
           </Table>
+
+          <Paper
+            sx={{
+              flex: "1 1 auto",
+              maxWidth: "20rem",
+              padding: "1rem",
+              width: "20rem",
+              minWidth: "10rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-around",
+            }}
+          >
+            {" "}
+            <div>
+              <Typography component="h4" variant="h5">
+                Current profile image
+              </Typography>
+              <UserUploadedImage
+                src={"/" + userData.profileImage}
+              ></UserUploadedImage>
+            </div>
+            <div>
+              <Typography component="h4" variant="h5">
+                Upload new profile image
+              </Typography>
+              <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
+            </div>
+          </Paper>
         </TableContainer>
 
         <MainFooter />

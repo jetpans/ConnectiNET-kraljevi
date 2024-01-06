@@ -37,13 +37,7 @@ class UserController(Controller):
         myOrganiser = self.db.session.query(Organizer).filter(Organizer.accountId == myUser.accountId).first()
         myVisitor = self.db.session.query(Visitor).filter(Visitor.accountId == myUser.accountId).first()
         if result == "OK":
-            temp_image_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] , "temp_"+get_jwt_identity()+".png")
-            profile_image_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] , get_jwt_identity()+".png")
-            if os.path.isfile(temp_image_path):
-                myUser.profileImage = get_jwt_identity()+".png"
-                if os.path.exists(profile_image_path):
-                    os.remove(profile_image_path)
-                os.rename(temp_image_path, profile_image_path)
+
             
             roleId = get_jwt()["roleId"]
             if data["password"] != None and len(data["password"])>0:

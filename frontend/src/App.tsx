@@ -6,6 +6,7 @@ import EventsPage from "./views/EventsPage";
 import RegisterPage from "./views/RegisterPage";
 import UploadImagePageTemp from "./views/UploadImagePageTemp";
 import AccountPage from "./views/AccountPage";
+import PublicProfilePage from "./views/PublicProfilePage";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/temp" element={<UploadImagePageTemp />} />
 
         <Route path="/account" element={<AccountPage />} />
+        <Route path="/organizer/:organizerId" element={<PublicProfilePage />} />
         <Route path="*" element={<h1>404</h1>} />
       </Routes>
     </BrowserRouter>

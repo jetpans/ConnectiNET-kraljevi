@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { DialogProvider } from './context/DialogContext';
+import { SnackbarProvider } from './context/SnackbarContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -14,9 +15,11 @@ root.render(
   <React.StrictMode>
     <UserProvider>
       <ThemeProvider>
-        <DialogProvider>
-          <App />
-        </DialogProvider>
+        <SnackbarProvider>
+          <DialogProvider>
+            <App />
+          </DialogProvider>
+        </SnackbarProvider>
       </ThemeProvider>
     </UserProvider>
   </React.StrictMode>

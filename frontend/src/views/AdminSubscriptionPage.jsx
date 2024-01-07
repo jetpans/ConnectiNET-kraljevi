@@ -26,6 +26,7 @@ import {
 } from "@mui/base/Unstable_NumberInput";
 
 import { useState, useContext, useEffect } from "react";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
 
 export default function AdminSubscription(props) {
   const [value, setValue] = React.useState();
@@ -235,15 +236,7 @@ export default function AdminSubscription(props) {
 `
   );
   return (
-    <Box
-      sx={{
-        my: 8,
-        mx: 4,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
+    <ProtectedComponent>
       <Box
         sx={{
           my: 8,
@@ -251,58 +244,68 @@ export default function AdminSubscription(props) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          width: "65vw",
-          border: "2px solid #3399FF",
-          borderRadius: "10px",
         }}
       >
-        <Typography variant="h6" noWrap sx={{ marginTop: "15px" }}>
-          Current subscription price:
-        </Typography>
         <Box
           sx={{
-            display: "grid",
-
-            justifyItems: "center",
-            marginTop: "10px",
-            marginBottom: "10px",
+            my: 8,
+            mx: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "65vw",
+            border: "2px solid #3399FF",
+            borderRadius: "10px",
           }}
         >
-          <Typography variant="h6" noWrap>
-            Enter new subscription price:
+          <Typography variant="h6" noWrap sx={{ marginTop: "15px" }}>
+            Current subscription price:
           </Typography>
-          <NumberInput
-            aria-label="Demo number input"
-            placeholder="Type a number…"
-            value={value}
-            onChange={(event, val) => setValue(val)}
-            sx={{ marginBottom: "10px" }}
-          />
-          <SvgButton>Button</SvgButton>
+          <Box
+            sx={{
+              display: "grid",
+
+              justifyItems: "center",
+              marginTop: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            <Typography variant="h6" noWrap>
+              Enter new subscription price:
+            </Typography>
+            <NumberInput
+              aria-label="Demo number input"
+              placeholder="Type a number…"
+              value={value}
+              onChange={(event, val) => setValue(val)}
+              sx={{ marginBottom: "10px" }}
+            />
+            <SvgButton>Button</SvgButton>
+          </Box>
         </Box>
+        <TableRow sx={{display:"flex", width:"65vw"}}>
+          <TableCell sx={{border: "1px solid #3399FF",
+            borderRadius: "5px", width:"13vw"}}>
+            bok
+          </TableCell>
+          <TableCell sx={{border: "1px solid #3399FF",
+            borderRadius: "5px", width:"13vw"}}>
+            bok
+          </TableCell>
+          <TableCell sx={{border: "1px solid #3399FF",
+            borderRadius: "5px", width:"13vw"}}>
+            bok
+          </TableCell>
+          <TableCell sx={{border: "1px solid #3399FF",
+            borderRadius: "5px", width:"13vw"}}>
+            bok
+          </TableCell>
+          <TableCell sx={{border: "1px solid #3399FF",
+            borderRadius: "5px", width:"13vw"}}>
+            bok
+          </TableCell>
+        </TableRow>
       </Box>
-      <TableRow sx={{display:"flex", width:"65vw"}}>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-        <TableCell sx={{border: "1px solid #3399FF",
-          borderRadius: "5px", width:"13vw"}}>
-          bok
-        </TableCell>
-      </TableRow>
-    </Box>
+    </ProtectedComponent>
   );
 }

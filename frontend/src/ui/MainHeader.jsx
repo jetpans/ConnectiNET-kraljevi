@@ -28,6 +28,7 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import { useTheme } from "../context/ThemeContext";
 import { useDialog } from "../context/DialogContext";
 import AddCardIcon from '@mui/icons-material/AddCard';
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -66,6 +67,8 @@ export default function MainHeader(props) {
         logout();
         navigate("/login");
       }
+    }).catch((e) => {
+      console.log(e);
     });
   }
 
@@ -97,6 +100,12 @@ export default function MainHeader(props) {
     openDialog(dialogContent);
   }
 
+  const {isOpen, type, message, closeSnackbar, openSnackbar} = useSnackbar();
+
+  const handleSnackbarOpen = () => {
+    openSnackbar("info", "My custom message");
+  }
+
   return (
     <div>
       <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main}}>
@@ -114,6 +123,9 @@ export default function MainHeader(props) {
           </Typography>
 
           <div>
+            <Button onClick={handleSnackbarOpen}>
+              <AddCardIcon sx={{ color: theme.palette.secondary.light }} />
+            </Button>
             <Button onClick={handleOpenDialog}>
               <AddCardIcon sx={{ color: theme.palette.secondary.light }} />
             </Button>

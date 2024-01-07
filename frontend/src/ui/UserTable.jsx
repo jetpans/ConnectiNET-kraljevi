@@ -32,17 +32,80 @@ export default function UserTable() {
   useEffect(() => {
     fetchData();
   }, []);
+/*
+  const users = [
+    {
+      username: 'johndoe123',
+      roleId: 1,
+      eMail: 'johndoe@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      organizerName: 'ABC Events',
+      countryName: 'United States',
+    },
+    {
+      username: 'janedoe456',
+      roleId: 0,
+      eMail: 'jane@example.com',
+      firstName: 'Jane',
+      lastName: 'Doe',
+      organizerName: 'XYZ Conferences',
+      countryName: 'Canada',
+    },
+    {
+      username: 'alexsmith789',
+      roleId: 2,
+      eMail: 'alex@example.com',
+      firstName: 'Alex',
+      lastName: 'Smith',
+      organizerName: 'Event Planners Inc.',
+      countryName: 'Australia',
+    },
+  ];
+*/
+const [filterValue, setFilterValue] = useState('');
+  const [filterBy, setFilterBy] = useState('username');
+  
+
+  const filterFunction = (user) => {
+    switch (filterBy) {
+      case 'username':
+        return user.username.toLowerCase().includes(filterValue.toLowerCase());
+      case 'organizer':
+        if(user.organizerName !== undefined)
+          return user.organizerName.toLowerCase().includes(filterValue.toLowerCase());
+        return
+      case 'firstName':
+        if(user.firstName !== undefined)
+          return user.firstName.toLowerCase().includes(filterValue.toLowerCase());
+        return
+      default:
+        return true; // If no specific filterBy is selected, include all users
+    }
+  };
+
+  const handleFilterSubmit = () => {
+    const filteredUsers = users.filter(filterFunction);
+    console.log("bok")
+    console.log(filteredUsers)
+    // Now you can use the filteredUsers array as needed
+    // Example: setFilteredUsers(filteredUsers);
+  };
+
+  const handleFilterByChange = (e) => {
+    setFilterBy(e.target.value);
+  };
   return (
     <Paper sx={{ padding: "2rem" }}>
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <TextField label="Filter" ></TextField>
-        <TextField label="Filter by:" select defaultValue="username" >
+        <TextField label="Filter" onChange={(e) => setFilterValue(e.target.value)}></TextField>
+        <TextField label="Filter by:" select defaultValue="username" onChange={handleFilterByChange} >
           <MenuItem value="username">Username</MenuItem>
           <MenuItem value="organizer">Organizer Name</MenuItem>
           <MenuItem value="firstName">First Name</MenuItem>
         </TextField>
 
-        <Button variant="contained" > Search...</Button>
+       
       </div>
 
       <Table>
@@ -58,7 +121,7 @@ export default function UserTable() {
         </TableRow>
 
         {users ? (
-          users.map((user) => (
+          users.filter(filterFunction).map((user) => (
             <TableRow>
               <TableCell>{user.username ? user.username : "-"}</TableCell>
               <TableCell>
@@ -76,7 +139,7 @@ export default function UserTable() {
               </TableCell>
               <TableCell>{user.countryName ? user.countryName : "-"}</TableCell>
               <TableCell>{user.roleId == 1 
-                  ? <><Button>Browse events</Button> <Button>Cancle subscription</Button></>
+                  ? <><Button>Browse events</Button> {user.subscription == 1 ? <Button>Cancle subscription</Button>:null}</>
                   : user.roleId == 0
                   ? <><Button>Make Administrator</Button> <Button>Delete account</Button></>
                   : null}</TableCell>
@@ -89,3 +152,4 @@ export default function UserTable() {
     </Paper>
   );
 }
+

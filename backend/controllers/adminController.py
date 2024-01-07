@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from flask import Flask,jsonify,request,render_template, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -37,16 +38,27 @@ class AdminController(Controller):
     
     
     
+    
     def tripletToDict(self, triplet):
         acc, visit, org, country = triplet
+        data = self.db.session.query(Subscription.startDate, Subscription.expireDate).join(Account, Account.accountId == Subscription.accountId).filter(Account.username ==acc.__dict__.get('username')).order_by(Subscription.startDate).first()
         result : dict = {}
         result = acc.__dict__
         result.update(visit.__dict__) if visit != None else 1
         result.update(org.__dict__) if org != None else 1
         result["countryName"] = country.name
+        if data:
+            start_date, expire_date = data
+            today = datetime.now().date()
+            if expire_date != None or start_date<=today<=expire_date:
+                result["subscription"] = 1
+            else:
+                result["subscription"] = 0
+        else:
+            result["subscription"] = 0
         del result['_sa_instance_state']
         return result
-        
+
 
     @jwt_required()
     def setSubscriptionPrice(self):

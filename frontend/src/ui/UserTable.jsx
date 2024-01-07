@@ -17,6 +17,7 @@ export default function UserTable() {
   const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
+ 
 
   const fetchData = async () => {
     dc.GetData(API_URL + "/api/getAllUsers", accessToken)
@@ -34,19 +35,20 @@ export default function UserTable() {
   return (
     <Paper sx={{ padding: "2rem" }}>
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <TextField label="Filter"></TextField>
-        <TextField label="Filter by:" select defaultValue="username">
+        <TextField label="Filter" ></TextField>
+        <TextField label="Filter by:" select defaultValue="username" >
           <MenuItem value="username">Username</MenuItem>
           <MenuItem value="organizer">Organizer Name</MenuItem>
-          <MenuItem value="firstName">Organizer Name</MenuItem>
+          <MenuItem value="firstName">First Name</MenuItem>
         </TextField>
 
-        <Button variant="contained"> Search...</Button>
+        <Button variant="contained" > Search...</Button>
       </div>
 
       <Table>
         <TableRow>
           <TableCell>Username</TableCell>
+          <TableCell>Role</TableCell>
           <TableCell>eMail</TableCell>
           <TableCell>First name</TableCell>
           <TableCell>Last name</TableCell>
@@ -59,6 +61,13 @@ export default function UserTable() {
           users.map((user) => (
             <TableRow>
               <TableCell>{user.username ? user.username : "-"}</TableCell>
+              <TableCell>
+                {user.roleId == 1
+                  ? "Organizer"
+                  : user.roleId == 0
+                  ? "Visitor"
+                  : "Administrator"}
+              </TableCell>
               <TableCell>{user.eMail ? user.eMail : "-"}</TableCell>
               <TableCell>{user.firstName ? user.firstName : "-"}</TableCell>
               <TableCell>{user.lastName ? user.lastName : "-"}</TableCell>
@@ -66,7 +75,11 @@ export default function UserTable() {
                 {user.organizerName ? user.organizerName : "-"}
               </TableCell>
               <TableCell>{user.countryName ? user.countryName : "-"}</TableCell>
-              <TableCell></TableCell>
+              <TableCell>{user.roleId == 1
+                  ? <><Button>Browse events</Button> <Button>Cancle subscription</Button></>
+                  : user.roleId == 0
+                  ? <><Button>Make Administrator</Button> <Button>Delete account</Button></>
+                  : null}</TableCell>
             </TableRow>
           ))
         ) : (

@@ -12,10 +12,10 @@ export default function AdminBrowseUsers() {
         justifyContent: "space-between",
       }}
     >
-      <MainHeader></MainHeader>
+      
 
       <UserTable></UserTable>
-      <MainFooter></MainFooter>
+     
     </div>
   );
 }

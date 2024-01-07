@@ -41,11 +41,11 @@ class EventController(Controller):
         account = self.db.session.query(Account).filter_by(accountId=organizerId).first()
         if organizer:
             profile = {
-                "username": account["username"],
-                "organizerName": organizer["organizerName"],
-                "eMail": account["eMail"],
-                "profileImage": account["profileImage"],
-                "countryCode": account["countryCode"],
+                "username": account.username,
+                "organizerName": organizer.organizerName,
+                "eMail": account.eMail,
+                "profileImage": account.profileImage,
+                "countryCode": account.countryCode,
             }
 
             dbResp = self.db.session.query(Event).filter_by(accountId=organizerId).all() 

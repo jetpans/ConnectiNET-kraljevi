@@ -94,26 +94,35 @@ export default function OrganizerProfile() {
             <Container sx={{ py: 4 }} maxWidth="lg">
                 {organizerInfo && organizerInfo !== null ? (
                 <>
-                    <Typography variant="h4" gutterBottom>
-                    {organizerInfo.organizerName}'s Profile
-                    </Typography>
+                    
                     <Box sx={{ mb: 4 }}>
-                    <UserUploadedImage
-                        src={organizerInfo.profileImage}
-                        style={{ maxWidth: "200px", maxHeight: "200px" }}
-                        className="profile-image"
-                    />
+                        <UserUploadedImage
+                            src={"/" + organizerInfo.profileImage}
+                            style={{border: "1px solid black", maxWidth: "150px", maxHeight: "150px" }}
+                            className="profile-image"
+                        />
+                        <Typography variant="h4" gutterBottom>
+                            {organizerInfo.organizerName}
+                        </Typography>
+                    </Box>
+                    <Typography>
+                        Username: {organizerInfo.username}
+                    </Typography>
                     <Typography>
                         Email: {organizerInfo.eMail}
                     </Typography>
                     <Typography>
                         Country: {organizerInfo.countryCode}
                     </Typography>
-                    </Box>
+                    
                 </>
                 ) : null}
 
                 <Divider sx={{ mb: 4 }} />
+
+                <Typography variant="h5" gutterBottom>
+                    Events by {organizerInfo.organizerName}:
+                </Typography>
 
                 <div>
                     <br></br>

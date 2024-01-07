@@ -7,7 +7,7 @@ import uuid
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest, Country
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from datetime import timedelta

@@ -9,7 +9,7 @@ from controllers.authController import AuthController
 from controllers.eventController import EventController
 from controllers.imageController import ImageController
 from controllers.userController import UserController
-from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, EventMedia, Interest
 from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager

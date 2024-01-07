@@ -6,6 +6,8 @@ import EventsPage from "./views/EventsPage";
 import RegisterPage from "./views/RegisterPage";
 import UploadImagePageTemp from "./views/UploadImagePageTemp";
 import SubscribePage from "./views/SubscribePage";
+import AccountPage from "./views/AccountPage";
+import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
 
 export default function App() {
   return (
@@ -14,9 +16,12 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/subscribe" element={<SubscribePage />} />
+        <Route path="/adminsubscription" element={<AdminSubscriptionPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/temp" element={<UploadImagePageTemp />} />
+
+        <Route path="/account" element={<AccountPage />} />
         <Route path="*" element={<h1>404</h1>} />
       </Routes>
     </BrowserRouter>

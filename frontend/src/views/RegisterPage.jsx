@@ -20,6 +20,8 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 import { useState, useContext, useEffect } from "react";
+import { checkToken } from "../utils/ProtectedComponent";
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function RegisterPage() {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -28,6 +30,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { user, updateUser, logout, loading } = useUser();
+  const { openSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
 
@@ -71,27 +74,33 @@ export default function RegisterPage() {
           // "countryCode": loginData.countryCode,
           // "email": loginData.email
           // });
-          alert("Registration successful! Please log in.");
+          openSnackbar("success", "Registration successful! Please log in.");
           navigate("/login");
         } else {
           // console.log('Error!');
           // console.log(resp.data);
           if (resp.data.data === "Username already in use.") {
-            alert("Registration unsuccessful. Username already exists.");
+            openSnackbar("error", "Registration unsuccessful. Username already exists.");
             return;
           }
-          alert("Registration unsuccessful. " + resp.data.data);
+          openSnackbar("error", "Registration unsuccessful. " + resp.data.data);
         }
       })
       .catch((resp) => {
-        alert("Registration unsuccessful. " + resp.data.data);
+        openSnackbar("error", "Registration unsuccessful. " + resp.data.data);
       });
   };
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("jwt");
-    if (accessToken !== null) {
-      navigate("/events");
+    const token = localStorage.getItem("jwt");
+
+    if(token !== null) {
+      const tokenValid = checkToken(token);
+      if(tokenValid === true) {
+        navigate("/events");
+      } else {
+        localStorage.removeItem("jwt");
+      }
     }
   }, []);
 
@@ -144,12 +153,7 @@ export default function RegisterPage() {
                 <Typography component="h1" variant="h5">
                   Sign up
                 </Typography>
-                <Box
-                  component="form"
-                  noValidate
-                  onSubmit={handleSubmit}
-                  sx={{ mt: 3 }}
-                >
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
                   <Grid container spacing={2}>
                     <Grid
                       item
@@ -175,6 +179,7 @@ export default function RegisterPage() {
                           value="Visitor"
                           control={<Radio />}
                           label="Visitor"
+
                         />
                         <FormControlLabel
                           value="Organizer"

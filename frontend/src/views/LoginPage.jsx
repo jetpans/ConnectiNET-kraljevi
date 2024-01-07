@@ -19,12 +19,15 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 import { useState, useContext, useEffect } from "react";
+import { checkToken } from "../utils/ProtectedComponent";
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function LoginPage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
   const [error, setError] = useState([false, false]);
 
   const navigate = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const { user, updateUser, logout, loading } = useUser();
 
@@ -69,23 +72,30 @@ export default function LoginPage(props) {
         } else {
           // console.log('Error!');
           // console.log(resp.data);
-          alert("Login unsuccessful. Please check your credentials.");
+          openSnackbar('error', 'Login unsuccessful. Please check your credentials.');
           setError([false, false]);
         }
       })
       .catch((resp) => {
         // console.log(resp.data);
-        alert("Login unsuccessful. Please check your credentials.");
+        openSnackbar('error', 'Login unsuccessful. Please check your credentials.');
         setError([false, false]);
       });
   };
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("jwt");
-    if (accessToken !== null) {
-      navigate("/events");
+    const token = localStorage.getItem("jwt");
+
+    if(token !== null) {
+      const tokenValid = checkToken(token);
+      if(tokenValid === true) {
+        navigate("/events");
+      } else {
+        localStorage.removeItem("jwt");
+      }
     }
   }, []);
+
 
   return (
     <>

@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {UserProvider} from './context/UserContext';
+import { UserProvider } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { DialogProvider } from './context/DialogContext';
+import { SnackbarProvider } from './context/SnackbarContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +14,13 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <UserProvider>
-      <App />
+      <ThemeProvider>
+        <SnackbarProvider>
+          <DialogProvider>
+            <App />
+          </DialogProvider>
+        </SnackbarProvider>
+      </ThemeProvider>
     </UserProvider>
   </React.StrictMode>
 );

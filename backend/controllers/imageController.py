@@ -14,7 +14,7 @@ class ImageController(Controller):
 
         self.app.add_url_rule("/api/upload", view_func=self.upload_image, methods=["POST"])
         self.app.add_url_rule("/api/image/<image_name>", view_func = self.fetch_image, methods= ["GET"])
-        
+        self.app.add_url_rule("/api/usernameTempUpload", view_func=self.usernameTempUpload, methods=["POST"])
     # @visitor_required()
     def upload_image(self):
         print("Got request")
@@ -47,4 +47,19 @@ class ImageController(Controller):
                 return send_file(placeholder_path, mimetype='image/png')  # Adjust mimetype based on your image type
             except Exception as e:
                 return str(e)
+    
+    @visitor_required()
+    def usernameTempUpload(self):
+        if 'image' not in request.files:
+            return jsonify({'success': False, 'error': 'No image part in the request'})
+
+        file = request.files['image']
         
+        if file:
+            new_filename = "temp_"+get_jwt_identity()+".png"  # Set your desired new filename here
+            file_path = os.path.join(self.app.config['IMAGE_DIRECTORY'], new_filename)      
+            file.save(file_path)
+
+            return jsonify({'success': True, 'message': 'Image uploaded and saved successfully'})
+        
+        return jsonify({'success': False, 'error': 'No image data received'})     

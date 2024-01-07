@@ -82,4 +82,4 @@ def refresh_expiring_jwts(response):
 authController = AuthController(app, db, bcrypt, jwt)
 eventController = EventController(app, db, jwt)
 imageController = ImageController(app,db,jwt)
-userController = UserController(app,db,jwt)
+userController = UserController(app,db,bcrypt,jwt)

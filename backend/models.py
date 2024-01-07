@@ -11,7 +11,7 @@ if env == 'production':
     app.config.from_object(ProductionConfig)
 else:
     app.config.from_object(DevelopmentConfig)
-
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://snnmskyd:3RwBnQ_v0mfD24Jlbzy2xWFpw_wCGcUm@surus.db.elephantsql.com/snnmskyd"
 db = SQLAlchemy(app)
 
 class Country(db.Model):
@@ -61,7 +61,7 @@ class Organizer(db.Model):
     accountId = db.Column(db.Integer, db.ForeignKey('accounts.accountId'), primary_key=True)
     organizerName = db.Column(db.String(100), nullable=False)
     hidden = db.Column(db.Boolean, default = False)
-    
+    socials = db.Column(db.String(200), nullable = True)
     account = db.relationship('Account', backref='organizers')
 
     def __init__(self, organizerName, accountId):
@@ -80,6 +80,8 @@ class Event(db.Model):
     location = db.Column(db.String(100), nullable=False)
     displayImageSource = db.Column(db.String(150))
     price = db.Column(db.Float)
+    eventType = db.Column(db.Integer, nullable = False)
+    duration = db.Column(db.Time, nullable = True)
     accountId = db.Column(db.Integer, db.ForeignKey('organizers.accountId'))
 
     organizer = db.relationship('Organizer', backref='events')
@@ -148,18 +150,38 @@ class Subscription(db.Model):
         self.expireDate = expireDate
         self.accountId = accountId
 
-class NotificationOption(db.Model):
-    __tablename__ = 'notification_options'  # Lowercase and plural table name
+class NotificationCountry(db.Model):
+    __tablename__ = 'notification_countries'  # Lowercase and plural table name
+    
+    accountId = db.Column(db.Integer, db.ForeignKey('visitors.accountId'), primary_key=True, nullable=False)
+    countryCode = db.Column(db.String(3), db.ForeignKey('countries.countryCode'), primary_key = True, nullable=False)
 
-    type = db.Column(db.String(10), primary_key=True, nullable=False)
+    visitor = db.relationship('Visitor', backref='notification_countries')
+    country = db.relationship('Country', backref='notification_countries')
+
+    def __init__(self, countryCode, accountId):
+        self.countryCode = countryCode
+        self.accountId = accountId
+        
+class NotificationEventType(db.Model):
+    __tablename__ = "notification_eventtypes"
+
+    eventType = db.Column(db.Integer, db.ForeignKey('eventtypes.typeId'), primary_key=True, nullable=False)
     accountId = db.Column(db.Integer, db.ForeignKey('visitors.accountId'), primary_key=True, nullable=False)
 
-    visitor = db.relationship('Visitor', backref='notification_options')
-
-    def __init__(self, type, accountId):
-        self.type = type
+    visitor = db.relationship('Visitor', backref='notification_eventtypes')
+    type = db.relationship('EventType' , backref = "notification_eventtypes")
+    def __init__(self, eventType, accountId):
+        self.eventType = eventType
         self.accountId = accountId
-      
+        
+        
+class EventType(db.Model):
+    __tablename__ = "eventtypes"
+    typeId = db.Column(db.Integer, primary_key = True, nullable = False)
+    typeName = db.Column(db.String(50), nullable = False)
+    
+
 class EventMedia(db.Model):
     __tablename__ = 'event_media'  # Lowercase and plural table name
 
@@ -191,6 +213,11 @@ class Interest(db.Model):
         self.accountId = accountId
         self.eventId = eventId
 
+class Data(db.Model):
+    __tablename__ = 'data'
+    
+    entryName = db.Column(db.String(10),primary_key =True , nullable = False)
+    value = db.Column(db.String(500), nullable = False)
 @app.route('/')
 def hello():
     return "Hello world!"

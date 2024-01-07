@@ -7,7 +7,7 @@ import uuid
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest, EventType, Country, NotificationCountry, NotificationEventType
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from util import *
@@ -21,6 +21,13 @@ class UserController(Controller):
 
         self.app.add_url_rule("/api/changeInformation", view_func=self.changeInformation, methods=["POST"])
         self.app.add_url_rule("/api/getInformation", view_func=self.getMoreInfo, methods=["GET"])
+        self.app.add_url_rule("/api/getNotificationOptions", view_func = self.getUserNotificationOptions, methods = ["GET"])
+        self.app.add_url_rule("/api/getEventTypes", view_func = self.getEventTypes, methods = ["GET"])
+        self.app.add_url_rule("/api/addNotificationEventType", view_func = self.addNotificationEventType, methods = ["POST"])
+        self.app.add_url_rule("/api/addNotificationCountry", view_func = self.addNotificationCountry, methods = ["POST"])
+        self.app.add_url_rule("/api/deleteNotificationCountry", view_func = self.deleteNotificationCountry, methods = ["POST"])
+        self.app.add_url_rule("/api/deleteNotificationEventType", view_func = self.deleteNotificationEventType, methods = ["POST"])
+        self.app.add_url_rule("/api/deleteAccount", view_func = self.deleteAccount, methods = ["POST"])
 
 
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
@@ -111,15 +118,9 @@ class UserController(Controller):
         
         return "OK"
         
-    def testLoginForm(self,form):
-        if "username" not in form.keys() or "password" not in form.keys():
-            {"success": False, "data": "Missing a field in login package."}
-        if form["username"] not in list(map(lambda x: x[0] , self.db.session.query(Account.username).all())):
-            {"success": False, "data": "Wrong credentials."}
-        return "OK"
+
     
     def countries(self):
-        
         dbResp = self.db.session.query(Country).all() 
         result_dict = [u.__dict__ for u in dbResp]
         toList = list(map( lambda country:
@@ -128,4 +129,103 @@ class UserController(Controller):
                 "name":country["name"],
             }, result_dict))
         return {"success":True, "data": toList}
+    
+    
+    @visitor_required()
+    def getUserNotificationOptions(self):
+        print("\n\n GOT REQUEST")
+        notificationOptionsEventType = self.db.session.query(NotificationEventType,EventType.typeName). \
+        join(Account, Account.accountId == NotificationEventType.accountId and Account.username == get_jwt_identity()).\
+        join(EventType, EventType.typeId == NotificationEventType.eventType).all()
+        
+        notificationOptionsCountry = self.db.session.query(NotificationCountry, Country.name). \
+        join(Account, Account.accountId == NotificationCountry.accountId and Account.username == get_jwt_identity()).\
+        join(Country, Country.countryCode == NotificationCountry.countryCode).all()
+        
+        notificationOptionsEventType = list(map(lambda entry: entry[1], notificationOptionsEventType))
+        notificationOptionsCountry= list(map(lambda entry: entry[1], notificationOptionsCountry))
+        result = {
+            "countries":notificationOptionsCountry,
+            "eventTypes" : notificationOptionsEventType}
+        
+        return {"success":True, "data": result}
 
+    @visitor_required()
+    def getEventTypes(self):
+        events = self.db.session.query(EventType).all()
+        events = list(map(lambda eType: eType.__dict__, events))
+        for item in events:
+            del item['_sa_instance_state']
+        
+        return {"success":True, "data": events}
+
+    @visitor_required()
+    def addNotificationCountry(self):
+        data = request.get_json()
+
+        countryCode = data["countryCode"]
+        
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+        newNotification = NotificationCountry(countryCode, myUser.accountId)
+        self.db.session.add(newNotification)
+        self.db.session.commit()
+        return {"success":True, "message":"successful"}
+
+    @visitor_required()
+    def addNotificationEventType(self):
+        data = request.get_json()
+
+        eventType = data["eventType"]
+        
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+        newNotification = NotificationEventType(eventType, myUser.accountId)
+        
+        
+        self.db.session.add(newNotification)
+        self.db.session.commit()
+        return {"success":True, "message":"successful"}
+    
+
+    @visitor_required()
+    def deleteNotificationCountry(self):
+        data = request.get_json()
+
+        countryName = data["countryName"]
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+        myNot = self.db.session.query(NotificationCountry).join(Country, Country.countryCode == NotificationCountry.countryCode and Country.name == countryName)\
+        .filter(NotificationCountry.accountId == myUser.accountId).first()
+        self.db.session.delete(myNot)
+        self.db.session.commit()
+        return {"success":True, "message":"successful"}
+
+    @visitor_required()
+    def deleteNotificationEventType(self):
+        data = request.get_json()
+
+        typeName = data["typeName"]
+        
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+        myNot = self.db.session.query(NotificationEventType).join(EventType, EventType.typeId == NotificationEventType.eventType  and EventType.typeName == typeName)\
+        .filter(NotificationEventType.accountId == myUser.accountId).first()
+        self.db.session.delete(myNot)
+
+        self.db.session.commit()
+        return {"success":True, "message":"successful"}
+    
+    @visitor_required()
+    def deleteAccount(self):
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+        
+        if myUser.roleId != 0 :
+            return {"success":False, "message": "Can't delete account because user is more than visitor."}
+        try:
+            self.db.session.query(Review).filter(Review.accountId == myUser.accountId).delete()
+            self.db.session.query(Interest).filter(Interest.accountId == myUser.accountId).delete()
+            self.db.session.query(NotificationCountry).filter(NotificationCountry.accountId == myUser.accountId).delete()
+            self.db.session.query(NotificationEventType).filter(NotificationEventType.accountId == myUser.accountId).delete()
+            self.db.session.query(Visitor).filter(Visitor.accountId == myUser.accountId).delete()
+            self.db.session.delete(myUser)
+            self.db.session.commit()
+        except:
+            return {"success":False, "message": "Can't delete account."}
+        return {"success":True, "message": "Successfuly deleted account."}

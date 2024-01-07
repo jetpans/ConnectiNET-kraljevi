@@ -9,12 +9,11 @@ from controllers.authController import AuthController
 from controllers.eventController import EventController
 from controllers.imageController import ImageController
 from controllers.userController import UserController
-from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, EventMedia, Interest
 from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
-
-
+from flask_mail import Mail
 
 app = Flask(__name__)
 
@@ -22,6 +21,13 @@ env = os.environ.get('FLASK_ENV')
 app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["IMAGE_DIRECTORY"] = "images"
+
+# app.config['MAIL_SERVER']='smtp.gmail.com'
+# app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USERNAME'] = 'connectinetkraljevi@gmail.com'
+# app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PW')
+# app.config['MAIL_USE_TLS'] = False
+# app.config['MAIL_USE_SSL'] = True
 
 app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
 
@@ -34,6 +40,8 @@ else:
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+# mail = Mail(app)
+mail = None
 
 @app.before_request
 def do():
@@ -79,7 +87,7 @@ def refresh_expiring_jwts(response):
 
 
 
-authController = AuthController(app, db, bcrypt, jwt)
+authController = AuthController(app, db, bcrypt, jwt, mail)
 eventController = EventController(app, db, jwt)
 imageController = ImageController(app,db,jwt)
 userController = UserController(app,db,bcrypt,jwt)

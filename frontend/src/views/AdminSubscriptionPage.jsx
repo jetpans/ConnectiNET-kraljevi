@@ -28,9 +28,15 @@ import {
 import { useState, useContext, useEffect } from "react";
 import MainHeader from "../ui/MainHeader.jsx";
 import MainFooter from "../ui/MainFooter";
+import { dblClick } from "@testing-library/user-event/dist/click";
 
 export default function AdminSubscription(props) {
-  const [value, setValue] = React.useState();
+  const [value, setValue] = useState(0);
+  const [price, setPrice] = useState(0);
+  const API_URL = process.env.REACT_APP_API_URL;
+  const dc = new dataController();
+  const navigate = useNavigate();
+  const accessToken = localStorage.getItem("jwt");
   const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
     return (
       <BaseNumberInput
@@ -236,6 +242,29 @@ export default function AdminSubscription(props) {
   
 `
   );
+
+  const fetchData = () => {
+    dc.GetData(API_URL + "/api/getSubscriptionPrice", accessToken)
+      .then((resp) => setPrice(resp.data.data.value))
+      .catch((e) => console.log(e));
+  };
+
+  const handleClick = () => {
+    const result = { newPrice: value };
+    dc.PostData(API_URL + "/api/setSubscriptionPrice", result, accessToken)
+      .then((resp) => {
+        if (resp.data.success === true) {
+          alert("Success!");
+          navigate(0);
+        } else {
+          alert("Failed to set price.");
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
     <Box
       sx={{
@@ -261,7 +290,7 @@ export default function AdminSubscription(props) {
         }}
       >
         <Typography variant="h6" noWrap sx={{ marginTop: "15px" }}>
-          Current subscription price:
+          Current subscription price: {price}
         </Typography>
         <Box
           sx={{
@@ -276,14 +305,15 @@ export default function AdminSubscription(props) {
             Enter new subscription price:
           </Typography>
           <TextField
-            inputProps={{ type: "number", min: 0 }}
+            inputProps={{ type: "number", min: 0, value: value }}
             aria-label="Demo number input"
             placeholder="Type a number…"
-            value={value}
-            onChange={(event, val) => setValue(val)}
+            onChange={(e) => {
+              setValue(e.target.value);
+            }}
             sx={{ marginBottom: "10px" }}
           />
-          <SvgButton>Button</SvgButton>
+          <SvgButton onClick={() => handleClick()}>Set price</SvgButton>
         </Box>
       </Paper>
 

@@ -7,7 +7,7 @@ import uuid
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, Country
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from util import *
@@ -20,7 +20,7 @@ class AdminController(Controller):
 
 
         self.app.add_url_rule("/api/getAllUsers", view_func=self.getAllUsers, methods=["GET"])
-
+        self.app.add_url_rule("/api/setSubscriptionPrice", view_func=self.setSubscriptionPrice, methods=["POST"])
         
     @visitor_required()
     def getAllUsers(self):
@@ -48,3 +48,15 @@ class AdminController(Controller):
         return result
         
 
+    @jwt_required()
+    def setSubscriptionPrice(self):
+        data = request.get_json()
+        print("Data is ", data)
+        newPrice = data["newPrice"]
+        print("NEW PRICE IS : ",  newPrice)
+        if (int(newPrice) > 0):
+            myEntry = self.db.session.query(Data).filter(Data.entryName == "subscriptionPrice").first()
+            myEntry.value = str(newPrice)
+            self.db.session.commit()
+            return {"success":True, "message":"Succesful."}
+        return {"success":False, "message":"Something was wrong with request, maybe the price is < 0."}

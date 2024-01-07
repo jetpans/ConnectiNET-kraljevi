@@ -7,7 +7,7 @@ import uuid
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, Country
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from util import *
@@ -21,6 +21,7 @@ class UserController(Controller):
 
         self.app.add_url_rule("/api/changeInformation", view_func=self.changeInformation, methods=["POST"])
         self.app.add_url_rule("/api/getInformation", view_func=self.getMoreInfo, methods=["GET"])
+        self.app.add_url_rule("/api/getSubscriptionPrice", view_func=self.getSubscriptionPrice, methods=["GET"])
 
 
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
@@ -135,3 +136,8 @@ class UserController(Controller):
             }, result_dict))
         return {"success":True, "data": toList}
 
+    @visitor_required()
+    def getSubscriptionPrice(self):
+        price = int(self.db.session.query(Data).filter(Data.entryName=="subscriptionPrice").first().value)
+        
+        return {"success":True, "data":{"value": price}}

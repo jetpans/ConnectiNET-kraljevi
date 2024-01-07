@@ -35,15 +35,17 @@ class EventController(Controller):
                 "priority":str(int(random.random()*50))
             }, result_dict))
         return {"success":True, "data": toList}
-    def getOrganizerPublicProfile(organizerId, self):
+    
+    def getOrganizerPublicProfile(self, organizerId):
         organizer = self.db.session.query(Organizer).filter_by(accountId=organizerId).first()
+        account = self.db.session.query(Account).filter_by(accountId=organizerId).first()
         if organizer:
             profile = {
-                "username": organizer["username"],
+                "username": account["username"],
                 "organizerName": organizer["organizerName"],
-                "eMail": organizer["eMail"],
-                "profileImage": organizer["profileImage"],
-                "countryCode": organizer["countryCode"],
+                "eMail": account["eMail"],
+                "profileImage": account["profileImage"],
+                "countryCode": account["countryCode"],
             }
 
             dbResp = self.db.session.query(Event).filter_by(accountId=organizerId).all() 

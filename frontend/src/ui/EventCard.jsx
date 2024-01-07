@@ -5,13 +5,15 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { useTheme } from "../context/ThemeContext";
 
 export default function EventCard(props) { 
     const { card } = props;
+    const { theme, toggleTheme } = useTheme();
 
     return (
         <Card
-            sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+            sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: theme.palette.background.default, color: theme.palette.text }}
             elevation={24}
             onMouseEnter={() => {/*console.log("Mouse enter")*/}}
         >

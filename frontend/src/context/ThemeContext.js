@@ -6,6 +6,7 @@ import { grey, indigo } from '@mui/material/colors';
 // the themes:
 const lightTheme = createTheme({
     title: 'light',
+    mode: 'light',
     palette: {
         mode: 'light',
         primary: {
@@ -23,7 +24,10 @@ const lightTheme = createTheme({
             paper: "#ffffff"
         },
         text: {
-            primary: "#000000"
+            primary: "#FFF",
+            secondary: "#FFF",
+            disabled: "#FFF",
+            hint: "#FFF",
         }
     }
 });
@@ -31,7 +35,7 @@ const darkTheme = createTheme({
     title: 'dark',
     palette: {
         mode: 'dark',
-        primary: {
+        primary: { 
             main: indigo[400],
             dark: indigo[600],
             light: indigo[200]
@@ -42,11 +46,11 @@ const darkTheme = createTheme({
             light: grey[100]
         },
         background: {
-            default: "#515151",
+            default: "#313131",
             paper: "#000000"
         },
         text: {
-            primary: "#eeefef"
+            default: "#000",
         }
     }
 });

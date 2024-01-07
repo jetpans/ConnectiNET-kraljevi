@@ -75,7 +75,7 @@ export default function UserTable() {
                 {user.organizerName ? user.organizerName : "-"}
               </TableCell>
               <TableCell>{user.countryName ? user.countryName : "-"}</TableCell>
-              <TableCell>{user.roleId == 1
+              <TableCell>{user.roleId == 1 
                   ? <><Button>Browse events</Button> <Button>Cancle subscription</Button></>
                   : user.roleId == 0
                   ? <><Button>Make Administrator</Button> <Button>Delete account</Button></>

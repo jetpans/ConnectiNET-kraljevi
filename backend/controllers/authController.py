@@ -43,6 +43,7 @@ class AuthController(Controller):
             self.db.session.add(newAcc)
             self.db.session.commit()
             
+
             if roleId == 0:
                 newVisitor = Visitor(f["firstName"], f["lastName"], newAcc.accountId)
                 self.db.session.add(newVisitor)

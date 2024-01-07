@@ -179,6 +179,7 @@ export default function RegisterPage() {
                           value="Visitor"
                           control={<Radio />}
                           label="Visitor"
+
                         />
                         <FormControlLabel
                           value="Organizer"

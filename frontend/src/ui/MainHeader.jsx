@@ -119,10 +119,6 @@ export default function MainHeader(props) {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log(profileImage);
-  }, [profileImage])
-
   return (
     <div>
       <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main}}>
@@ -187,8 +183,8 @@ export default function MainHeader(props) {
           }
         }}
       >
-        <Button onClick={toggleDrawer} color={theme.palette.text.light}>
-            <TableRowsIcon sx={{ color: theme.palette.secondary.light }} />
+        <Button onClick={toggleDrawer} >
+            <TableRowsIcon sx={{ color: theme.palette.text.light }} />
           </Button>
         <Typography variant="h5" sx={{ textAlign: "center", mt: 2, mb: 2 }}>
           ConnectiNET

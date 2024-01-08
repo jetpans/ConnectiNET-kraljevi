@@ -28,6 +28,7 @@ import { ProtectedComponent } from "../utils/ProtectedComponent";
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
 import { useDialog } from "../context/DialogContext";
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function SubscribePage(props) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -37,6 +38,8 @@ export default function SubscribePage(props) {
   const accessToken = localStorage.getItem("jwt");
   const { theme, toggleTheme } = useTheme();
   const mainTheme = theme;
+
+  const { openSnackbar } = useSnackbar();
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -81,30 +84,30 @@ export default function SubscribePage(props) {
           if (resp.success == true && resp.data.success === true) {
             navigate(0);
 
-            alert("Payment successful");
+            openSnackbar("success", "Payment successful");
           } else if (resp.success == true && resp.data.success == false) {
-            alert(resp.data.message);
+            openSnackbar("error", resp.data.message);
           } else {
-            alert("Failed");
+            openSnackbar("error", "Failed");
           }
         })
         .catch((resp) => {
-          alert("Failed.");
+          openSnackbar("error", "Failed.");
         });
     } else {
       dc.PostData(API_URL + "/api/subscribe", payDataCard, accessToken)
         .then((resp) => {
           if (resp.success == true && resp.data.success === true) {
-            alert("Payment successful");
+            openSnackbar("success", "Payment successful");
             navigate(0);
           } else if (resp.success == true && resp.data.success == false) {
-            alert(resp.data.message);
+            openSnackbar("error", resp.data.message);
           } else {
-            alert("Failed");
+            openSnackbar("error", "Failed");
           }
         })
         .catch((resp) => {
-          alert("Failed.");
+          openSnackbar("error", "Failed.");
         });
     }
   };
@@ -126,30 +129,30 @@ export default function SubscribePage(props) {
           if (resp.success == true && resp.data.success === true) {
             navigate(0);
 
-            alert("Payment successful");
+            openSnackbar("success", "Payment successful");
           } else if (resp.success == true && resp.data.success == false) {
-            alert(resp.data.message);
+            openSnackbar("error", resp.data.message);
           } else {
-            alert("Failed");
+            openSnackbar("error", "Failed");
           }
         })
         .catch((resp) => {
-          alert("Failed.");
+          openSnackbar("error", "Failed.");
         });
     } else {
       dc.PostData(API_URL + "/api/subscribe", payDataPayPal, accessToken)
         .then((resp) => {
           if (resp.success === true && resp.data.success === true) {
-            alert("Payment successful");
+            openSnackbar("success", "Payment successful");
             navigate(0);
           } else if (resp.success === false) {
-            alert(resp.data.message);
+            openSnackbar("error", resp.data.message);
           } else {
-            alert("Failed");
+            openSnackbar("error", "Failed");
           }
         })
         .catch((resp) => {
-          alert("Failed.");
+          openSnackbar("error", "Failed");
         });
     }
   };
@@ -158,16 +161,16 @@ export default function SubscribePage(props) {
     dc.PostData(API_URL + "/api/unsubscribe", "", accessToken)
       .then((resp) => {
         if (resp.success === true && resp.data.success === true) {
-          alert("Successfuly canceled subscription.");
+          openSnackbar("success", "Payment successful");
           navigate(0);
         } else if (resp.success === false) {
-          alert(resp.data.message);
+          openSnackbar("error", resp.data.message);
         } else {
-          alert("Failed.");
+          openSnackbar("error", "Failed");
         }
       })
       .catch((resp) => {
-        alert("Failed.");
+        openSnackbar("error", "Failed");
       });
   };
 
@@ -281,7 +284,6 @@ export default function SubscribePage(props) {
           </Typography>
           <Box
             component="form"
-            noValidate
             onSubmit={handleSubmitCard}
             sx={{
               mt: 3,
@@ -309,7 +311,7 @@ export default function SubscribePage(props) {
               name="card_date"
               inputProps={{
                 inputMode: "numeric",
-                pattern: "",
+                pattern: "\\d\\d/\\d\\d",
                 maxLength: 5,
               }}
               label="Card date"
@@ -386,7 +388,6 @@ export default function SubscribePage(props) {
           </Typography>
           <Box
             component="form"
-            noValidate
             onSubmit={handleSubmitPayPal}
             sx={{
               mt: 3,
@@ -399,16 +400,23 @@ export default function SubscribePage(props) {
               id="paypal_username"
               name="paypal_username"
               label="Paypal username"
-              type="email"
+              type="username"
               placeholder="Enter paypal username"
+              inputProps={{
+                inputMode: "text",
+                maxLength: 30
+              }}
               sx={{ marginBottom: "10px" }}
             />
             <TextField
               id="paypal_password"
               name="paypal_password"
               label="Paypal password"
-              placeholder="Enter paypal password"
               type="password"
+              inputProps={{
+                inputMode: "text",
+                maxLength: 30
+              }}
               sx={{ marginBottom: "10px" }}
             />
             <CardActions

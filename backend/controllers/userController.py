@@ -179,7 +179,7 @@ class UserController(Controller):
         
         if not self.askBankIfPaymentIsLegal(formData):
             print("BANK REJETCTED")
-            return jsonify({"success": False, "message": "Bank rejected the payment."})
+            return jsonify({"success": False, "message": "Error - Bank rejected the payment."})
                 
         if formData["method"] == "card":
             newPayment = Payment(date.today(),self.COST_OF_MONTH,"card", myUser.accountId)
@@ -236,7 +236,7 @@ class UserController(Controller):
         
         if not self.askBankIfPaymentIsLegal(formData):
             print("BANK REJETCTED")
-            return jsonify({"success": False, "message": "Bank rejected the payment."})
+            return jsonify({"success": False, "message": "Error - Bank rejected the payment."})
                 
         expire_date = data.expireDate
         today = datetime.now().date()

@@ -39,6 +39,7 @@ export const SnackbarProvider = ({ children }) => {
                       autoHideDuration={6000}
                       onClose={closeSnackbar}
                       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                      sx={{ zIndex: 9999 }}
                     >
                         {type === 'success' ? 
                             <Alert onClose={closeSnackbar} severity="success" sx={{ width: '100%' }}>

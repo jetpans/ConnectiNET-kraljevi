@@ -19,8 +19,8 @@ class AdminController(Controller):
     def __init__(self, app, db, jwt):
         super().__init__(app, db, jwt)
 
-
         self.app.add_url_rule("/api/getAllUsers", view_func=self.getAllUsers, methods=["GET"])
+        self.app.add_url_rule("/api/getAllEventsForOrganizer/<accountId>", view_func=self.getAllEvents, methods=["GET"])
         self.app.add_url_rule("/api/setSubscriptionPrice", view_func=self.setSubscriptionPrice, methods=["POST"])
         
     @visitor_required()
@@ -36,12 +36,27 @@ class AdminController(Controller):
         
         return {"success": False, "message": "There was an error"}
     
-    
+    @jwt_required()
+    def getAllEvents(self, accountId):
+        try:
+            print("tusam")
+            events = self.db.session.query(Event).filter(Event.accountId == accountId).all() 
+            
+            result = list(map(lambda event: event.__dict__, events))
+            for e in result:
+                del e['_sa_instance_state']
+            return {"success": True, "data":result}
+        except Exception as e:
+            print(e)
+            pass
+        
+        return {"success": False, "message": "There was an error"}
     
     
     def tripletToDict(self, triplet):
         acc, visit, org, country = triplet
         data = self.db.session.query(Subscription.startDate, Subscription.expireDate).join(Account, Account.accountId == Subscription.accountId).filter(Account.username ==acc.__dict__.get('username')).order_by(Subscription.startDate).first()
+        events = self.db.session.query(Event).join(Account, Account.accountId == Event.accountId).filter(Account.username ==acc.__dict__.get('username')).all() 
         result : dict = {}
         result = acc.__dict__
         result.update(visit.__dict__) if visit != None else 1
@@ -56,6 +71,10 @@ class AdminController(Controller):
                 result["subscription"] = 0
         else:
             result["subscription"] = 0
+        if events:
+            result["events"] = 1
+        else:
+            result["events"] = 0
         del result['_sa_instance_state']
         return result
 

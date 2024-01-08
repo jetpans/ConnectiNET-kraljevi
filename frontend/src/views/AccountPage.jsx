@@ -16,7 +16,6 @@ import {
 import Typography from "@mui/material/Typography";
 
 import { green, grey, indigo } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
 import dataController from "../utils/DataController";
@@ -26,6 +25,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ImageUploadButton from "../ui/ImageUploadButton";
 import UserUploadedImage from "../ui/UserUploadedImage";
+import { useTheme } from "../context/ThemeContext";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function AccountPage() {
   const [editMode, setEditMode] = useState(false);
@@ -38,6 +40,7 @@ export default function AccountPage() {
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("user"))
   );
+  const { openSnackbar } = useSnackbar();
 
   const [notification, setNotification] = useState({
     countries: [],
@@ -51,42 +54,13 @@ export default function AccountPage() {
   const fetchCountries = async () => {
     await dc
       .GetData(API_URL + "/api/countries")
-      .then((resp) => setCountries(resp.data.data));
+      .then((resp) => setCountries(resp.data.data))
+      .catch((resp) => { console.log(resp) });
   };
 
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
+  const { theme, toggleTheme } = useTheme();
 
-  const mainTheme = lightTheme;
+  const mainTheme = theme;
 
   const handleAddCountry = () => {
     dc.PostData(
@@ -196,14 +170,14 @@ export default function AccountPage() {
     dc.PostData(API_URL + "/api/changeInformation", loginData, accessToken)
       .then((resp) => {
         if (resp.success === true && resp.data.success === true) {
-          alert("Change successful!");
+          openSnackbar('success', 'Change successful!');
           navigate(0);
         } else {
-          alert("Change unsuccessful. " + resp.data);
+          openSnackbar('error', 'Change unsuccessful. ' + resp.data);
         }
       })
       .catch((resp) => {
-        alert("Change unsuccessful. " + resp.data);
+        openSnackbar('error', 'Change unsuccessful. ' + resp.data);
       });
   };
 
@@ -213,7 +187,9 @@ export default function AccountPage() {
       setUserData(resp.data.data);
       setCountryCode(resp.data.data.countryCode);
       setHidden(resp.data.data.hidden == "True");
-    });
+
+    }).catch((resp) => { console.log(resp) });
+
 
     dc.GetData(API_URL + "/api/getNotificationOptions", accessToken)
       .then((resp) => {
@@ -239,29 +215,26 @@ export default function AccountPage() {
   }, []);
 
   return (
-    <Paper
-      sx={{
-        bgcolor: mainTheme.background.default,
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-      }}
-    >
-      <ThemeProvider theme={mainTheme}>
+
+    <ProtectedComponent>
+      <Paper
+        sx={{
+          bgcolor: mainTheme.palette.background.default,
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+
         <CssBaseline />
         <MainHeader for="Account" />
 
         <TableContainer
           sx={{
-            bgcolor: mainTheme.background.default,
-            padding: "1rem 1vw",
-            display: "flex",
-            justifyContent: "center",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: "1rem",
+            bgcolor: mainTheme.palette.background.default,
+            padding: "2rem 20rem",
+
           }}
         >
           <Table
@@ -698,7 +671,7 @@ export default function AccountPage() {
         </TableContainer>
 
         <MainFooter />
-      </ThemeProvider>
-    </Paper>
+      </Paper>
+    </ProtectedComponent>
   );
 }

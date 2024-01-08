@@ -44,6 +44,8 @@ export const UserProvider = ({ children }) => {
       if(resp.success === true) {
         console.log("Logout successful");
       }
+    }).catch((err) => {
+      console.log(err);
     });
   };
 

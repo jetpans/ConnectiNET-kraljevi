@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import dataController from "../utils/DataController";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button, InputLabel, Chip } from "@mui/material";
 import { useSnackbar } from "../context/SnackbarContext";
@@ -9,7 +11,9 @@ export default function ImageUploadButton(props) {
   const accessToken = localStorage.getItem("jwt");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
+
   const { openSnackbar } = useSnackbar();
+
 
   const dc = new dataController();
 
@@ -44,7 +48,9 @@ export default function ImageUploadButton(props) {
         .then((resp) => {
           // console.log("THIS:", resp.data);
           if (resp.data.success === true) {
+
             openSnackbar('success', 'Image uploaded successfully.');
+
           } else {
             openSnackbar('error', 'Error uploading image.');
           }

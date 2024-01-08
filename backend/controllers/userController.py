@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask,jsonify,request,render_template, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -11,6 +12,9 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from util import *
 import os
+import random
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 
 
 class UserController(Controller):
@@ -180,7 +184,7 @@ class UserController(Controller):
                 
         if formData["method"] == "card":
             newPayment = Payment(date.today(),self.COST_OF_MONTH,"card", myUser.accountId)
-            newSubscription = Subscription(date.today(),datetime.today()+ relativedelta(months=1),myUser.accountId )
+            newSubscription = Subscription(date.today(),date.today()+ relativedelta(months=1),myUser.accountId )
             self.db.session.add(newPayment)
             self.db.session.add(newSubscription)
             self.db.session.commit()
@@ -189,7 +193,7 @@ class UserController(Controller):
             return jsonify({"success": True, "message": "Success."})
         elif formData["method"] == "paypal":
             newPayment = Payment(date.today(),self.COST_OF_MONTH,"paypal", myUser.accountId)
-            newSubscription = Subscription(date.today(),datetime.today()+ relativedelta(months=1),myUser.accountId )
+            newSubscription = Subscription(date.today(),date.today()+ relativedelta(months=1),myUser.accountId )
             
             self.db.session.add(newPayment)
             self.db.session.add(newSubscription)

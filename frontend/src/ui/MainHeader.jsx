@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -32,14 +34,16 @@ import { useSnackbar } from "../context/SnackbarContext";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
-  const tabs = ["Profile", "Events", "My Events", "Account", "Temp"];
-  const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { user, updateUser, logout, loading } = useUser();
   const navigate = useNavigate();
 
-  const { user, updateUser, logout, loading } = useUser();
-
+  const tabs = 
+      user.roleId === 0 ? ["Events", "Account"] 
+    : user.roleId === 1 ? ["Profile", "Events", "My Events", "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", "My Events", "Account", "Temp", "ConnectiNET Premium"]
+    : ["Events"];
   const dc = new dataController();
 
   function handleTabChange(event) {
@@ -53,6 +57,9 @@ export default function MainHeader(props) {
         break;
       case "Events":
         navigate("/events");
+        break;
+      case "ConnectiNET Premium":
+        navigate("/premium");
         break;
     }
   }
@@ -163,13 +170,17 @@ export default function MainHeader(props) {
                   onClick={(e) => handleTabChange(e)}
                 >
                   <ListItemIcon>
-                    {index === 1 ? (
+                    {text === "Events" ? (
                       <EventIcon />
-                    ) : index === 0 ? (
+                    ) : text === "Account" ? (
+                      <ManageAccountsIcon/>
+                    ) : text === "ConnectiNET Premium" ? (
+                      <WorkspacePremiumIcon />
+                    ) : text === "Profile" ? (
                       <AccountCircleIcon />
-                    ) : (
+                    ) : text === "My Events" ? (
                       <EditCalendarIcon />
-                    )}
+                    ) : null}
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>

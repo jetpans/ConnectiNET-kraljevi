@@ -23,6 +23,11 @@ import { useUser } from "../context/UserContext";
 
 import { useState, useContext, useEffect } from "react";
 import { Block, Pattern } from "@mui/icons-material";
+import { useTheme } from "../context/ThemeContext";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
+import MainHeader from "../ui/MainHeader";
+import MainFooter from "../ui/MainFooter";
+import { useDialog } from "../context/DialogContext";
 
 export default function SubscribePage(props) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -30,6 +35,10 @@ export default function SubscribePage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const accessToken = localStorage.getItem("jwt");
+  const { theme, toggleTheme } = useTheme();
+  const mainTheme = theme;
+
+  const { openDialog, closeDialog } = useDialog();
 
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("user"))
@@ -57,7 +66,6 @@ export default function SubscribePage(props) {
 
   const handleSubmitCard = (event) => {
     event.preventDefault();
-    console.log("bok");
     const data = new FormData(event.currentTarget);
 
     const payDataCard = {
@@ -66,7 +74,6 @@ export default function SubscribePage(props) {
       cardDate: data.get("card_date"),
       cvv: data.get("cvv"),
     };
-    console.log(payDataCard);
     const dc = new dataController();
     if (dateData.isSubscribed == "True") {
       dc.PostData(API_URL + "/api/extendSubscribe", payDataCard, accessToken)
@@ -104,7 +111,6 @@ export default function SubscribePage(props) {
 
   const handleSubmitPayPal = (event) => {
     event.preventDefault();
-    console.log("bok");
     const data = new FormData(event.currentTarget);
 
     const payDataPayPal = {
@@ -112,7 +118,6 @@ export default function SubscribePage(props) {
       payPalUsername: data.get("paypal_username"),
       payPalPassword: data.get("paypal_password"),
     };
-    console.log(payDataPayPal);
     const dc = new dataController();
 
     if (dateData.isSubscribed) {
@@ -171,7 +176,6 @@ export default function SubscribePage(props) {
       API_URL + "/api/getSubscriberInfo",
       localStorage.getItem("jwt")
     ).then((resp) => {
-      console.log(resp.data);
       setDateData(resp.data.data);
     });
   };
@@ -184,168 +188,79 @@ export default function SubscribePage(props) {
       fetchData();
     }
   }, [navigate]);
-  return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {dateData.isSubscribed ? (
-        <Card
-          variant="outlined"
-          sx={{ width: 345, minHeight: "350px", marginTop: "25vh" }}
+
+  const ChooseDialog = () => {
+    return (
+      <Card
+        id="opcija"
+        variant="outlined"
+        sx={{ width: 400, minHeight: "300px", marginTop: "0vh" }}
+      >
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "30px",
+          }}
         >
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "30px",
-            }}
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            sx={{ marginBottom: "45px" }}
           >
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              sx={{ marginBottom: "45px" }}
-            >
-              Welcome {userData.username}
-            </Typography>
+            Choose a payment option
+          </Typography>
+        </CardContent>
 
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ marginBottom: "15px" }}
-            >
-              Subscription status:
-              {dateData.isSubscribed === "True"
-                ? "Subscribed"
-                : "Nije pretplaćen"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Subscribed from {dateData.startDate} to {dateData.expireDate}
-            </Typography>
-          </CardContent>
-
-          <CardActions
-            sx={{
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "20px",
-            }}
-          >
-            <Button size="small" onClick={() => handleCancelSubscription()}>
-              Cancel subscription
-            </Button>
-            <Button size="small" onClick={() => setDialogOpen(true)}>
-              Extend subscription
-            </Button>
-          </CardActions>
-        </Card>
-      ) : (
-        <Card
-          variant="outlined"
-          sx={{ width: 345, minHeight: "350px", marginTop: "25vh" }}
+        <CardActions
+          sx={{
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "0px",
+            alignContent: "center",
+            justifyItems: "space-between",
+          }}
         >
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "30px",
-            }}
-          >
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              sx={{ marginBottom: "45px" }}
-            >
-              Welcome {userData.username}
-            </Typography>
+          <Grid container justifyContent="center">
+            <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button onClick={() => {openDialog(KarticaDialog)}} variant="contained">
+                Pay by card
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button onClick={() => {openDialog(PaypalDialog)}} variant="contained">
+                Pay with PayPal
+              </Button>
+            </Grid>
+          </Grid>
+        </CardActions>
 
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ marginBottom: "15px" }}
-            >
-              Subscription status: Not subscribed
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Price: 10$/mth
-            </Typography>
-          </CardContent>
-
-          <CardActions
-            sx={{
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "20px",
-            }}
-          >
-            <Button
-              size="small"
-              onClick={() => {
-                setDialogOpen(true);
-              }}
-            >
-              Subscribe
-            </Button>
-          </CardActions>
-        </Card>
-      )}
-      {dialogOpen ? (
-        <Card
-          id="opcija"
-          variant="outlined"
-          sx={{ width: 345, minHeight: "350px", marginTop: "25vh" }}
+        <CardActions
+          sx={{
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "50px",
+          }}
         >
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "30px",
-            }}
-          >
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              sx={{ marginBottom: "45px" }}
-            >
-              Choose a payment option
-            </Typography>
-          </CardContent>
+          <Button onClick={closeDialog} size="small" variant="outlined">
+            Close
+          </Button>
+        </CardActions>
+      </Card>
+    )
+  }
 
-          <CardActions
-            sx={{
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "20px",
-            }}
-          >
-            <Button onClick={handleClickCard} size="small">
-              Pay by card
-            </Button>
-            <Button onClick={handleClickPayPal} size="small">
-              Pay with PayPal
-            </Button>
-          </CardActions>
-        </Card>
-      ) : (
-        <></>
-      )}
+  const KarticaDialog = () => {
+    return (
       <Card
         id="kartica"
         variant="outlined"
         sx={{
           width: 345,
           minHeight: "350px",
-          marginTop: "25vh",
-          display: "none",
+          marginTop: "0vh",
         }}
       >
         <CardContent
@@ -420,21 +335,36 @@ export default function SubscribePage(props) {
                 marginTop: "5px",
               }}
             >
-              <Button size="small" type="submit">
+              <Button size="small" type="submit" variant="contained">
                 Confirm transaction
+              </Button>
+            </CardActions>
+            <CardActions
+              sx={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "50px",
+              }}
+            >
+              <Button onClick={closeDialog} size="small" variant="outlined">
+                Close
               </Button>
             </CardActions>
           </Box>
         </CardContent>
       </Card>
+    )
+  }
+
+  const PaypalDialog = () => {
+    return (
       <Card
         id="paypal"
         variant="outlined"
         sx={{
           width: 345,
           minHeight: "350px",
-          marginTop: "25vh",
-          display: "none",
+          marginTop: "0vh",
         }}
       >
         <CardContent
@@ -488,13 +418,156 @@ export default function SubscribePage(props) {
                 marginTop: "5px",
               }}
             >
-              <Button size="small" type="submit">
+              <Button size="small" type="submit" variant="contained">
                 Confirm transaction
+              </Button>
+            </CardActions>
+            <CardActions
+              sx={{
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "50px",
+              }}
+            >
+              <Button onClick={closeDialog} size="small" variant="outlined">
+                Close
               </Button>
             </CardActions>
           </Box>
         </CardContent>
       </Card>
-    </div>
+    )
+  }
+
+  return (
+    <ProtectedComponent>
+      <Paper
+        sx={{
+          bgcolor: mainTheme.palette.background.default,
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <CssBaseline />
+        <MainHeader for="Account" />
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {dateData.isSubscribed ? (
+        <Card
+          variant="outlined"
+          sx={{ width: "35%", height: "50vh", minWidth: 350, minHeight: 350, marginTop: "0vh" }}
+        >
+          <CardContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "30px",
+            }}
+          >
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              sx={{ marginBottom: "45px" }}
+            >
+              Welcome {userData.username}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ marginBottom: "15px" }}
+            >
+              Subscription status:
+              {dateData.isSubscribed === "True"
+                ? "Subscribed"
+                : "Nije pretplaćen"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Subscribed from {dateData.startDate} to {dateData.expireDate}
+            </Typography>
+          </CardContent>
+
+          <CardActions
+            sx={{
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button size="small" onClick={() => handleCancelSubscription()}>
+              Cancel subscription
+            </Button>
+            <Button size="small" onClick={() => openDialog(ChooseDialog)}>
+              Extend subscription
+            </Button>
+          </CardActions>
+        </Card>
+      ) : (
+        <Card
+          variant="outlined"
+          sx={{ width: 345, minHeight: "350px", marginTop: "0vh" }}
+        >
+          <CardContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "30px",
+            }}
+          >
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              sx={{ marginBottom: "45px" }}
+            >
+              Welcome {userData.username}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ marginBottom: "15px" }}
+            >
+              Subscription status: Not subscribed
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Price: 10$/mth
+            </Typography>
+          </CardContent>
+
+          <CardActions
+            sx={{
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "65px",
+            }}
+          >
+            <Button
+              size="small"
+              onClick={() => {
+                openDialog(ChooseDialog);
+              }}
+              variant="contained"
+            >
+              Subscribe
+            </Button>
+          </CardActions>
+        </Card>
+      )}
+      
+      </div>
+      <MainFooter />
+      </ Paper>
+      </ ProtectedComponent>
   );
 }

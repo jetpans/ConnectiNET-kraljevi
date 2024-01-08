@@ -56,10 +56,12 @@ class ImageController(Controller):
         file = request.files['image']
         
         if file:
-            new_filename = "temp_"+get_jwt_identity()+".png"  # Set your desired new filename here
+            myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+            new_filename = get_jwt_identity()+".png"  # Set your desired new filename here
             file_path = os.path.join(self.app.config['IMAGE_DIRECTORY'], new_filename)      
             file.save(file_path)
-
+            myUser.profileImage = new_filename
+            self.db.session.commit()
             return jsonify({'success': True, 'message': 'Image uploaded and saved successfully'})
         
         return jsonify({'success': False, 'error': 'No image data received'})     

@@ -15,14 +15,20 @@ import {
   ListItemButton,
   ListItemText,
   ListItemIcon,
+  Paper,
+  Container,
+  Grid
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { createTheme } from "@mui/material/styles";
-import { green, grey, indigo } from "@mui/material/colors";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import { useTheme } from "../context/ThemeContext";
+import { useDialog } from "../context/DialogContext";
+import AddCardIcon from '@mui/icons-material/AddCard';
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -61,6 +67,8 @@ export default function MainHeader(props) {
         logout();
         navigate("/login");
       }
+    }).catch((e) => {
+      console.log(e);
     });
   }
 
@@ -71,62 +79,66 @@ export default function MainHeader(props) {
     }
   }, []);
 
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
+  const { theme, toggleTheme } = useTheme();
+  const { dialogComponent, isDialogOpen, openDialog, closeDialog } = useDialog();
+  const dialogContent = (
+    <Paper>
+      <div className="dialog-content">
+        <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography variant="h6">Dialog Test Dialog Test Dialog Test</Typography>
+            <br />
+            <br />
+            <br />
+          </Grid>
+          <Button onClick={closeDialog} variant="contained">Close</Button>
+        </Container>
+      </div>
+    </Paper>
+  );
+  const handleOpenDialog = () => {
+    openDialog(dialogContent);
+  }
 
-  const mainTheme = lightTheme;
+  const {isOpen, type, message, closeSnackbar, openSnackbar} = useSnackbar();
+
+  const handleSnackbarOpen = () => {
+    openSnackbar("info", "My custom message");
+  }
+
   return (
     <div>
-      <AppBar position="relative">
+      <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main}}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={toggleDrawer}>
-            <TableRowsIcon sx={{ color: mainTheme.palette.secondary.other }} />
+            <TableRowsIcon sx={{ color: theme.palette.secondary.light }} />
           </Button>
 
           <Typography
             variant="h5"
-            color={mainTheme.palette.secondary.other}
+            color={theme.palette.secondary.light}
             noWrap
           >
             {props.for}
           </Typography>
 
           <div>
-            <Button onClick={handleLogout}>
-              <LogoutIcon sx={{ color: mainTheme.palette.secondary.other }} />
+            <Button onClick={handleSnackbarOpen}>
+              <AddCardIcon sx={{ color: theme.palette.secondary.light }} />
             </Button>
-            <Typography variant="h6" color={mainTheme.palette.secondary.other}>
+            <Button onClick={handleOpenDialog}>
+              <AddCardIcon sx={{ color: theme.palette.secondary.light }} />
+            </Button>
+            <Button onClick={toggleTheme}>
+              <Brightness4Icon sx={{ color: theme.palette.secondary.light }} />
+            </Button>
+            <Button onClick={handleLogout}>
+              <LogoutIcon sx={{ color: theme.palette.secondary.light }} />
+            </Button>
+
+            {/* <Typography variant="h6" color={theme.palette.secondary.light}>
               Log out
-            </Typography>
+            </Typography> */}
           </div>
         </Toolbar>
       </AppBar>

@@ -12,11 +12,12 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from datetime import timedelta
 
-
+from flask_mail import Mail, Message
 class AuthController(Controller):
-    def __init__(self, app, db, bcrypt, jwt):
+    def __init__(self, app, db, bcrypt, jwt, mail):
         super().__init__(app, db, jwt)
         self.bcrypt = bcrypt
+        self.mail = mail
 
         self.app.add_url_rule("/register", view_func=self.register, methods=["POST"])
         self.app.add_url_rule("/login", view_func=self.login, methods=["POST"]) 
@@ -43,6 +44,7 @@ class AuthController(Controller):
             self.db.session.add(newAcc)
             self.db.session.commit()
             
+
             if roleId == 0:
                 newVisitor = Visitor(f["firstName"], f["lastName"], newAcc.accountId)
                 self.db.session.add(newVisitor)
@@ -51,6 +53,27 @@ class AuthController(Controller):
                 newOrganizer = Organizer(f["organizerName"], newAcc.accountId)
                 self.db.session.add(newOrganizer)
             self.db.session.commit()
+            
+            data = {
+            'Messages': [
+                            {
+                                    "From": {
+                                            "Email": "connectinetkraljevi@gmail.com",
+                                            "Name": "ConnectiNET Kraljevi"
+                                    },
+                                    "To": [
+                                            {
+                                                    "Email": "stjepan.djelekovcan@gmail.com",
+                                                    "Name": "Test"
+                                            }
+                                    ],
+                                    "Subject": "My first mail!",
+                                    "TextPart": f"User {f['username']} just registered.",
+                            }
+                    ]
+            }
+            result = self.mail.send.create(data=data)
+            print("RESULT OF SEND: ", result)
             return {"success": True, "data": "Registration successful."}
         
         return result

@@ -4,9 +4,10 @@ import UserUploadedImage from "../ui/UserUploadedImage";
 
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
 export default function UploadImagePageTemp() {
   return (
-    <div>
+    <ProtectedComponent>
       <MainHeader />
 
       <ImageUploadButton
@@ -16,6 +17,6 @@ export default function UploadImagePageTemp() {
       <UserUploadedImage src="/image-demso.png"></UserUploadedImage>
 
       <MainFooter></MainFooter>
-    </div>
+    </ProtectedComponent>
   );
 }

@@ -5,3 +5,5 @@ python-dotenv
 gunicorn
 flask_jwt_extended
 python-dateutil
+flask_mail
+mailjet_rest

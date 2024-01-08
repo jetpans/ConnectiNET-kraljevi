@@ -70,6 +70,12 @@ export default function EventsPage(props) {
               variant="fullWidth"
               value={currentTab}
               onChange={handleTabChange}
+              TabIndicatorProps={{
+                style: {
+                  backgroundColor: mainTheme.palette.primary.main
+                }
+              }}
+              textColor="inherit"
             >
               <Tab
                 label="Top Picks"

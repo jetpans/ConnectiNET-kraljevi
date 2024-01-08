@@ -42,7 +42,7 @@ export const UserProvider = ({ children }) => {
     const dc = new dataController();
     dc.PostData(API_URL + "/logout", null).then((resp) => {
       if(resp.success === true) {
-        console.log("Logout successful");
+        // console.log("Logout successful");
       }
     }).catch((err) => {
       console.log(err);

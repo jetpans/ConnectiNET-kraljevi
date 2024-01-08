@@ -17,7 +17,9 @@ import {
   ListItemIcon,
   Paper,
   Container,
-  Grid
+  Grid,
+  Menu,
+  MenuItem
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -28,9 +30,9 @@ import TableRowsIcon from "@mui/icons-material/TableRows";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import { useTheme } from "../context/ThemeContext";
-import { useDialog } from "../context/DialogContext";
 import AddCardIcon from '@mui/icons-material/AddCard';
 import { useSnackbar } from "../context/SnackbarContext";
+import UserUploadedAvatar from "./UserUploadedAvatar";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -39,11 +41,30 @@ export default function MainHeader(props) {
   const { user, updateUser, logout, loading } = useUser();
   const navigate = useNavigate();
 
-  const tabs = 
+  const [tabs, setTabs] = useState(
+      user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
     : user.roleId === 1 ? ["Profile", "Events", "My Events", "Account", "ConnectiNET Premium"/**, "Temp" */]
     : user.roleId === -1 ? ["Profile", "Events", "My Events", "Account", "Temp", "ConnectiNET Premium"]
-    : ["Events"];
+    : ["Events"]); 
+
+  const [profileImage, setProfileImage] = useState("");
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    setTabs(
+      user === null ? ["Events"] :
+      user.roleId === 0 ? ["Events", "Account"] 
+    : user.roleId === 1 ? ["Profile", "Events", "My Events", "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", "My Events", "Account", "Temp", "ConnectiNET Premium"]
+    : ["Events"]);
+  }, [user])
+
   const dc = new dataController();
 
   function handleTabChange(event) {
@@ -87,31 +108,20 @@ export default function MainHeader(props) {
   }, []);
 
   const { theme, toggleTheme } = useTheme();
-  const { dialogComponent, isDialogOpen, openDialog, closeDialog } = useDialog();
-  const dialogContent = (
-    <Paper>
-      <div className="dialog-content">
-        <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
-          <Grid item xs={12} sm={6} md={6}>
-            <Typography variant="h6">Dialog Test Dialog Test Dialog Test</Typography>
-            <br />
-            <br />
-            <br />
-          </Grid>
-          <Button onClick={closeDialog} variant="contained">Close</Button>
-        </Container>
-      </div>
-    </Paper>
-  );
-  const handleOpenDialog = () => {
-    openDialog(dialogContent);
+  
+  const handleOpenMenu = () => {
+    setAnchorEl(document.getElementById("profile-image"));
   }
 
-  const {isOpen, type, message, closeSnackbar, openSnackbar} = useSnackbar();
+  useEffect(() => {
+    if(user && user !== null && user.profileImage) {
+      setProfileImage(user.profileImage);
+    }
+  }, [user]);
 
-  const handleSnackbarOpen = () => {
-    openSnackbar("info", "My custom message");
-  }
+  useEffect(() => {
+    console.log(profileImage);
+  }, [profileImage])
 
   return (
     <div>
@@ -130,18 +140,38 @@ export default function MainHeader(props) {
           </Typography>
 
           <div>
-            <Button onClick={handleSnackbarOpen}>
-              <AddCardIcon sx={{ color: theme.palette.secondary.light }} />
-            </Button>
-            <Button onClick={handleOpenDialog}>
-              <AddCardIcon sx={{ color: theme.palette.secondary.light }} />
-            </Button>
-            <Button onClick={toggleTheme}>
+            <Button onClick={toggleTheme} id="change-color-button">
               <Brightness4Icon sx={{ color: theme.palette.secondary.light }} />
             </Button>
-            <Button onClick={handleLogout}>
-              <LogoutIcon sx={{ color: theme.palette.secondary.light }} />
+            <Button onClick={handleOpenMenu} id="profile-image">
+              {profileImage && profileImage !== "" ? (
+                <UserUploadedAvatar
+                  src={"/" + profileImage}
+                ></UserUploadedAvatar>
+              ) : null}
             </Button>
+            {/* <Avatar alt="User Profile Picture" src={"/" + user.profileImage ? user.profileImage : ""} /> */}
+            {/* <Button onClick={handleLogout}>
+              <LogoutIcon sx={{ color: theme.palette.secondary.light }} />
+            </Button> */}
+            <Menu
+              id="profile-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button'
+              }}
+            >
+              <MenuItem onClick={() => {navigate('/account')}}>
+                <Typography marginRight={2}>Account</ Typography>
+                <ManageAccountsIcon marginBottom={1} htmlColor={theme.palette.secondary.dark} />
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <Typography marginRight={3}>Log Out</ Typography>
+                <LogoutIcon marginBottom={1} htmlColor={theme.palette.secondary.dark} />
+              </MenuItem>
+            </Menu>
 
             {/* <Typography variant="h6" color={theme.palette.secondary.light}>
               Log out
@@ -150,7 +180,16 @@ export default function MainHeader(props) {
         </Toolbar>
       </AppBar>
 
-      <Drawer open={drawerOpen} onClose={toggleDrawer}>
+      <Drawer open={drawerOpen} PaperProps={{
+          sx: {
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.main
+          }
+        }}
+      >
+        <Button onClick={toggleDrawer} color={theme.palette.text.light}>
+            <TableRowsIcon sx={{ color: theme.palette.secondary.light }} />
+          </Button>
         <Typography variant="h5" sx={{ textAlign: "center", mt: 2, mb: 2 }}>
           ConnectiNET
         </Typography>
@@ -169,7 +208,10 @@ export default function MainHeader(props) {
                   value={text}
                   onClick={(e) => handleTabChange(e)}
                 >
-                  <ListItemIcon>
+                <ListItemIcon sx={{
+                  backgroundColor: theme.palette.background.default,
+                  color: theme.palette.text.light
+                }}>
                     {text === "Events" ? (
                       <EventIcon />
                     ) : text === "Account" ? (

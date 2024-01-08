@@ -31,6 +31,8 @@ export default function LoginPage(props) {
 
   const { user, updateUser, logout, loading } = useUser();
 
+  const dc = new dataController();
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -45,8 +47,6 @@ export default function LoginPage(props) {
     if (data.get("username") === "" || data.get("password") === "") {
       return;
     }
-
-    const dc = new dataController();
 
     const loginData = {
       username: data.get("username"),
@@ -67,16 +67,13 @@ export default function LoginPage(props) {
             countryCode: resp.data.data.user.countryCode,
             email: resp.data.data.user.email,
           });
-
-          navigate("/events");
         } else {
           // console.log('Error!');
           // console.log(resp.data);
           openSnackbar('error', 'Login unsuccessful. Please check your credentials.');
           setError([false, false]);
         }
-      })
-      .catch((resp) => {
+      }).catch((resp) => {
         // console.log(resp.data);
         openSnackbar('error', 'Login unsuccessful. Please check your credentials.');
         setError([false, false]);
@@ -96,6 +93,23 @@ export default function LoginPage(props) {
     }
   }, []);
 
+  useEffect(() => {
+    if(user !== null) {
+      const accessToken = localStorage.getItem("jwt");
+      dc.GetData(API_URL + "/api/getInformation", accessToken)
+        .then((response) => {
+          updateUser({
+            username: user.username,
+            roleId: user.roleId,
+            countryCode: user.countryCode,
+            email: user.email,
+            profileImage: response.data.data.profileImage,
+          });
+        }).then((resp) => {
+          navigate("/events");
+        }).catch((response) => { console.log(response) });
+    }
+  }, [user]);
 
   return (
     <>

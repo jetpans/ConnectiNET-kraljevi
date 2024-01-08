@@ -14,6 +14,7 @@ import os
 import random
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+from sqlalchemy import and_
 
 
 class UserController(Controller):
@@ -268,11 +269,11 @@ class UserController(Controller):
         print("\n\n GOT REQUEST")
         myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
         notificationOptionsEventType = self.db.session.query(NotificationEventType,EventType.typeName). \
-        join(Account, Account.accountId == NotificationEventType.accountId and Account.username == get_jwt_identity()).\
+        join(Account, and_(Account.accountId == NotificationEventType.accountId, Account.username == get_jwt_identity())).\
         join(EventType, EventType.typeId == NotificationEventType.eventType).filter(Account.accountId == myUser.accountId).all()
         
         notificationOptionsCountry = self.db.session.query(NotificationCountry, Country.name). \
-        join(Account, Account.accountId == NotificationCountry.accountId and Account.username == get_jwt_identity()).\
+        join(Account,and_(Account.accountId == NotificationCountry.accountId , Account.username == get_jwt_identity())).\
         join(Country, Country.countryCode == NotificationCountry.countryCode).filter(Account.accountId == myUser.accountId).all()
         
         notificationOptionsEventType = list(map(lambda entry: entry[1], notificationOptionsEventType))
@@ -325,7 +326,7 @@ class UserController(Controller):
 
         countryName = data["countryName"]
         myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
-        myNot = self.db.session.query(NotificationCountry).join(Country, Country.countryCode == NotificationCountry.countryCode and Country.name == countryName)\
+        myNot = self.db.session.query(NotificationCountry).join(Country,and_(Country.countryCode == NotificationCountry.countryCode, Country.name == countryName))\
         .filter(NotificationCountry.accountId == myUser.accountId).first()
         self.db.session.delete(myNot)
         self.db.session.commit()
@@ -338,7 +339,7 @@ class UserController(Controller):
         typeName = data["typeName"]
         
         myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
-        myNot = self.db.session.query(NotificationEventType).join(EventType, EventType.typeId == NotificationEventType.eventType  and EventType.typeName == typeName)\
+        myNot = self.db.session.query(NotificationEventType).join(EventType,and_(EventType.typeId == NotificationEventType.eventType,  EventType.typeName == typeName))\
         .filter(NotificationEventType.accountId == myUser.accountId).first()
         self.db.session.delete(myNot)
 

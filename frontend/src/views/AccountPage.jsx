@@ -225,9 +225,8 @@ export default function AccountPage() {
     return;
   };
 
-  const handleDeleteCountry = (e) => {
-    let countryName = e.target.id;
-
+  const handleDeleteCountry = (event) => {
+    let countryName = event.target.id;
     dc.PostData(
       API_URL + "/api/deleteNotificationCountry",
       { countryName: countryName },
@@ -641,10 +640,10 @@ export default function AccountPage() {
                               <TableCell>{country}</TableCell>
                               <TableCell>
                                 <Button
-                                  id={country}
+                                  key={country}
                                   onClick={(e) => handleDeleteCountry(e)}
                                 >
-                                  <DeleteIcon></DeleteIcon>
+                                  <DeleteIcon id={country}></DeleteIcon>
                                 </Button>
                               </TableCell>
                             </TableRow>
@@ -660,10 +659,10 @@ export default function AccountPage() {
                               <TableCell>{type}</TableCell>
                               <TableCell>
                                 <Button
-                                  id={type}
+                                  key={type}
                                   onClick={(e) => handleDeleteEventType(e)}
                                 >
-                                  <DeleteIcon></DeleteIcon>
+                                  <DeleteIcon id={type}></DeleteIcon>
                                 </Button>
                               </TableCell>
                             </TableRow>

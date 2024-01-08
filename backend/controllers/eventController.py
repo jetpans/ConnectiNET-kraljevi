@@ -38,8 +38,8 @@ class EventController(Controller):
     
     def getOrganizerPublicProfile(self, organizerId):
         organizer = self.db.session.query(Organizer).filter_by(accountId=organizerId).first()
-        account = self.db.session.query(Account).filter_by(accountId=organizerId).first()
         if organizer:
+            account = self.db.session.query(Account).filter_by(accountId=organizerId).first()
             profile = {
                 "username": account.username,
                 "organizerName": organizer.organizerName,

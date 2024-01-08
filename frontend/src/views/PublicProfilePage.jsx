@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -33,7 +37,7 @@ export default function OrganizerProfile() {
 
   const fetchData = async () => {
     const accessToken = localStorage.getItem('jwt');
-    dc.GetData(API_URL + "/getOrganizerPublicProfile/"+organizerId, accessToken).then((resp) => {
+    dc.GetData(API_URL + "/getOrganizerPublicProfile/" + organizerId, accessToken).then((resp) => {
       if (resp.data.success === true) {
         setOrganizerInfo(resp.data.organizerInfo);
         setCards(resp.data.organizerEvents);
@@ -88,41 +92,59 @@ export default function OrganizerProfile() {
     <Paper sx={{ bgcolor: mainTheme.background.default }}>
       <ThemeProvider theme={mainTheme}>
         <CssBaseline />
-        <MainHeader for="Organizer"></MainHeader>
+        <MainHeader for={organizerInfo && organizerInfo.organizerName !== null ? organizerInfo.organizerName : "Organizer" }></MainHeader>
         <>
             {/* Hero unit */}
+            
             <Container sx={{ py: 4 }} maxWidth="lg">
                 {organizerInfo && organizerInfo !== null ? (
                 <>
-                    
-                    <Box sx={{ mb: 4 }}>
+
+
+
+                
+        <Card
+            sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
+            elevation={24}
+            onMouseEnter={() => {/*console.log("Mouse enter")*/}}
+        >
+            <Box sx={{ py: 4,  px: 4 ,display: 'flex', flexDirection: 'column' }}>
                         <UserUploadedImage
                             src={"/" + organizerInfo.profileImage}
-                            style={{border: "1px solid black", maxWidth: "150px", maxHeight: "150px" }}
+                            style={{py: 4,  px: 4, border: "1px solid black", maxWidth: "150px", maxHeight: "150px" }}
                             className="profile-image"
                         />
-                        <Typography variant="h4" gutterBottom>
-                            {organizerInfo.organizerName}
-                        </Typography>
-                    </Box>
+            </Box>
+            <CardContent sx={{ flexGrow: 1 ,py: 4,  px: 4 ,display: 'flex', flexDirection: 'column' }}>
                     <Typography>
                         Username: {organizerInfo.username}
                     </Typography>
+                    <Divider sx={{ mb: 4 }} />
                     <Typography>
                         Email: {organizerInfo.eMail}
                     </Typography>
+                    <Divider sx={{ mb: 4 }} />
                     <Typography>
                         Country: {organizerInfo.countryCode}
                     </Typography>
+                    <Divider sx={{ mb: 4 }} />
+            </CardContent>
+            
+        </Card>
+        
                     
-                </>
-                ) : null}
-
-                <Divider sx={{ mb: 4 }} />
+        <div>
+          <br></br>
+        </div>
 
                 <Typography variant="h5" gutterBottom>
                     Events by {organizerInfo.organizerName}:
-                </Typography>
+                </Typography>                    <Divider sx={{ mb: 0 }} />
+
+                </>
+
+                
+                ) : null}
 
                 <div>
                     <br></br>
@@ -135,6 +157,8 @@ export default function OrganizerProfile() {
                                 <EventCard card={card} />
                             </Grid>
                         ))
+
+                  
                     ) : (
                          <Box
                             sx={{

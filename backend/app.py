@@ -14,6 +14,8 @@ from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from flask_mail import Mail
+from mailjet_rest import Client
+
 
 app = Flask(__name__)
 
@@ -22,13 +24,9 @@ app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["IMAGE_DIRECTORY"] = "images"
 
-# app.config['MAIL_SERVER']='smtp.gmail.com'
-# app.config['MAIL_PORT'] = 465
-# app.config['MAIL_USERNAME'] = 'connectinetkraljevi@gmail.com'
-# app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PW')
-# app.config['MAIL_USE_TLS'] = False
-# app.config['MAIL_USE_SSL'] = True
-
+app.config["MAIL_API_KEY"] = os.environ.get('MAIL_API_KEY')
+app.config["MAIL_SECRET"] = os.environ.get("MAIL_SECRET")
+ 
 app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
 
 
@@ -40,8 +38,8 @@ else:
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
-# mail = Mail(app)
-mail = None
+mail = Client(auth=(os.environ.get('MAIL_API_KEY'), os.environ.get("MAIL_SECRET")), version='v3.1')
+
 
 @app.before_request
 def do():

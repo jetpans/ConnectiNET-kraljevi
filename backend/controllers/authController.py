@@ -53,8 +53,26 @@ class AuthController(Controller):
                 self.db.session.add(newOrganizer)
             self.db.session.commit()
             
-            # msg = Message(f"User {f['username']} just registered.", sender ="connectiMail@gmail.com", recipients=["stjepan.djelekovcan@gmail.com"])
-            # self.mail.send(msg)
+            data = {
+            'Messages': [
+                            {
+                                    "From": {
+                                            "Email": "connectinetkraljevi@gmail.com",
+                                            "Name": "ConnectiNET Kraljevi"
+                                    },
+                                    "To": [
+                                            {
+                                                    "Email": "stjepan.djelekovcan@gmail.com",
+                                                    "Name": "Test"
+                                            }
+                                    ],
+                                    "Subject": "My first mail!",
+                                    "TextPart": f"User {f['username']} just registered.",
+                            }
+                    ]
+            }
+            result = self.mail.send.create(data=data)
+            print("RESULT OF SEND: ", result)
             return {"success": True, "data": "Registration successful."}
         
         return result

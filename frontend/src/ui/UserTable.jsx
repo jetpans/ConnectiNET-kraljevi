@@ -83,7 +83,11 @@ const [filterValue, setFilterValue] = useState('');
         return true; // If no specific filterBy is selected, include all users
     }
   };
-
+  
+  const handleClickEvents = (event) =>{
+    let accountId = event.target.id;
+    navigate("/admin/browseEvents/" + accountId)
+  };
   const handleFilterSubmit = () => {
     const filteredUsers = users.filter(filterFunction);
     console.log("bok")
@@ -139,7 +143,7 @@ const [filterValue, setFilterValue] = useState('');
               </TableCell>
               <TableCell>{user.countryName ? user.countryName : "-"}</TableCell>
               <TableCell>{user.roleId == 1 
-                  ? <>{user.events == 1 ?<Button>Browse events</Button>:null} {user.subscription == 1 ? <Button>Cancle subscription</Button>:null}</>
+                  ? <>{user.events == 1 ?<Button id = {user.accountId} onClick={(e) => handleClickEvents(e)}>Browse events</Button>:null} {user.subscription == 1 ? <Button>Cancle subscription</Button>:null}</>
                   : user.roleId == 0
                   ? <><Button>Make Administrator</Button> <Button>Delete account</Button></>
                   : null}</TableCell>

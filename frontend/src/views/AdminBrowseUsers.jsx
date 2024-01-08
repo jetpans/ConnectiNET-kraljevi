@@ -10,12 +10,13 @@ export default function AdminBrowseUsers() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        minHeight: "100vh",
       }}
     >
       
-
+      <MainHeader></MainHeader>
       <UserTable></UserTable>
-     
+      <MainFooter></MainFooter>
     </div>
   );
 }

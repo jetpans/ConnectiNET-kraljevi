@@ -17,11 +17,11 @@ export default function App() {
         <Route path="/events" element={<EventsPage />} />
         <Route path="/admin/subscription" element={<AdminSubscriptionPage />} />
         <Route
-          path="admin/browseUsers"
+          path="/admin/browseUsers"
           element={<AdminBrowseUsers></AdminBrowseUsers>}
         />
         <Route
-          path="admin/browseEvent"
+          path="/admin/browseEvents/:accountId"
           element={<AdminBrowseEvent></AdminBrowseEvent>}
         />
         <Route path="/login" element={<LoginPage />} />

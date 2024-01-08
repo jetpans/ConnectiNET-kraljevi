@@ -17,22 +17,22 @@ import {
   ListItemIcon,
   Paper,
   Container,
-  Grid
+  Grid,
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useTheme } from "../context/ThemeContext";
 import { useDialog } from "../context/DialogContext";
-import AddCardIcon from '@mui/icons-material/AddCard';
+import AddCardIcon from "@mui/icons-material/AddCard";
 import { useSnackbar } from "../context/SnackbarContext";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
-  const tabs = ["Profile", "Events", "My Events", "Account", "Temp"];
+  const tabs = ["Profile", "Events", "My Events", "Account", "Subscribe"];
   const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -48,11 +48,12 @@ export default function MainHeader(props) {
       case "Account":
         navigate("/account");
         break;
-      case "Temp":
-        navigate("/temp");
-        break;
+
       case "Events":
         navigate("/events");
+        break;
+      case "Subscribe":
+        navigate("/subscribe");
         break;
     }
   }
@@ -62,14 +63,16 @@ export default function MainHeader(props) {
   }
 
   function handleLogout() {
-    dc.PostData(API_URL + "/logout").then((resp) => {
-      if (resp.success === true) {
-        logout();
-        navigate("/login");
-      }
-    }).catch((e) => {
-      console.log(e);
-    });
+    dc.PostData(API_URL + "/logout")
+      .then((resp) => {
+        if (resp.success === true) {
+          logout();
+          navigate("/login");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 
   useEffect(() => {
@@ -80,45 +83,46 @@ export default function MainHeader(props) {
   }, []);
 
   const { theme, toggleTheme } = useTheme();
-  const { dialogComponent, isDialogOpen, openDialog, closeDialog } = useDialog();
+  const { dialogComponent, isDialogOpen, openDialog, closeDialog } =
+    useDialog();
   const dialogContent = (
     <Paper>
       <div className="dialog-content">
         <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
           <Grid item xs={12} sm={6} md={6}>
-            <Typography variant="h6">Dialog Test Dialog Test Dialog Test</Typography>
+            <Typography variant="h6">
+              Dialog Test Dialog Test Dialog Test
+            </Typography>
             <br />
             <br />
             <br />
           </Grid>
-          <Button onClick={closeDialog} variant="contained">Close</Button>
+          <Button onClick={closeDialog} variant="contained">
+            Close
+          </Button>
         </Container>
       </div>
     </Paper>
   );
   const handleOpenDialog = () => {
     openDialog(dialogContent);
-  }
+  };
 
-  const {isOpen, type, message, closeSnackbar, openSnackbar} = useSnackbar();
+  const { isOpen, type, message, closeSnackbar, openSnackbar } = useSnackbar();
 
   const handleSnackbarOpen = () => {
     openSnackbar("info", "My custom message");
-  }
+  };
 
   return (
     <div>
-      <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main}}>
+      <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={toggleDrawer}>
             <TableRowsIcon sx={{ color: theme.palette.secondary.light }} />
           </Button>
 
-          <Typography
-            variant="h5"
-            color={theme.palette.secondary.light}
-            noWrap
-          >
+          <Typography variant="h5" color={theme.palette.secondary.light} noWrap>
             {props.for}
           </Typography>
 

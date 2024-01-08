@@ -12,6 +12,9 @@ import {
   TextField,
   MenuItem,
   Hidden,
+  Grid,
+  Container,
+  Box,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
@@ -28,6 +31,8 @@ import UserUploadedImage from "../ui/UserUploadedImage";
 import { useTheme } from "../context/ThemeContext";
 import { ProtectedComponent } from "../utils/ProtectedComponent";
 import { useSnackbar } from "../context/SnackbarContext";
+import { useDialog } from "../context/DialogContext";
+import AddCardIcon from "@mui/icons-material/AddCard";
 
 export default function AccountPage() {
   const [editMode, setEditMode] = useState(false);
@@ -42,6 +47,103 @@ export default function AccountPage() {
   );
   const { openSnackbar } = useSnackbar();
 
+  const { dialogComponent, isDialogOpen, openDialog, closeDialog } =
+    useDialog();
+
+  const confirmDeleteAccountDialog = (
+    <Paper>
+      <div className="dialog-content">
+        <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography variant="h6">
+              Are you sure you want to delete your account?{" "}
+            </Typography>
+            <br />
+            <br />
+            <br />
+          </Grid>
+
+          <Box
+            fullWidth
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: "2rem",
+            }}
+          >
+            <Button
+              sx={{ bgcolor: "green" }}
+              type="submit"
+              form="edit-form"
+              onClick={() => handleDeleteAccount()}
+              variant="contained"
+            >
+              Yes
+            </Button>
+            <Button
+              sx={{ bgcolor: "red" }}
+              onClick={closeDialog}
+              variant="contained"
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Container>
+      </div>
+    </Paper>
+  );
+
+  const confirmChangeInformation = (
+    <Paper>
+      <div className="dialog-content">
+        <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography variant="h6">
+              Are you sure you want to change your information?
+            </Typography>
+            <br />
+            <br />
+            <br />
+          </Grid>
+          <Box
+            fullWidth
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: "2rem",
+            }}
+          >
+            <Button
+              sx={{ bgcolor: "green" }}
+              type="submit"
+              form="edit-form"
+              onClick={() => handleSubmitChange()}
+              variant="contained"
+            >
+              Yes
+            </Button>
+            <Button
+              sx={{ bgcolor: "red" }}
+              onClick={closeDialog}
+              variant="contained"
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Container>
+      </div>
+    </Paper>
+  );
+  const handleOpenChangeInformationDialog = () => {
+    openDialog(confirmChangeInformation);
+  };
+
+  const handleOpenDeleteAccountDialog = () => {
+    openDialog(confirmDeleteAccountDialog);
+  };
+
   const [notification, setNotification] = useState({
     countries: [],
     eventTypes: [],
@@ -55,7 +157,9 @@ export default function AccountPage() {
     await dc
       .GetData(API_URL + "/api/countries")
       .then((resp) => setCountries(resp.data.data))
-      .catch((resp) => { console.log(resp) });
+      .catch((resp) => {
+        console.log(resp);
+      });
   };
 
   const { theme, toggleTheme } = useTheme();
@@ -63,6 +167,7 @@ export default function AccountPage() {
   const mainTheme = theme;
 
   const handleAddCountry = () => {
+    if (notificationCountryCode == "") return;
     dc.PostData(
       API_URL + "/api/addNotificationCountry",
       { countryCode: notificationCountryCode },
@@ -70,10 +175,11 @@ export default function AccountPage() {
     )
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Sucessfuly added country.");
+          openSnackbar("success", "Successfuly added country.");
+
           navigate(0);
         } else {
-          alert("Failed here");
+          openSnackbar("error", "Failed to add country.");
         }
       })
       .catch((e) => console.log(e));
@@ -81,6 +187,7 @@ export default function AccountPage() {
   };
 
   const handleAddEventType = () => {
+    if (notificationEventType == "") return;
     dc.PostData(
       API_URL + "/api/addNotificationEventType",
       { eventType: notificationEventType },
@@ -88,10 +195,11 @@ export default function AccountPage() {
     )
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Sucessfuly added event type.");
+          openSnackbar("success", "Successfuly added event type.");
+
           navigate(0);
         } else {
-          alert("Failed here");
+          openSnackbar("error", "Failed to add event type.");
         }
       })
       .catch((e) => console.log(e));
@@ -107,10 +215,10 @@ export default function AccountPage() {
     )
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Sucessfuly deleted event type.");
+          openSnackbar("success", "Successfuly removed event type.");
           navigate(0);
         } else {
-          alert("Failed here");
+          openSnackbar("error", "Failed to delete event type.");
         }
       })
       .catch((e) => console.log(e));
@@ -127,10 +235,10 @@ export default function AccountPage() {
     )
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Sucessfuly deleted country.");
+          openSnackbar("success", "Successfuly removed country.");
           navigate(0);
         } else {
-          alert("Failed here");
+          openSnackbar("error", "Failed to delete country type.");
         }
       })
       .catch((e) => console.log(e));
@@ -138,23 +246,25 @@ export default function AccountPage() {
   };
 
   const handleDeleteAccount = () => {
+    closeDialog();
+
     dc.PostData(API_URL + "/api/deleteAccount", "", accessToken)
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Sucessfuly deleted account.");
+          openSnackbar("success", "Successfuly deleted.");
           localStorage.clear();
           navigate("/login");
         } else {
-          alert("Failed here");
+          openSnackbar("error", "Failed to delete account.");
         }
       })
       .catch((e) => console.log(e));
     return;
   };
-  const handleSubmitChange = (event) => {
-    event.preventDefault();
+  const handleSubmitChange = () => {
+    closeDialog();
 
-    const data = new FormData(event.currentTarget);
+    const data = new FormData(document.getElementById("edit-form"));
 
     const loginData = {
       email: data.get("email"),
@@ -170,26 +280,28 @@ export default function AccountPage() {
     dc.PostData(API_URL + "/api/changeInformation", loginData, accessToken)
       .then((resp) => {
         if (resp.success === true && resp.data.success === true) {
-          openSnackbar('success', 'Change successful!');
+          openSnackbar("success", "Change successful!");
           navigate(0);
         } else {
-          openSnackbar('error', 'Change unsuccessful. ' + resp.data);
+          openSnackbar("error", "Change unsuccessful. " + resp.data);
         }
       })
       .catch((resp) => {
-        openSnackbar('error', 'Change unsuccessful. ' + resp.data);
+        openSnackbar("error", "Change unsuccessful. " + resp.data);
       });
   };
 
   const fetchUserData = async () => {
     const accessToken = localStorage.getItem("jwt");
-    dc.GetData(API_URL + "/api/getInformation", accessToken).then((resp) => {
-      setUserData(resp.data.data);
-      setCountryCode(resp.data.data.countryCode);
-      setHidden(resp.data.data.hidden == "True");
-
-    }).catch((resp) => { console.log(resp) });
-
+    dc.GetData(API_URL + "/api/getInformation", accessToken)
+      .then((resp) => {
+        setUserData(resp.data.data);
+        setCountryCode(resp.data.data.countryCode);
+        setHidden(resp.data.data.hidden == "True");
+      })
+      .catch((resp) => {
+        console.log(resp);
+      });
 
     dc.GetData(API_URL + "/api/getNotificationOptions", accessToken)
       .then((resp) => {
@@ -215,18 +327,17 @@ export default function AccountPage() {
   }, []);
 
   return (
-
     <ProtectedComponent>
       <Paper
         sx={{
           bgcolor: mainTheme.palette.background.default,
           minHeight: "100vh",
           display: "flex",
+          flexWrap: "wrap",
           flexDirection: "column",
           justifyContent: "space-between",
         }}
       >
-
         <CssBaseline />
         <MainHeader for="Account" />
 
@@ -234,7 +345,10 @@ export default function AccountPage() {
           sx={{
             bgcolor: mainTheme.palette.background.default,
             padding: "2rem 20rem",
-
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: "2rem",
           }}
         >
           <Table
@@ -277,9 +391,7 @@ export default function AccountPage() {
                           <Button
                             sx={{ bgcolor: "red" }}
                             variant="countained"
-                            onClick={() => {
-                              handleDeleteAccount();
-                            }}
+                            onClick={handleOpenDeleteAccountDialog}
                           >
                             <Typography color="white">
                               Delete account
@@ -476,8 +588,7 @@ export default function AccountPage() {
                           margin: "1rem",
                           opacity: editMode ? 1 : 0,
                         }}
-                        type="submit"
-                        form="edit-form"
+                        onClick={handleOpenChangeInformationDialog}
                       >
                         Save changes
                       </Button>
@@ -493,8 +604,6 @@ export default function AccountPage() {
               flex: "1 1 auto",
               maxWidth: "20rem",
               padding: "1rem",
-              width: "20rem",
-              minWidth: "10rem",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-around",
@@ -596,7 +705,7 @@ export default function AccountPage() {
                       id="notif-country"
                       inputProps={{ value: notificationCountryCode }}
                       fullWidth
-                      label="Choose new event type"
+                      label="Choose new country"
                       onChange={(event) =>
                         setNotificationCountryCode(event.target.value)
                       }
@@ -623,7 +732,7 @@ export default function AccountPage() {
                       required
                       name="notif-eventType"
                       id="notif-eventType"
-                      label="Choose new country"
+                      label="Choose new event type"
                       inputProps={{ value: notificationEventType }}
                       fullWidth
                       onChange={(event) =>

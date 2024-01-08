@@ -344,9 +344,10 @@ export default function AccountPage() {
         <TableContainer
           sx={{
             bgcolor: mainTheme.palette.background.default,
-            padding: "2rem 20rem",
+            padding: "1rem 1rem",
             display: "flex",
             flexDirection: "row",
+            justifyContent: "center",
             flexWrap: "wrap",
             gap: "2rem",
           }}
@@ -599,6 +600,161 @@ export default function AccountPage() {
             </TableBody>
           </Table>
 
+          {userData.roleId == 0 ? (
+            <Paper
+              sx={{
+                flex: "1 1 auto",
+                padding: "1rem",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-around",
+                maxWidth: "40rem",
+              }}
+            >
+              <Table style={{ tableLayout: "fixed" }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={2}>
+                      <Typography component="h1" variant="h5">
+                        Your notification preferences
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography component="h5" variant="h6">
+                        Country preferences
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography component="h5" variant="h6">
+                        Event type preferences
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Table style={{ tableLayout: "fixed" }}>
+                        <TableBody>
+                          {notification.countries.map((country) => (
+                            <TableRow>
+                              <TableCell>{country}</TableCell>
+                              <TableCell>
+                                <Button
+                                  id={country}
+                                  onClick={(e) => handleDeleteCountry(e)}
+                                >
+                                  <DeleteIcon></DeleteIcon>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableCell>
+                    <TableCell>
+                      <Table style={{ tableLayout: "fixed" }}>
+                        <TableBody>
+                          {notification.eventTypes.map((type) => (
+                            <TableRow>
+                              <TableCell>{type}</TableCell>
+                              <TableCell>
+                                <Button
+                                  id={type}
+                                  onClick={(e) => handleDeleteEventType(e)}
+                                >
+                                  <DeleteIcon></DeleteIcon>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <TableCell>
+                      <TextField
+                        required
+                        name="notif-country"
+                        id="notif-country"
+                        inputProps={{ value: notificationCountryCode }}
+                        fullWidth
+                        label="Choose new country"
+                        onChange={(event) =>
+                          setNotificationCountryCode(event.target.value)
+                        }
+                        select
+                      >
+                        {countries != null ? (
+                          countries.map((country) =>
+                            !notification.countries.includes(country.name) ? (
+                              <MenuItem
+                                key={country.countryCode}
+                                value={country.countryCode}
+                              >
+                                {country.name}
+                              </MenuItem>
+                            ) : null
+                          )
+                        ) : (
+                          <MenuItem value={""}>Loading...</MenuItem>
+                        )}
+                      </TextField>
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        required
+                        name="notif-eventType"
+                        id="notif-eventType"
+                        label="Choose new event type"
+                        inputProps={{ value: notificationEventType }}
+                        fullWidth
+                        onChange={(event) =>
+                          setNotificationEventType(event.target.value)
+                        }
+                        select
+                      >
+                        {eventTypes != null ? (
+                          eventTypes.map((type) =>
+                            !notification.eventTypes.includes(type.typeName) ? (
+                              <MenuItem key={type.typeId} value={type.typeId}>
+                                {type.typeName}
+                              </MenuItem>
+                            ) : null
+                          )
+                        ) : (
+                          <MenuItem value={""}>Loading...</MenuItem>
+                        )}
+                      </TextField>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        sx={{ width: "80%" }}
+                        onClick={() => handleAddCountry()}
+                      >
+                        Add country
+                      </Button>
+                    </TableCell>{" "}
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        sx={{ width: "80%" }}
+                        onClick={() => handleAddEventType()}
+                      >
+                        Add event
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Paper>
+          ) : null}
+
           <Paper
             sx={{
               flex: "1 1 auto",
@@ -624,158 +780,6 @@ export default function AccountPage() {
               </Typography>
               <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
             </div>
-          </Paper>
-
-          <Paper
-            sx={{
-              flex: "1 1 auto",
-              padding: "1rem",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-around",
-            }}
-          >
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={2}>
-                    <Typography component="h1" variant="h5">
-                      Your notification preferences
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <Typography component="h5" variant="h6">
-                      Country preferences
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography component="h5" variant="h6">
-                      Event type preferences
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <Table>
-                      <TableBody>
-                        {notification.countries.map((country) => (
-                          <TableRow>
-                            <TableCell>{country}</TableCell>
-                            <TableCell>
-                              <Button
-                                id={country}
-                                onClick={(e) => handleDeleteCountry(e)}
-                              >
-                                <DeleteIcon></DeleteIcon>
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableCell>
-                  <TableCell>
-                    <Table>
-                      <TableBody>
-                        {notification.eventTypes.map((type) => (
-                          <TableRow>
-                            <TableCell>{type}</TableCell>
-                            <TableCell>
-                              <Button
-                                id={type}
-                                onClick={(e) => handleDeleteEventType(e)}
-                              >
-                                <DeleteIcon></DeleteIcon>
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>
-                    <TextField
-                      required
-                      name="notif-country"
-                      id="notif-country"
-                      inputProps={{ value: notificationCountryCode }}
-                      fullWidth
-                      label="Choose new country"
-                      onChange={(event) =>
-                        setNotificationCountryCode(event.target.value)
-                      }
-                      select
-                    >
-                      {countries != null ? (
-                        countries.map((country) =>
-                          !notification.countries.includes(country.name) ? (
-                            <MenuItem
-                              key={country.countryCode}
-                              value={country.countryCode}
-                            >
-                              {country.name}
-                            </MenuItem>
-                          ) : null
-                        )
-                      ) : (
-                        <MenuItem value={""}>Loading...</MenuItem>
-                      )}
-                    </TextField>
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      required
-                      name="notif-eventType"
-                      id="notif-eventType"
-                      label="Choose new event type"
-                      inputProps={{ value: notificationEventType }}
-                      fullWidth
-                      onChange={(event) =>
-                        setNotificationEventType(event.target.value)
-                      }
-                      select
-                    >
-                      {eventTypes != null ? (
-                        eventTypes.map((type) =>
-                          !notification.eventTypes.includes(type.typeName) ? (
-                            <MenuItem key={type.typeId} value={type.typeId}>
-                              {type.typeName}
-                            </MenuItem>
-                          ) : null
-                        )
-                      ) : (
-                        <MenuItem value={""}>Loading...</MenuItem>
-                      )}
-                    </TextField>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      sx={{ width: "10rem" }}
-                      onClick={() => handleAddCountry()}
-                    >
-                      Add country
-                    </Button>
-                  </TableCell>{" "}
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      sx={{ width: "10rem" }}
-                      onClick={() => handleAddEventType()}
-                    >
-                      Add event
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
           </Paper>
         </TableContainer>
 

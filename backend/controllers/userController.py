@@ -266,13 +266,14 @@ class UserController(Controller):
     @visitor_required()
     def getUserNotificationOptions(self):
         print("\n\n GOT REQUEST")
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
         notificationOptionsEventType = self.db.session.query(NotificationEventType,EventType.typeName). \
         join(Account, Account.accountId == NotificationEventType.accountId and Account.username == get_jwt_identity()).\
-        join(EventType, EventType.typeId == NotificationEventType.eventType).all()
+        join(EventType, EventType.typeId == NotificationEventType.eventType).filter(Account.accountId == myUser.accountId).all()
         
         notificationOptionsCountry = self.db.session.query(NotificationCountry, Country.name). \
         join(Account, Account.accountId == NotificationCountry.accountId and Account.username == get_jwt_identity()).\
-        join(Country, Country.countryCode == NotificationCountry.countryCode).all()
+        join(Country, Country.countryCode == NotificationCountry.countryCode).filter(Account.accountId == myUser.accountId).all()
         
         notificationOptionsEventType = list(map(lambda entry: entry[1], notificationOptionsEventType))
         notificationOptionsCountry= list(map(lambda entry: entry[1], notificationOptionsCountry))

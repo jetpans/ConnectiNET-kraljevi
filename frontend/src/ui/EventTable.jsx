@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import dataController from "../utils/DataController";
 import { useNavigate } from "react-router-dom";
-export default function UserTable() {
+export default function EventTable() {
   const API_URL = process.env.REACT_APP_API_URL;
   const accessToken = localStorage.getItem("jwt");
   const dc = new dataController();

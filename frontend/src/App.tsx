@@ -8,7 +8,7 @@ import UploadImagePageTemp from "./views/UploadImagePageTemp";
 import AccountPage from "./views/AccountPage";
 import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
 import AdminBrowseUsers from "./views/AdminBrowseUsers";
-
+import AdminBrowseEvent from "./views/AdminBrowseEvent";
 export default function App() {
   return (
     <BrowserRouter>
@@ -19,6 +19,10 @@ export default function App() {
         <Route
           path="admin/browseUsers"
           element={<AdminBrowseUsers></AdminBrowseUsers>}
+        />
+        <Route
+          path="admin/browseEvent"
+          element={<AdminBrowseEvent></AdminBrowseEvent>}
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

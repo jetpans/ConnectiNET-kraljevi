@@ -43,9 +43,25 @@ export default function CreateEventsPage() {
                                         <TextField
                                             required
                                             fullWidth
-                                            label="Location"
+                                            label="Location (City)"
                                             name="location"
                                         />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <InputLabel>Category</InputLabel>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                name="category"
+                                                defaultValue="none"
+                                            >
+                                                <MenuItem value="none" disabled>Select a category</MenuItem>
+                                                <MenuItem value="music">Music</MenuItem>
+                                                <MenuItem value="sports">Sports</MenuItem>
+                                                <MenuItem value="food">Food</MenuItem>
+                                                <MenuItem value="technology">Technology</MenuItem>
+                                                <MenuItem value="other">Other</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -71,26 +87,22 @@ export default function CreateEventsPage() {
                                             }}
                                         />
                                     </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12}>
                                             <InputLabel>Pricing</InputLabel>
                                             <FormControl>
                                                 <FormControl component="fieldset">
                                                     <RadioGroup name="price" defaultValue="free">
                                                         <FormControlLabel value="free" control={<Radio />} label="Free" />
                                                         <FormControlLabel value="paid" control={<Radio />} label="Paid" />
+                                                        <TextField
+                                                           fullWidth
+                                                           label="Entry fee"
+                                                           name="priceField"
+                                                           disabled
+                                                        />
                                                     </RadioGroup>
                                                 </FormControl>
                                             </FormControl>
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <Grid item>
-                                                <TextField
-                                                    fullWidth
-                                                    label="Entry fee"
-                                                    name="priceField"
-                                                    disabled
-                                                />
-                                            </Grid>
                                         </Grid>
                                     <Grid item xs={12}>
                                         <input

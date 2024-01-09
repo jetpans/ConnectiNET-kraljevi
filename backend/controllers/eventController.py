@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request,render_template, session
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import random
@@ -40,12 +40,14 @@ class EventController(Controller):
         organizer = self.db.session.query(Organizer).filter_by(accountId=organizerId).first()
         if organizer:
             account = self.db.session.query(Account).filter_by(accountId=organizerId).first()
+            country = self.db.session.query(Country).filter_by(countryCode=account.countryCode).first()
             profile = {
                 "username": account.username,
                 "organizerName": organizer.organizerName,
                 "eMail": account.eMail,
                 "profileImage": account.profileImage,
-                "countryCode": account.countryCode,
+                "country": country.name,
+                "socials": organizer.socials
             }
 
             dbResp = self.db.session.query(Event).filter_by(accountId=organizerId).all() 

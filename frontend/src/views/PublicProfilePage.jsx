@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
+import CardActions from '@mui/material/CardActions';
+import Button from '@mui/material/Button';
 
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
@@ -44,6 +45,14 @@ export default function OrganizerProfile() {
     }
   });
 };
+
+  function goToSocials() {
+    let url = organizerInfo.socials
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    window.open(url, '_blank');
+  }
 
   useEffect(() => {
     const accessToken = localStorage.getItem("jwt");
@@ -92,64 +101,60 @@ export default function OrganizerProfile() {
     <Paper sx={{ bgcolor: mainTheme.background.default }}>
       <ThemeProvider theme={mainTheme}>
         <CssBaseline />
-        <MainHeader for={organizerInfo && organizerInfo.organizerName !== null ? organizerInfo.organizerName : "Organizer" }></MainHeader>
+        <MainHeader for={organizerInfo && organizerInfo.organizerName !== null ? organizerInfo.organizerName+"'s Profile" : "Organizer's Profile" }></MainHeader>
         <>
             {/* Hero unit */}
-            
-            <Container sx={{ py: 4 }} maxWidth="lg">
-                {organizerInfo && organizerInfo !== null ? (
+        <Container style={{ width: "fit-content" }}>
+          {organizerInfo && organizerInfo !== null ? (
                 <>
-
-
-
-                
-        <Card
-            sx={{ height: '100%', display: 'flex', flexDirection: 'row' }}
+          <Card
+            sx={{ height: '100%', margin:4, p:2}}
             elevation={24}
-            onMouseEnter={() => {/*console.log("Mouse enter")*/}}
-        >
-            <Box sx={{ py: 4,  px: 4 ,display: 'flex', flexDirection: 'column' }}>
-                        <UserUploadedImage
-                            src={"/" + organizerInfo.profileImage}
-                            style={{py: 4,  px: 4, border: "1px solid black", maxWidth: "150px", maxHeight: "150px" }}
-                            className="profile-image"
-                        />
-            </Box>
-            <CardContent sx={{ flexGrow: 1 ,py: 4,  px: 4 ,display: 'flex', flexDirection: 'column' }}>
-                    <Typography>
-                        Username: {organizerInfo.username}
-                    </Typography>
-                    <Divider sx={{ mb: 4 }} />
-                    <Typography>
-                        Email: {organizerInfo.eMail}
-                    </Typography>
-                    <Divider sx={{ mb: 4 }} />
-                    <Typography>
-                        Country: {organizerInfo.countryCode}
-                    </Typography>
-                    <Divider sx={{ mb: 4 }} />
-            </CardContent>
-            
-        </Card>
-        
-                    
+          >
+            <Grid container spacing={4}>
+                
+                <Grid item xs={0} sm={1} md={1}></Grid>
+              <Grid item xs={12} sm={3} md={3}>
+                <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}>
+                  <UserUploadedImage
+                      src={"/" + organizerInfo.profileImage}
+                      style={{ maxWidth: "150px", maxHeight: "200px", minWidth: "150px" }}
+                      className="profile-image"
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={0} sm={1} md={1}></Grid>
+              <Grid item xs={12} sm={7} md={7}>    
+                
+                  <Typography variant="h4" gutterBottom>
+                    {organizerInfo.organizerName}
+                  </Typography>
+                  <Divider />
+                  <Typography>
+                    {organizerInfo.username}<br></br>({organizerInfo.country})
+                  </Typography>
+                  {organizerInfo.socials ? ( <>
+                    <CardActions>
+                      <Button variant="outlined" size="small" onClick={goToSocials}>{organizerInfo.organizerName}'s Socials</Button>
+                    </CardActions>
+                    </> ) : null}
+              </Grid>
+              </Grid>  
+              </Card>
+                </>
+                ) : null}
+                
+            </Container>
+
         <div>
           <br></br>
         </div>
-
-                <Typography variant="h5" gutterBottom>
-                    Events by {organizerInfo.organizerName}:
-                </Typography>                    <Divider sx={{ mb: 0 }} />
-
-                </>
-
                 
-                ) : null}
-
+                                
+                <Divider sx={{ mb: 0 }} />
                 <div>
                     <br></br>
                 </div>
-
                 <Grid container spacing={4}>
                     {cards && cards !== null ? (
                         cards.map((card) => (
@@ -169,8 +174,8 @@ export default function OrganizerProfile() {
                         />
                     )}
                 </Grid>
-            </Container>
         </>
+        
         <MainFooter></MainFooter>
       </ThemeProvider>
     </Paper>

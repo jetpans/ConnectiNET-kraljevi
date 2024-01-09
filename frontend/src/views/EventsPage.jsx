@@ -9,9 +9,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { green, grey, indigo } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Divider, Paper } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import EventCard from "../ui/EventCard";
 import dataController from "../utils/DataController";
 
@@ -19,17 +17,25 @@ import { useUser } from "../context/UserContext";
 
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
+import { useTheme } from "../context/ThemeContext";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
+import { useSnackbar } from "../context/SnackbarContext";
+
+
 export default function EventsPage(props) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const [cards, setCards] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [cardSize, setCardSize] = useState(12);
-  const navigate = useNavigate();
-
-  const { user, updateUser, logout, loading } = useUser();
+  
+  const { openSnackbar } = useSnackbar();
 
   const dc = new dataController();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const fetchData = async () => {
     const accessToken = localStorage.getItem("jwt");
@@ -39,6 +45,9 @@ export default function EventsPage(props) {
         // console.log("Cards set to :", resp.data.data);
         setCards(resp.data.data);
       }
+    }).catch((e) => {
+      console.log(e);
+      openSnackbar('error', 'Error fetching Event Data')
     });
   };
 
@@ -46,52 +55,12 @@ export default function EventsPage(props) {
     setCurrentTab(newValue);
   }
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("jwt");
-    if (accessToken === null) {
-      navigate("/login");
-    } else {
-      fetchData();
-    }
-  }, []);
-
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
-
-  const mainTheme = lightTheme;
+  const { theme, toggleTheme } = useTheme();
+  const mainTheme = theme;
 
   return (
-    <Paper sx={{ bgcolor: mainTheme.background.default }}>
-      <ThemeProvider theme={mainTheme}>
+    <ProtectedComponent roles={[0, 1, -1]}>
+      <Paper sx={{ bgcolor: mainTheme.palette.background.default }}>
         <CssBaseline />
         <MainHeader for="Events"></MainHeader>
         <>
@@ -101,6 +70,12 @@ export default function EventsPage(props) {
               variant="fullWidth"
               value={currentTab}
               onChange={handleTabChange}
+              TabIndicatorProps={{
+                style: {
+                  backgroundColor: mainTheme.palette.primary.main
+                }
+              }}
+              textColor="inherit"
             >
               <Tab
                 label="Top Picks"
@@ -128,7 +103,7 @@ export default function EventsPage(props) {
                 ) : (
                   <Box
                     sx={{
-                      bgcolor: mainTheme.palette.secondary.other,
+                      bgcolor: mainTheme.palette.secondary.light,
                       height: "1000px",
                     }}
                     component="footer"
@@ -176,7 +151,7 @@ export default function EventsPage(props) {
         {/* Footer */}
         <MainFooter></MainFooter>
         {/* End footer */}
-      </ThemeProvider>
-    </Paper>
+      </Paper>
+    </ProtectedComponent>
   );
 }

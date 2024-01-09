@@ -44,8 +44,8 @@ export default function MainHeader(props) {
   const [tabs, setTabs] = useState(
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "My Events", "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", "My Events", "Account", "Temp", "ConnectiNET Premium"]
+    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
     : ["Events"]); 
 
   const [profileImage, setProfileImage] = useState("");
@@ -60,9 +60,9 @@ export default function MainHeader(props) {
     setTabs(
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "My Events", "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", "My Events", "Account", "Temp", "ConnectiNET Premium"]
-    : ["Events"]);
+    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : ["Events"]); 
   }, [user])
 
   const dc = new dataController();

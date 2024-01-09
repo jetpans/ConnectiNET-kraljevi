@@ -14,14 +14,16 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/events" element={<EventsPage />} />
-        <Route path="/premium" element={<SubscribePage />} />
-        <Route path="/adminsubscription" element={<AdminSubscriptionPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/temp" element={<UploadImagePageTemp />} />
 
+        <Route path="/events" element={<EventsPage />} />
         <Route path="/account" element={<AccountPage />} />
+
+        <Route path="/premium" element={<SubscribePage />} />
+        
+        <Route path="/admin/subscription" element={<AdminSubscriptionPage />} />
+        
         <Route path="*" element={<h1>404</h1>} />
       </Routes>
     </BrowserRouter>

@@ -155,6 +155,7 @@ export default function OrganizerProfile() {
                 <div>
                     <br></br>
                 </div>
+              <Container sx={{ py: 4 }} maxWidth="lg">
                 <Grid container spacing={4}>
                     {cards && cards !== null ? (
                         cards.map((card) => (
@@ -174,6 +175,7 @@ export default function OrganizerProfile() {
                         />
                     )}
                 </Grid>
+              </Container>
         </>
         
         <MainFooter></MainFooter>

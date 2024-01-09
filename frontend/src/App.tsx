@@ -9,6 +9,7 @@ import AccountPage from "./views/AccountPage";
 import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
 import AdminBrowseUsers from "./views/AdminBrowseUsers";
 import AdminBrowseEvent from "./views/AdminBrowseEvent";
+import AdminBrowseReviews from "./views/AdminBrowseReviews";
 export default function App() {
   return (
     <BrowserRouter>
@@ -23,6 +24,10 @@ export default function App() {
         <Route
           path="/admin/browseEvents/:accountId"
           element={<AdminBrowseEvent></AdminBrowseEvent>}
+        />
+        <Route
+          path="/admin/browseReviews/:eventId"
+          element={<AdminBrowseReviews></AdminBrowseReviews>}
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

@@ -4,3 +4,5 @@ flask_bcrypt
 python-dotenv
 gunicorn
 flask_jwt_extended
+datetime
+dateutils

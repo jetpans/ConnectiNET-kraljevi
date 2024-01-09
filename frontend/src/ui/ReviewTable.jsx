@@ -10,23 +10,23 @@ import {
 } from "@mui/material";
 import dataController from "../utils/DataController";
 import { useNavigate } from "react-router-dom";
-export default function EventTable(props) {
+export default function ReviewTable(props) {
   const API_URL = process.env.REACT_APP_API_URL;
   const accessToken = localStorage.getItem("jwt");
   const dc = new dataController();
   const navigate = useNavigate();
 
-  const [events, setEvents] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   const fetchData = async () => {
-    dc.GetData(API_URL + "/api/getAllEventsForOrganizer/" + props.accountId, accessToken)
+    dc.GetData(API_URL + "/api/getAllReviewsForEvent/" + props.eventId, accessToken)
       .then((resp) => {
         console.log("hi");
         console.log(resp.data.data);
         let temp = resp.data.data.map(
-          (event) => (event.dateTime = new Date(event.dateTime))
+          (review) => (review.dateTime = new Date(review.dateTime))
         );
-        setEvents(resp.data.data);
+        setReviews(resp.data.data);
         console.log("set events");
       })
       .catch((e) => console.log(e));
@@ -35,11 +35,6 @@ export default function EventTable(props) {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const handleClickReviews = (event) => {
-    let eventId = event.target.id;
-    navigate("/admin/browseReviews/" + eventId);
-  };
 
   const [filterValue, setFilterValue] = useState("");
   const [filterBy, setFilterBy] = useState("username");
@@ -65,9 +60,8 @@ export default function EventTable(props) {
     }
   };
 
-
   const handleFilterSubmit = () => {
-    const filteredUsers = events.filter(filterFunction);
+    const filteredUsers = reviews.filter(filterFunction);
     console.log("bok");
     console.log(filteredUsers);
     // Now you can use the filteredUsers array as needed
@@ -98,39 +92,25 @@ export default function EventTable(props) {
 
       <Table>
         <TableRow>
-          <TableCell>Title</TableCell>
-          <TableCell>Events-type</TableCell>
+          <TableCell>Comment</TableCell>
+          <TableCell>Review Id</TableCell>
+          <TableCell>Account Id</TableCell>
           <TableCell>Date</TableCell>
           <TableCell>Time</TableCell>
-          <TableCell>City</TableCell>
-          <TableCell>Location</TableCell>
-          <TableCell>Price</TableCell>
-          <TableCell></TableCell>
+          
         </TableRow>
 
-        {events ? (
-          events.map((event) => (
+        {reviews ? (
+          reviews.map((review) => (
             <TableRow>
-              <TableCell>{event.title ? event.title : "-"}</TableCell>
-              <TableCell></TableCell>
+              <TableCell>{review.comment ? review.comment : "-"}</TableCell>
+              <TableCell>{review.reviewId ? review.reviewId : "-"}</TableCell>
+              <TableCell>{review.accountId ? review.accountId : "-"}</TableCell>
               <TableCell>
-                {event.dateTime ? event.dateTime.toDateString() : "-"}
+                {review.dateTime ? review.dateTime.toDateString() : "-"}
               </TableCell>
               <TableCell>
-                {event.dateTime ? event.dateTime.toLocaleTimeString() : "-"}
-              </TableCell>
-              <TableCell>{event.city ? event.city : "-"}</TableCell>
-              <TableCell>{event.location ? event.location : "-"}</TableCell>
-              <TableCell>{event.price ? event.price : "-"}</TableCell>
-              <TableCell>
-                    {event.reviews == 1 ? (
-                      <Button
-                        id={event.eventId}
-                        onClick={(e) => handleClickReviews(e)}
-                      >
-                        Browse reviews
-                      </Button>
-                    ) : null}
+                {review.dateTime ? review.dateTime.toLocaleTimeString() : "-"}
               </TableCell>
             </TableRow>
           ))

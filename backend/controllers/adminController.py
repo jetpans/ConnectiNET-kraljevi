@@ -22,6 +22,7 @@ class AdminController(Controller):
 
         self.app.add_url_rule("/api/getAllUsers", view_func=self.getAllUsers, methods=["GET"])
         self.app.add_url_rule("/api/getAllEventsForOrganizer/<accountId>", view_func=self.getAllEvents, methods=["GET"])
+        self.app.add_url_rule("/api/getAllReviewsForEvent/<eventId>", view_func=self.getAllReviews, methods=["GET"])
         self.app.add_url_rule("/api/admin/makeAdmin/<accountId>", view_func=self.makeAdmin, methods=["POST"])
         self.app.add_url_rule("/api/admin/deleteAccount/<accountId>", view_func=self.deleteAccount, methods=["POST"])
         self.app.add_url_rule("/api/admin/cancelSubscription/<accountId>", view_func=self.cancelSubscription, methods=["POST"])
@@ -46,8 +47,23 @@ class AdminController(Controller):
         try:
             print("tusam")
             events = self.db.session.query(Event).filter(Event.accountId == accountId).all() 
-            
-            result = list(map(lambda event: event.__dict__, events))
+            print("halooo")
+            result = list(map(lambda event: self.hasReviews(event), events))
+            print(result)
+            return {"success": True, "data":result}
+        except Exception as e:
+            print(e)
+            pass
+        
+        return {"success": False, "message": "There was an error"}
+    
+    @jwt_required()
+    def getAllReviews(self, eventId):
+        try:
+            print("tusam")
+            reviews = self.db.session.query(Review).filter(Review.eventId == eventId).all() 
+            print("halooo")
+            result = list(map(lambda review: review.__dict__, reviews))
             for e in result:
                 del e['_sa_instance_state']
             return {"success": True, "data":result}
@@ -57,6 +73,18 @@ class AdminController(Controller):
         
         return {"success": False, "message": "There was an error"}
     
+    def hasReviews(self, triplet):
+        events = triplet
+        print(triplet)
+        reviews = self.db.session.query(Event).join(Review, Review.eventId == Event.eventId).filter(Event.eventId ==events.__dict__.get('eventId')).all() 
+        result : dict = {}
+        result = events.__dict__
+        if reviews:
+            result["reviews"] = 1
+        else:
+            result["reviews"] = 0
+        del result['_sa_instance_state']
+        return result
     
     def tripletToDict(self, triplet):
         acc, visit, org, country = triplet

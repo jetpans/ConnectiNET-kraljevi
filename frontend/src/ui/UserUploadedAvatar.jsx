@@ -2,9 +2,12 @@ import { dblClick } from "@testing-library/user-event/dist/click";
 import React, { useEffect, useState } from "react";
 import dataController from "../utils/DataController";
 import { Avatar } from "@mui/material";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useTheme } from "../context/ThemeContext";
 
 export default function UserUploadedAvatar(props) {
   const [image, setImage] = useState(null);
+  const { theme } = useTheme();
   const dc = new dataController();
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -13,7 +16,13 @@ export default function UserUploadedAvatar(props) {
       .then((resp) => {
         return resp.blob();
       })
-      .then((blob) => setImage(URL.createObjectURL(blob)))
+      .then((blob) => {
+        if(blob.type === 'application/json') {
+          setImage(null);
+        } else {
+          setImage(URL.createObjectURL(blob));
+        }
+      })
       .catch((e) => {
         console.error(e);
       });
@@ -21,9 +30,10 @@ export default function UserUploadedAvatar(props) {
 
   return (
     <div {...props}>
-      {image && (
-        <Avatar alt="img" src={image} />
-      )}
+      {image && image !== null ? <Avatar alt="img" src={image} sx={{width: 30, height: 30}} />
+      : <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+          <AccountCircleIcon color={theme.palette.background.default} sx={{width: 28, height: 28}}/>
+        </Avatar>}
     </div>
   );
 }

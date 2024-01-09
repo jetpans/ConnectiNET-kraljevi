@@ -16,27 +16,34 @@ export const checkToken = (token) => {
   return true;
 }
 
-export const ProtectedComponent = ({ children }) => {
+export const ProtectedComponent = (props) => {
   const navigate = useNavigate();
   const { user, updateUser, logout, loading } = useUser();
+  const roles = props.roles;
 
   useEffect(() => {
-    const token = localStorage.getItem("jwt");
+    if(user && user !== null && roles && roles !== null && roles.length !== 0) {
+      const token = localStorage.getItem("jwt");
 
-    if(token === null) {
-      navigate("/login");
-    } else {
-      const tokenValid = checkToken(token);
-      if(tokenValid === false) {
-        localStorage.removeItem("jwt");
+      if(token === null) {
         navigate("/login");
+      } else {
+        const tokenValid = checkToken(token);
+        if(tokenValid === false) {
+          localStorage.removeItem("jwt");
+          navigate("/login");
+        }
+        if(roles !== undefined && roles !== null && roles.length !== 0 && roles.includes(user.roleId)) {
+        } else {
+          navigate("/events");
+        }
       }
     }
-  }, []);
+  }, [user]);
 
   return (
     <>
-      {children}
+      {props.children}
     </>
   );
 }

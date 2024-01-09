@@ -28,14 +28,17 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import LogoutIcon from "@mui/icons-material/Logout";
-import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useTheme } from "../context/ThemeContext";
-import AddCardIcon from '@mui/icons-material/AddCard';
+import { useDialog } from "../context/DialogContext";
+import AddCardIcon from "@mui/icons-material/AddCard";
+
 import { useSnackbar } from "../context/SnackbarContext";
 import UserUploadedAvatar from "./UserUploadedAvatar";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
+  const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { user, updateUser, logout, loading } = useUser();
@@ -44,8 +47,8 @@ export default function MainHeader(props) {
   const [tabs, setTabs] = useState(
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "My Events", "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", "My Events", "Account", "Temp", "ConnectiNET Premium"]
+    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
     : ["Events"]); 
 
   const [profileImage, setProfileImage] = useState("");
@@ -60,9 +63,9 @@ export default function MainHeader(props) {
     setTabs(
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "My Events", "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", "My Events", "Account", "Temp", "ConnectiNET Premium"]
-    : ["Events"]);
+    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : ["Events"]); 
   }, [user])
 
   const dc = new dataController();
@@ -73,12 +76,11 @@ export default function MainHeader(props) {
       case "Account":
         navigate("/account");
         break;
-      case "Temp":
-        navigate("/temp");
-        break;
+
       case "Events":
         navigate("/events");
         break;
+
       case "ConnectiNET Premium":
         navigate("/premium");
         break;
@@ -90,14 +92,16 @@ export default function MainHeader(props) {
   }
 
   function handleLogout() {
-    dc.PostData(API_URL + "/logout").then((resp) => {
-      if (resp.success === true) {
-        logout();
-        navigate("/login");
-      }
-    }).catch((e) => {
-      console.log(e);
-    });
+    dc.PostData(API_URL + "/logout")
+      .then((resp) => {
+        if (resp.success === true) {
+          logout();
+          navigate("/login");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 
   useEffect(() => {
@@ -121,23 +125,19 @@ export default function MainHeader(props) {
 
   return (
     <div>
-      <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main}}>
+      <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={toggleDrawer}>
             <TableRowsIcon sx={{ color: theme.palette.secondary.light }} />
           </Button>
 
-          <Typography
-            variant="h5"
-            color={theme.palette.secondary.light}
-            noWrap
-          >
+          <Typography variant="h5" color={theme.palette.secondary.light} noWrap>
             {props.for}
           </Typography>
 
           <div>
             <Button onClick={toggleTheme} id="change-color-button">
-              <Brightness4Icon sx={{ color: theme.palette.secondary.light }} />
+              <Brightness4Icon sx={{ color: '#FFF' }} />
             </Button>
             <Button onClick={handleOpenMenu} id="profile-image">
               {profileImage && profileImage !== "" ? (

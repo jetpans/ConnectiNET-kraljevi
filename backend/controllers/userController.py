@@ -17,6 +17,7 @@ import os
 import random
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+from sqlalchemy import and_
 
 
 class UserController(Controller):
@@ -183,7 +184,8 @@ class UserController(Controller):
                 
         if formData["method"] == "card":
             newPayment = Payment(date.today(),self.COST_OF_MONTH,"card", myUser.accountId)
-            newSubscription = Subscription(date.today(),date.today()+ relativedelta(months=1),myUser.accountId )
+            newSubscription = Subscription(date.today(),datetime.now() + relativedelta(months=1),myUser.accountId )
+
             self.db.session.add(newPayment)
             self.db.session.add(newSubscription)
             self.db.session.commit()
@@ -269,13 +271,14 @@ class UserController(Controller):
     @visitor_required()
     def getUserNotificationOptions(self):
         print("\n\n GOT REQUEST")
+        myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
         notificationOptionsEventType = self.db.session.query(NotificationEventType,EventType.typeName). \
-        join(Account, Account.accountId == NotificationEventType.accountId and Account.username == get_jwt_identity()).\
-        join(EventType, EventType.typeId == NotificationEventType.eventType).all()
+        join(Account, and_(Account.accountId == NotificationEventType.accountId, Account.username == get_jwt_identity())).\
+        join(EventType, EventType.typeId == NotificationEventType.eventType).filter(Account.accountId == myUser.accountId).all()
         
         notificationOptionsCountry = self.db.session.query(NotificationCountry, Country.name). \
-        join(Account, Account.accountId == NotificationCountry.accountId and Account.username == get_jwt_identity()).\
-        join(Country, Country.countryCode == NotificationCountry.countryCode).all()
+        join(Account,and_(Account.accountId == NotificationCountry.accountId , Account.username == get_jwt_identity())).\
+        join(Country, Country.countryCode == NotificationCountry.countryCode).filter(Account.accountId == myUser.accountId).all()
         
         notificationOptionsEventType = list(map(lambda entry: entry[1], notificationOptionsEventType))
         notificationOptionsCountry= list(map(lambda entry: entry[1], notificationOptionsCountry))
@@ -327,7 +330,7 @@ class UserController(Controller):
 
         countryName = data["countryName"]
         myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
-        myNot = self.db.session.query(NotificationCountry).join(Country, Country.countryCode == NotificationCountry.countryCode and Country.name == countryName)\
+        myNot = self.db.session.query(NotificationCountry).join(Country,and_(Country.countryCode == NotificationCountry.countryCode, Country.name == countryName))\
         .filter(NotificationCountry.accountId == myUser.accountId).first()
         self.db.session.delete(myNot)
         self.db.session.commit()
@@ -340,7 +343,7 @@ class UserController(Controller):
         typeName = data["typeName"]
         
         myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
-        myNot = self.db.session.query(NotificationEventType).join(EventType, EventType.typeId == NotificationEventType.eventType  and EventType.typeName == typeName)\
+        myNot = self.db.session.query(NotificationEventType).join(EventType,and_(EventType.typeId == NotificationEventType.eventType,  EventType.typeName == typeName))\
         .filter(NotificationEventType.accountId == myUser.accountId).first()
         self.db.session.delete(myNot)
 

@@ -448,7 +448,7 @@ export default function SubscribePage(props) {
   }
 
   return (
-    <ProtectedComponent>
+    <ProtectedComponent roles={[1, -1]}>
       <Paper
         sx={{
           bgcolor: mainTheme.palette.background.default,

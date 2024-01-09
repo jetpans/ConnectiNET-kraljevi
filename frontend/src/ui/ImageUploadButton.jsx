@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Button, InputLabel, Chip } from "@mui/material";
 import { useSnackbar } from "../context/SnackbarContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function ImageUploadButton(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -60,10 +61,12 @@ export default function ImageUploadButton(props) {
     }
   };
 
+  const { theme } = useTheme();
+
   return (
     <div style={{ display: "flex", flexDirection: "column", ...props.style }}>
-      <InputLabel htmlFor="image" style={{ width: "100%" }}>
-        <Button variant="contained" component="span" style={{ width: "100%" }}>
+      <InputLabel htmlFor="image" style={{ width: "100%", marginTop: 2 }}>
+        <Button variant="contained" component="span" style={{ width: "100%", marginTop: 10 }}>
           Choose File
         </Button>
       </InputLabel>
@@ -76,7 +79,8 @@ export default function ImageUploadButton(props) {
         hidden={true}
       />
 
-      <Chip
+      <Chip 
+        sx={{color: theme.palette.text.main, marginTop: 2}}
         label={selectedImage ? selectedImage.name : "Image not selected."}
       />
       {/* {previewImage && (
@@ -86,10 +90,12 @@ export default function ImageUploadButton(props) {
         </div>
       )} */}
       <Button
+        mt={2}
         onClick={handleUpload}
         variant="outlined"
         component="span"
         disabled={selectedImage === null}
+        sx={{color: theme.palette.text.main, marginTop: 2}}
       >
         Upload Image
       </Button>

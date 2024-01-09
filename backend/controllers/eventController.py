@@ -1,5 +1,6 @@
 from flask import Flask,jsonify,request,render_template, session
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest, Country
+# NotificationOption ?
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import random

@@ -46,16 +46,16 @@ export default function AccountPage() {
     JSON.parse(localStorage.getItem("user"))
   );
   const { openSnackbar } = useSnackbar();
-
+  const { theme, toggleTheme } = useTheme();
   const { dialogComponent, isDialogOpen, openDialog, closeDialog } =
     useDialog();
 
   const confirmDeleteAccountDialog = (
-    <Paper>
+    <Paper sx={{bgcolor: theme.palette.background.table}}>
       <div className="dialog-content">
         <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
           <Grid item xs={12} sm={6} md={6}>
-            <Typography variant="h6">
+            <Typography variant="h6" color={theme.palette.text.main}>
               Are you sure you want to delete your account?{" "}
             </Typography>
             <br />
@@ -95,11 +95,11 @@ export default function AccountPage() {
   );
 
   const confirmChangeInformation = (
-    <Paper>
+    <Paper sx={{bgcolor: theme.palette.background.table}}>
       <div className="dialog-content">
         <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
           <Grid item xs={12} sm={6} md={6}>
-            <Typography variant="h6">
+            <Typography variant="h6" color={theme.palette.text.main}>
               Are you sure you want to change your information?
             </Typography>
             <br />
@@ -161,8 +161,6 @@ export default function AccountPage() {
         console.log(resp);
       });
   };
-
-  const { theme, toggleTheme } = useTheme();
 
   const mainTheme = theme;
 
@@ -347,13 +345,22 @@ export default function AccountPage() {
             flexDirection: "row",
             justifyContent: "center",
             flexWrap: "wrap",
-            gap: "2rem",
+            gap: "2rem"
           }}
         >
+          <Box sx={{
+            bgcolor: mainTheme.palette.background.default,
+            padding: "1rem 1rem",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "2rem"
+          }}>
           <Table
             aria-label="user-data-table"
             component={Paper}
-            sx={{ maxWidth: "40rem", flex: "1 1 auto" }}
+            sx={{ bgcolor: mainTheme.palette.background.table, maxWidth: "40rem", flex: "1 1 auto" }}
           >
             <TableBody>
               <TableCell>
@@ -368,10 +375,10 @@ export default function AccountPage() {
                       <TableCell
                         colSpan={1}
                         sx={{
-                          display: "flex",
+                          display: "flex"
                         }}
                       >
-                        <Typography component="h1" variant="h5">
+                        <Typography component="h1" variant="h5" color={theme.palette.text.main}>
                           Account information
                         </Typography>
 
@@ -401,12 +408,12 @@ export default function AccountPage() {
                     </TableRow>
 
                     <TableRow>
-                      <TableCell>Username</TableCell>
-                      <TableCell>{userData.username}</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Username</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>{userData.username}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Role ID</TableCell>
-                      <TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Role ID</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>
                         {userData.roleId == -1
                           ? "Administrator"
                           : userData.roleId == 1
@@ -415,7 +422,7 @@ export default function AccountPage() {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Email</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Email</TableCell>
                       {editMode ? (
                         <TextField
                           inputProps={{
@@ -429,11 +436,11 @@ export default function AccountPage() {
                           autoComplete="email"
                         />
                       ) : (
-                        <TableCell>{userData.eMail}</TableCell>
+                        <TableCell sx={{color: theme.palette.text.main}}>{userData.eMail}</TableCell>
                       )}
                     </TableRow>
                     <TableRow>
-                      <TableCell>Country Code</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Country Code</TableCell>
                       {editMode ? (
                         <TextField
                           required
@@ -464,14 +471,14 @@ export default function AccountPage() {
                           )}
                         </TextField>
                       ) : (
-                        <TableCell>{userData.countryCode}</TableCell>
+                        <TableCell sx={{color: theme.palette.text.main}}>{userData.countryCode}</TableCell>
                       )}
                     </TableRow>
 
                     {userData.roleId == 1 ? (
                       <>
                         <TableRow>
-                          <TableCell>Organiser Name</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>Organizer Name</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -487,11 +494,11 @@ export default function AccountPage() {
                               autoFocus
                             />
                           ) : (
-                            <TableCell>{userData.organiserName}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.organiserName}</TableCell>
                           )}
                         </TableRow>
                         <TableRow>
-                          <TableCell>Hidden profile</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>Hidden profile</TableCell>
                           {editMode ? (
                             <TextField
                               required
@@ -510,14 +517,14 @@ export default function AccountPage() {
                               <MenuItem value={false}>False</MenuItem>
                             </TextField>
                           ) : (
-                            <TableCell>{userData.hidden}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.hidden}</TableCell>
                           )}
                         </TableRow>
                       </>
                     ) : (
                       <>
                         <TableRow>
-                          <TableCell>First Name</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>First Name</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -533,11 +540,11 @@ export default function AccountPage() {
                               autoFocus
                             />
                           ) : (
-                            <TableCell>{userData.firstName}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.firstName}</TableCell>
                           )}
                         </TableRow>
                         <TableRow>
-                          <TableCell>LastName</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>LastName</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -552,12 +559,12 @@ export default function AccountPage() {
                               autoComplete="family-name"
                             />
                           ) : (
-                            <TableCell>{userData.lastName}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.lastName}</TableCell>
                           )}
                         </TableRow>
 
                         <TableRow>
-                          <TableCell>Password</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>Password</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -572,7 +579,7 @@ export default function AccountPage() {
                               autoComplete="new-password"
                             />
                           ) : (
-                            <TableCell>*********</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>*********</TableCell>
                           )}
                         </TableRow>
                       </>
@@ -605,25 +612,26 @@ export default function AccountPage() {
                 flexDirection: "column",
                 justifyContent: "space-around",
                 maxWidth: "40rem",
+                bgcolor: mainTheme.palette.background.table
               }}
             >
               <Table style={{ tableLayout: "fixed" }}>
                 <TableBody>
                   <TableRow>
                     <TableCell colSpan={2}>
-                      <Typography component="h1" variant="h5">
+                      <Typography component="h1" variant="h5" color={theme.palette.text.main}>
                         Your notification preferences
                       </Typography>
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
-                      <Typography component="h5" variant="h6">
+                      <Typography component="h5" variant="h6" color={theme.palette.text.main}>
                         Country preferences
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography component="h5" variant="h6">
+                      <Typography component="h5" variant="h6" color={theme.palette.text.main}>
                         Event type preferences
                       </Typography>
                     </TableCell>
@@ -759,24 +767,28 @@ export default function AccountPage() {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-around",
+              bgcolor: mainTheme.palette.background.table
             }}
           >
             {" "}
             <div>
-              <Typography component="h4" variant="h5">
-                Current profile image
+              <Typography component="h4" variant="h5" color={theme.palette.text.main}>
+                Current profile image:
               </Typography>
-              <UserUploadedImage
-                src={"/" + userData.profileImage}
-              ></UserUploadedImage>
+              <Box mt={5} sx={{ display: "flex", justifyContent: "center" }}>
+                <UserUploadedImage
+                  src={"/" + userData.profileImage}
+                ></UserUploadedImage>
+              </Box>
             </div>
             <div>
-              <Typography component="h4" variant="h5">
-                Upload new profile image
+              <Typography component="h4" variant="h5" color={theme.palette.text.main} mb={4}>
+                Upload new profile image:
               </Typography>
               <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
             </div>
           </Paper>
+          </Box>
         </TableContainer>
 
         <MainFooter />

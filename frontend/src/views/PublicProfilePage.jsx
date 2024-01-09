@@ -25,6 +25,9 @@ import { useUser } from "../context/UserContext";
 
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
+import { useTheme } from "../context/ThemeContext";
+
 
 export default function OrganizerProfile() {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -43,6 +46,8 @@ export default function OrganizerProfile() {
         setOrganizerInfo(resp.data.organizerInfo);
         setCards(resp.data.organizerEvents);
     }
+  }).catch((error) => {
+    console.log(error);
   });
 };
 
@@ -63,43 +68,11 @@ export default function OrganizerProfile() {
     }
   }, []);
 
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
-
-  const mainTheme = lightTheme;
+  const {theme} = useTheme();
   
   return (
-    <Paper sx={{ bgcolor: mainTheme.background.default }}>
-      <ThemeProvider theme={mainTheme}>
+    <ProtectedComponent roles={[0, -1, 1]}>
+      <Paper sx={{ bgcolor: theme.palette.background.default }}>
         <CssBaseline />
         <MainHeader for={organizerInfo && organizerInfo.organizerName !== null ? organizerInfo.organizerName+"'s Profile" : "Organizer's Profile" }></MainHeader>
         <>
@@ -108,7 +81,7 @@ export default function OrganizerProfile() {
           {organizerInfo && organizerInfo !== null ? (
                 <>
           <Card
-            sx={{ height: '100%', margin:4, p:2}}
+            sx={{ height: '100%', margin:4, p:2, bgcolor: theme.palette.background.default, color: theme.palette.text }}
             elevation={24}
           >
             <Grid container spacing={4}>
@@ -126,11 +99,11 @@ export default function OrganizerProfile() {
               <Grid item xs={0} sm={1} md={1}></Grid>
               <Grid item xs={12} sm={7} md={7}>    
                 
-                  <Typography variant="h4" gutterBottom>
+                  <Typography variant="h4" gutterBottom color={theme.palette.text.main}>
                     {organizerInfo.organizerName}
                   </Typography>
                   <Divider />
-                  <Typography>
+                  <Typography color={theme.palette.text.main}>
                     {organizerInfo.username}<br></br>({organizerInfo.country})
                   </Typography>
                   {organizerInfo.socials ? ( <>
@@ -166,9 +139,9 @@ export default function OrganizerProfile() {
 
                   
                     ) : (
-                         <Box
+                        <Box
                             sx={{
-                                bgcolor: mainTheme.palette.secondary.other,
+                                bgcolor: theme.palette.secondary.other,
                                 height: "1000px",
                             }}
                             component="footer"
@@ -179,7 +152,7 @@ export default function OrganizerProfile() {
         </>
         
         <MainFooter></MainFooter>
-      </ThemeProvider>
-    </Paper>
+      </Paper>
+    </ProtectedComponent>
   );
 }

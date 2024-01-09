@@ -27,6 +27,9 @@ const lightTheme = createTheme({
             main: "#222111",
             light: "#333222",
             dark: "#111000"
+        },
+        border: {
+            main: grey[300]
         }
     }
 });
@@ -46,14 +49,18 @@ const darkTheme = createTheme({
         },
         background: {
             default: "#2e2e2e",
-            paper: "#000000"
+            paper: "#FFF",
+            table: "#2a2a2a"
         },
         text: {
             main: "#eee",
             light: "#ccc",
             dark: "#fff"
+        },
+        border: {
+            main: grey[700]
         }
-    }
+    }  
 });
 
 

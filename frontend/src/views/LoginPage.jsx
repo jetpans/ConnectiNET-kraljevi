@@ -62,6 +62,7 @@ export default function LoginPage(props) {
           // console.log("Set acess token to", resp.data.data.access_token);
 
           updateUser({
+            id: resp.data.data.user.id,
             username: resp.data.data.user.username,
             roleId: resp.data.data.user.roleId,
             countryCode: resp.data.data.user.countryCode,

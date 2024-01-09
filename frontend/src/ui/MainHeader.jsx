@@ -137,7 +137,7 @@ export default function MainHeader(props) {
 
           <div>
             <Button onClick={toggleTheme} id="change-color-button">
-              <Brightness4Icon sx={{ color: theme.palette.secondary.light }} />
+              <Brightness4Icon sx={{ color: '#FFF' }} />
             </Button>
             <Button onClick={handleOpenMenu} id="profile-image">
               {profileImage && profileImage !== "" ? (

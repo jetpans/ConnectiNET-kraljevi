@@ -24,7 +24,7 @@ export default function App() {
 
         <Route path="/premium" element={<SubscribePage />} />
         
-        <Route path="/admin/subscription" element={<AdminSubscriptionPage />} />
+        {/* <Route path="/admin/subscription" element={<AdminSubscriptionPage />} /> */}
         
         <Route path="*" element={<h1>404</h1>} />
       </Routes>

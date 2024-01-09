@@ -17,7 +17,6 @@ export default function UserTable() {
   const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
- 
 
   const fetchData = async () => {
     dc.GetData(API_URL + "/api/getAllUsers", accessToken)
@@ -32,7 +31,7 @@ export default function UserTable() {
   useEffect(() => {
     fetchData();
   }, []);
-/*
+  /*
   const users = [
     {
       username: 'johndoe123',
@@ -63,37 +62,96 @@ export default function UserTable() {
     },
   ];
 */
-const [filterValue, setFilterValue] = useState('');
-  const [filterBy, setFilterBy] = useState('username');
-  
+  const [filterValue, setFilterValue] = useState("");
+  const [filterBy, setFilterBy] = useState("username");
 
   const filterFunction = (user) => {
     switch (filterBy) {
-      case 'username':
+      case "username":
         return user.username.toLowerCase().includes(filterValue.toLowerCase());
-      case 'organizer':
-        if(user.organizerName !== undefined)
-          return user.organizerName.toLowerCase().includes(filterValue.toLowerCase());
-        return
-      case 'firstName':
-        if(user.firstName !== undefined)
-          return user.firstName.toLowerCase().includes(filterValue.toLowerCase());
-        return
+      case "organizer":
+        if (user.organizerName !== undefined)
+          return user.organizerName
+            .toLowerCase()
+            .includes(filterValue.toLowerCase());
+        return;
+      case "firstName":
+        if (user.firstName !== undefined)
+          return user.firstName
+            .toLowerCase()
+            .includes(filterValue.toLowerCase());
+        return;
       default:
         return true; // If no specific filterBy is selected, include all users
     }
   };
-  
-  const handleClickEvents = (event) =>{
+
+  const handleClickEvents = (event) => {
     let accountId = event.target.id;
-    navigate("/admin/browseEvents/" + accountId)
+    navigate("/admin/browseEvents/" + accountId);
   };
   const handleFilterSubmit = () => {
     const filteredUsers = users.filter(filterFunction);
-    console.log("bok")
-    console.log(filteredUsers)
+    console.log("bok");
+    console.log(filteredUsers);
     // Now you can use the filteredUsers array as needed
     // Example: setFilteredUsers(filteredUsers);
+  };
+
+  const handleMakeAdmin = (e) => {
+    e.preventDefault();
+    let accountId = e.target.id;
+
+    dc.PostData(API_URL + "/api/admin/makeAdmin/" + accountId, "", accessToken)
+      .then((resp) => {
+        if (resp.data.success === true) {
+          alert("Successfuly made admin.");
+          navigate(0);
+        } else {
+          alert("Something went wrong.");
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const handleDeleteAccount = (e) => {
+    e.preventDefault();
+    let accountId = e.target.id;
+
+    dc.PostData(
+      API_URL + "/api/admin/deleteAccount/" + accountId,
+      "",
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.data.success === true) {
+          alert("Successfuly deleted account.");
+          navigate(0);
+        } else {
+          alert("Something went wrong.");
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const handleCancelSubscription = (e) => {
+    e.preventDefault();
+    let accountId = e.target.id;
+
+    dc.PostData(
+      API_URL + "/api/admin/cancelSubscription/" + accountId,
+      "",
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.data.success === true) {
+          alert("Successfuly canceled subscription.");
+          navigate(0);
+        } else {
+          alert("Something went wrong.");
+        }
+      })
+      .catch((e) => console.log(e));
   };
 
   const handleFilterByChange = (e) => {
@@ -102,14 +160,20 @@ const [filterValue, setFilterValue] = useState('');
   return (
     <Paper sx={{ padding: "2rem" }}>
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <TextField label="Filter" onChange={(e) => setFilterValue(e.target.value)}></TextField>
-        <TextField label="Filter by:" select defaultValue="username" onChange={handleFilterByChange} >
+        <TextField
+          label="Filter"
+          onChange={(e) => setFilterValue(e.target.value)}
+        ></TextField>
+        <TextField
+          label="Filter by:"
+          select
+          defaultValue="username"
+          onChange={handleFilterByChange}
+        >
           <MenuItem value="username">Username</MenuItem>
           <MenuItem value="organizer">Organizer Name</MenuItem>
           <MenuItem value="firstName">First Name</MenuItem>
         </TextField>
-
-       
       </div>
 
       <Table>
@@ -142,11 +206,47 @@ const [filterValue, setFilterValue] = useState('');
                 {user.organizerName ? user.organizerName : "-"}
               </TableCell>
               <TableCell>{user.countryName ? user.countryName : "-"}</TableCell>
-              <TableCell>{user.roleId == 1 
-                  ? <>{user.events == 1 ?<Button id = {user.accountId} onClick={(e) => handleClickEvents(e)}>Browse events</Button>:null} {user.subscription == 1 ? <Button>Cancle subscription</Button>:null}</>
-                  : user.roleId == 0
-                  ? <><Button>Make Administrator</Button> <Button>Delete account</Button></>
-                  : null}</TableCell>
+              <TableCell>
+                {user.roleId == 1 ? (
+                  <>
+                    {user.events == 1 ? (
+                      <Button
+                        id={user.accountId}
+                        onClick={(e) => handleClickEvents(e)}
+                      >
+                        Browse events
+                      </Button>
+                    ) : null}{" "}
+                    {user.subscription == 1 ? (
+                      <Button
+                        id={user.accountId}
+                        onClick={(e) => {
+                          handleCancelSubscription(e);
+                        }}
+                      >
+                        Cancel subscription
+                      </Button>
+                    ) : null}
+                  </>
+                ) : user.roleId == 0 ? (
+                  <>
+                    <Button
+                      id={user.accountId}
+                      onClick={(e) => handleMakeAdmin(e)}
+                    >
+                      Make Administrator
+                    </Button>{" "}
+                    <Button
+                      id={user.accountId}
+                      onClick={(e) => {
+                        handleDeleteAccount(e);
+                      }}
+                    >
+                      Delete account
+                    </Button>
+                  </>
+                ) : null}
+              </TableCell>
             </TableRow>
           ))
         ) : (
@@ -156,4 +256,3 @@ const [filterValue, setFilterValue] = useState('');
     </Paper>
   );
 }
-

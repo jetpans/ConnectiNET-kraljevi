@@ -3,21 +3,27 @@ import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
 import ReviewTable from "../ui/ReviewTable";
 import { useParams } from "react-router-dom";
+import { Box } from "@mui/material";
 
 export default function AdminBrowseUsers() {
-  const { eventId } = useParams();
+  const { accountId } = useParams();
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
         minHeight: "100vh",
+        backgroundColor: "#f5f5f5",
       }}
     >
       <MainHeader></MainHeader>
-      <ReviewTable eventId={eventId}></ReviewTable>
-      <MainFooter></MainFooter>
+      <Box sx={{ padding: "1rem 1rem" }}>
+        <ReviewTable accountId={accountId}></ReviewTable>
+      </Box>
+
+      <Box style={{ marginTop: "auto" }}>
+        <MainFooter></MainFooter>
+      </Box>
     </div>
   );
 }

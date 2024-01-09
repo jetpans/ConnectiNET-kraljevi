@@ -7,6 +7,7 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import dataController from "../utils/DataController";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +20,10 @@ export default function ReviewTable(props) {
   const [reviews, setReviews] = useState([]);
 
   const fetchData = async () => {
-    dc.GetData(API_URL + "/api/getAllReviewsForEvent/" + props.eventId, accessToken)
+    dc.GetData(
+      API_URL + "/api/getAllReviewsForAccount/" + props.accountId,
+      accessToken
+    )
       .then((resp) => {
         console.log("hi");
         console.log(resp.data.data);
@@ -32,85 +36,68 @@ export default function ReviewTable(props) {
       .catch((e) => console.log(e));
   };
 
+  const deleteReview = (e) => {
+    dc.PostData(
+      API_URL + "/api/admin/deleteReview/" + e.target.id,
+      "",
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.success === true) {
+          alert("Successfuly deleted review.");
+          navigate(0);
+        } else {
+          alert("Faield to delete review.");
+        }
+      })
+      .catch((e) => alert(e));
+  };
   useEffect(() => {
     fetchData();
   }, []);
 
-  const [filterValue, setFilterValue] = useState("");
-  const [filterBy, setFilterBy] = useState("username");
-
-  const filterFunction = (user) => {
-    switch (filterBy) {
-      case "username":
-        return user.username.toLowerCase().includes(filterValue.toLowerCase());
-      case "organizer":
-        if (user.organizerName !== undefined)
-          return user.organizerName
-            .toLowerCase()
-            .includes(filterValue.toLowerCase());
-        return;
-      case "firstName":
-        if (user.firstName !== undefined)
-          return user.firstName
-            .toLowerCase()
-            .includes(filterValue.toLowerCase());
-        return;
-      default:
-        return true; // If no specific filterBy is selected, include all users
-    }
-  };
-
-  const handleFilterSubmit = () => {
-    const filteredUsers = reviews.filter(filterFunction);
-    console.log("bok");
-    console.log(filteredUsers);
-    // Now you can use the filteredUsers array as needed
-    // Example: setFilteredUsers(filteredUsers);
-  };
-
-  const handleFilterByChange = (e) => {
-    setFilterBy(e.target.value);
-  };
   return (
     <Paper sx={{ padding: "2rem" }}>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <TextField
-          label="Filter"
-          onChange={(e) => setFilterValue(e.target.value)}
-        ></TextField>
-        <TextField
-          label="Filter by:"
-          select
-          defaultValue="username"
-          onChange={handleFilterByChange}
-        >
-          <MenuItem value="username">Username</MenuItem>
-          <MenuItem value="organizer">Organizer Name</MenuItem>
-          <MenuItem value="firstName">First Name</MenuItem>
-        </TextField>
-      </div>
-
       <Table>
-        <TableRow>
-          <TableCell>Comment</TableCell>
-          <TableCell>Review Id</TableCell>
-          <TableCell>Account Id</TableCell>
-          <TableCell>Date</TableCell>
-          <TableCell>Time</TableCell>
-          
+        <TableRow sx={{ backgroundColor: "black", color: "white" }}>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Username</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Event name</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Comment</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Date</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Time</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Options</Typography>
+          </TableCell>
         </TableRow>
 
         {reviews ? (
           reviews.map((review) => (
             <TableRow>
+              <TableCell>{review.username}</TableCell>
+              <TableCell>{review.eventName}</TableCell>
+
               <TableCell>{review.comment ? review.comment : "-"}</TableCell>
-              <TableCell>{review.reviewId ? review.reviewId : "-"}</TableCell>
-              <TableCell>{review.accountId ? review.accountId : "-"}</TableCell>
+
               <TableCell>
                 {review.dateTime ? review.dateTime.toDateString() : "-"}
               </TableCell>
               <TableCell>
                 {review.dateTime ? review.dateTime.toLocaleTimeString() : "-"}
+              </TableCell>
+              <TableCell>
+                <Button id={review.reviewId} onClick={(e) => deleteReview(e)}>
+                  Delete review
+                </Button>
               </TableCell>
             </TableRow>
           ))

@@ -7,6 +7,7 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import dataController from "../utils/DataController";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +20,10 @@ export default function EventTable(props) {
   const [events, setEvents] = useState([]);
 
   const fetchData = async () => {
-    dc.GetData(API_URL + "/api/getAllEventsForOrganizer/" + props.accountId, accessToken)
+    dc.GetData(
+      API_URL + "/api/getAllEventsForOrganizer/" + props.accountId,
+      accessToken
+    )
       .then((resp) => {
         console.log("hi");
         console.log(resp.data.data);
@@ -36,83 +40,59 @@ export default function EventTable(props) {
     fetchData();
   }, []);
 
-  const handleClickReviews = (event) => {
-    let eventId = event.target.id;
-    navigate("/admin/browseReviews/" + eventId);
+  const handleDeleteEvent = (event) => {
+    dc.PostData(
+      API_URL + "/api/admin/deleteEvent/" + event.target.id,
+      "",
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.success === true) {
+          alert("Successfuly deleted event.");
+          navigate(0);
+        } else {
+          alert("Faield to delete event.");
+        }
+      })
+      .catch((e) => alert(e));
   };
 
-  const [filterValue, setFilterValue] = useState("");
-  const [filterBy, setFilterBy] = useState("username");
-
-  const filterFunction = (user) => {
-    switch (filterBy) {
-      case "username":
-        return user.username.toLowerCase().includes(filterValue.toLowerCase());
-      case "organizer":
-        if (user.organizerName !== undefined)
-          return user.organizerName
-            .toLowerCase()
-            .includes(filterValue.toLowerCase());
-        return;
-      case "firstName":
-        if (user.firstName !== undefined)
-          return user.firstName
-            .toLowerCase()
-            .includes(filterValue.toLowerCase());
-        return;
-      default:
-        return true; // If no specific filterBy is selected, include all users
-    }
-  };
-
-
-  const handleFilterSubmit = () => {
-    const filteredUsers = events.filter(filterFunction);
-    console.log("bok");
-    console.log(filteredUsers);
-    // Now you can use the filteredUsers array as needed
-    // Example: setFilteredUsers(filteredUsers);
-  };
-
-  const handleFilterByChange = (e) => {
-    setFilterBy(e.target.value);
-  };
   return (
     <Paper sx={{ padding: "2rem" }}>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <TextField
-          label="Filter"
-          onChange={(e) => setFilterValue(e.target.value)}
-        ></TextField>
-        <TextField
-          label="Filter by:"
-          select
-          defaultValue="username"
-          onChange={handleFilterByChange}
-        >
-          <MenuItem value="username">Username</MenuItem>
-          <MenuItem value="organizer">Organizer Name</MenuItem>
-          <MenuItem value="firstName">First Name</MenuItem>
-        </TextField>
-      </div>
-
       <Table>
-        <TableRow>
-          <TableCell>Title</TableCell>
-          <TableCell>Events-type</TableCell>
-          <TableCell>Date</TableCell>
-          <TableCell>Time</TableCell>
-          <TableCell>City</TableCell>
-          <TableCell>Location</TableCell>
-          <TableCell>Price</TableCell>
-          <TableCell></TableCell>
+        <TableRow sx={{ bgcolor: "black", color: "white" }}>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Event name</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Organizer</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Date</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Time</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>City</Typography>
+          </TableCell>
+
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Price</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Country</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Options</Typography>
+          </TableCell>
         </TableRow>
 
         {events ? (
           events.map((event) => (
             <TableRow>
               <TableCell>{event.title ? event.title : "-"}</TableCell>
-              <TableCell></TableCell>
+              <TableCell>{event.organizerName}</TableCell>
               <TableCell>
                 {event.dateTime ? event.dateTime.toDateString() : "-"}
               </TableCell>
@@ -120,17 +100,15 @@ export default function EventTable(props) {
                 {event.dateTime ? event.dateTime.toLocaleTimeString() : "-"}
               </TableCell>
               <TableCell>{event.city ? event.city : "-"}</TableCell>
-              <TableCell>{event.location ? event.location : "-"}</TableCell>
               <TableCell>{event.price ? event.price : "-"}</TableCell>
+              <TableCell>{event.countryName}</TableCell>
               <TableCell>
-                    {event.reviews == 1 ? (
-                      <Button
-                        id={event.eventId}
-                        onClick={(e) => handleClickReviews(e)}
-                      >
-                        Browse reviews
-                      </Button>
-                    ) : null}
+                <Button
+                  id={event.eventId}
+                  onClick={(e) => handleDeleteEvent(e)}
+                >
+                  Delete event
+                </Button>
               </TableCell>
             </TableRow>
           ))

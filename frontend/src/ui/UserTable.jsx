@@ -7,6 +7,7 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import dataController from "../utils/DataController";
 import { useNavigate } from "react-router-dom";
@@ -90,12 +91,10 @@ export default function UserTable() {
     let accountId = event.target.id;
     navigate("/admin/browseEvents/" + accountId);
   };
-  const handleFilterSubmit = () => {
-    const filteredUsers = users.filter(filterFunction);
-    console.log("bok");
-    console.log(filteredUsers);
-    // Now you can use the filteredUsers array as needed
-    // Example: setFilteredUsers(filteredUsers);
+  const handleClickReviews = (event) => {
+    let accountId = event.target.id;
+    console.log(event.target.id);
+    navigate("/admin/browseReviews/" + accountId);
   };
 
   const handleMakeAdmin = (e) => {
@@ -161,31 +160,50 @@ export default function UserTable() {
     <Paper sx={{ padding: "2rem" }}>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <TextField
-          label="Filter"
-          onChange={(e) => setFilterValue(e.target.value)}
-        ></TextField>
-        <TextField
           label="Filter by:"
           select
           defaultValue="username"
           onChange={handleFilterByChange}
+          sx={{ marginRight: "2rem" }}
         >
           <MenuItem value="username">Username</MenuItem>
           <MenuItem value="organizer">Organizer Name</MenuItem>
           <MenuItem value="firstName">First Name</MenuItem>
         </TextField>
+        <TextField
+          label="Filter"
+          onChange={(e) => setFilterValue(e.target.value)}
+        ></TextField>
       </div>
-
+      <br></br>
+      <br></br>
       <Table>
-        <TableRow>
-          <TableCell>Username</TableCell>
-          <TableCell>Role</TableCell>
-          <TableCell>eMail</TableCell>
-          <TableCell>First name</TableCell>
-          <TableCell>Last name</TableCell>
-          <TableCell>Organizer name</TableCell>
-          <TableCell>Country</TableCell>
-          <TableCell></TableCell>
+        <TableRow sx={{ backgroundColor: "black", color: "white" }}>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Username</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Role</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>E-Mail</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>First name</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Last name</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Organizer name</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography sx={{ fontWeight: "bold" }}>Country</Typography>
+          </TableCell>
+          <TableCell>
+            {" "}
+            <Typography sx={{ fontWeight: "bold" }}>Options</Typography>
+          </TableCell>
         </TableRow>
 
         {users ? (
@@ -236,6 +254,18 @@ export default function UserTable() {
                     >
                       Make Administrator
                     </Button>{" "}
+                    {user.reviews === true ? (
+                      <Button
+                        id={user.accountId}
+                        onClick={(e) => {
+                          handleClickReviews(e);
+                        }}
+                      >
+                        Browse reviews
+                      </Button>
+                    ) : (
+                      <></>
+                    )}
                     <Button
                       id={user.accountId}
                       onClick={(e) => {

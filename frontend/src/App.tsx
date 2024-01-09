@@ -26,7 +26,7 @@ export default function App() {
           element={<AdminBrowseEvent></AdminBrowseEvent>}
         />
         <Route
-          path="/admin/browseReviews/:eventId"
+          path="/admin/browseReviews/:accountId"
           element={<AdminBrowseReviews></AdminBrowseReviews>}
         />
         <Route path="/login" element={<LoginPage />} />

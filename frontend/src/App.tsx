@@ -8,6 +8,7 @@ import UploadImagePageTemp from "./views/UploadImagePageTemp";
 import SubscribePage from "./views/SubscribePage";
 import AccountPage from "./views/AccountPage";
 import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
+import CreateEventsPage from "./views/CreateEventsPage";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/temp" element={<UploadImagePageTemp />} />
+        <Route path="/create" element={<CreateEventsPage />} />  
 
         <Route path="/account" element={<AccountPage />} />
         <Route path="*" element={<h1>404</h1>} />

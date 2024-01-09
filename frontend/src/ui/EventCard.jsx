@@ -14,6 +14,7 @@ import UserUploadedImage from "./UserUploadedImage";
 export default function EventCard(props) { 
     const { card } = props;
     const navigate = useNavigate();
+    const maxDescriptionLength = 150;
 
     function displayEvent() {   
         navigate("/event", {state: {event: card}});
@@ -35,7 +36,7 @@ export default function EventCard(props) {
                 // image={card.image ? card.image : <div />}
                 key={card.id}
             >
-                <UserUploadedImage src = "/slika.jpg">
+                <UserUploadedImage src = "/placeholder.jpg">
 
                 </UserUploadedImage>
             </CardMedia>
@@ -44,12 +45,27 @@ export default function EventCard(props) {
                     {card.title}
                 </Typography>
                 <Typography>
-                    {card.description}
+                    {card.description.length > maxDescriptionLength
+                    ? `${card.description.slice(0, maxDescriptionLength)}...`
+                    : card.description}
                 </Typography>
+                
+                <Typography >
+                    {"Organizator: " + card.organizer}
+                </Typography>
+                <Typography >
+                    {"Vrijeme: " + card.time.slice(0, 10)}
+                </Typography>  
+                <Typography >
+                    {"Cijena: " + card.price}
+                </Typography> 
+                <Typography >
+                    {"Interest: " + card.interest}
+                </Typography> 
+                
             </CardContent>
             <CardActions>
                 <Button onClick={displayEvent} size="small">View</Button>
-                <Button size="small">Edit</Button>
             </CardActions>
         </Card>
     )

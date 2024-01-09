@@ -311,7 +311,6 @@ export default function AccountPage() {
     dc.GetData(API_URL + "/api/getEventTypes", accessToken)
       .then((resp) => {
         setEventTypes(resp.data.data);
-        console.log(resp.data.data);
       })
       .catch((e) => console.log(e));
   };
@@ -326,7 +325,7 @@ export default function AccountPage() {
   }, []);
 
   return (
-    <ProtectedComponent>
+    <ProtectedComponent roles={[0, 1, -1]}>
       <Paper
         sx={{
           bgcolor: mainTheme.palette.background.default,
@@ -378,8 +377,6 @@ export default function AccountPage() {
 
                         <Button
                           onClick={() => {
-                            console.log(countries);
-
                             setEditMode(!editMode);
                           }}
                         >

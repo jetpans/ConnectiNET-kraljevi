@@ -1,3 +1,4 @@
+import datetime
 from flask import Flask,jsonify,request,render_template, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -6,7 +7,9 @@ import uuid
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
+
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest, EventType, Country, NotificationCountry, NotificationEventType
+
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 from util import *
@@ -177,11 +180,12 @@ class UserController(Controller):
         
         if not self.askBankIfPaymentIsLegal(formData):
             print("BANK REJETCTED")
-            return jsonify({"success": False, "message": "Bank rejected the payment."})
+            return jsonify({"success": False, "message": "Error - Bank rejected the payment."})
                 
         if formData["method"] == "card":
             newPayment = Payment(date.today(),self.COST_OF_MONTH,"card", myUser.accountId)
             newSubscription = Subscription(date.today(),datetime.now() + relativedelta(months=1),myUser.accountId )
+
             self.db.session.add(newPayment)
             self.db.session.add(newSubscription)
             self.db.session.commit()
@@ -190,7 +194,7 @@ class UserController(Controller):
             return jsonify({"success": True, "message": "Success."})
         elif formData["method"] == "paypal":
             newPayment = Payment(date.today(),self.COST_OF_MONTH,"paypal", myUser.accountId)
-            newSubscription = Subscription(date.today(),datetime.today()+ relativedelta(months=1),myUser.accountId )
+            newSubscription = Subscription(date.today(),date.today()+ relativedelta(months=1),myUser.accountId )
             
             self.db.session.add(newPayment)
             self.db.session.add(newSubscription)
@@ -234,7 +238,7 @@ class UserController(Controller):
         
         if not self.askBankIfPaymentIsLegal(formData):
             print("BANK REJETCTED")
-            return jsonify({"success": False, "message": "Bank rejected the payment."})
+            return jsonify({"success": False, "message": "Error - Bank rejected the payment."})
                 
         expire_date = data.expireDate
         today = datetime.now().date()

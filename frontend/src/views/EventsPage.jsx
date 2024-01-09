@@ -59,7 +59,7 @@ export default function EventsPage(props) {
   const mainTheme = theme;
 
   return (
-    <ProtectedComponent>
+    <ProtectedComponent roles={[0, 1, -1]}>
       <Paper sx={{ bgcolor: mainTheme.palette.background.default }}>
         <CssBaseline />
         <MainHeader for="Events"></MainHeader>
@@ -70,6 +70,12 @@ export default function EventsPage(props) {
               variant="fullWidth"
               value={currentTab}
               onChange={handleTabChange}
+              TabIndicatorProps={{
+                style: {
+                  backgroundColor: mainTheme.palette.primary.main
+                }
+              }}
+              textColor="inherit"
             >
               <Tab
                 label="Top Picks"

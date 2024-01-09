@@ -24,10 +24,9 @@ const lightTheme = createTheme({
             paper: "#ffffff"
         },
         text: {
-            primary: "#FFF",
-            secondary: "#FFF",
-            disabled: "#FFF",
-            hint: "#FFF",
+            main: "#222111",
+            light: "#333222",
+            dark: "#111000"
         }
     }
 });
@@ -46,11 +45,13 @@ const darkTheme = createTheme({
             light: grey[100]
         },
         background: {
-            default: "#313131",
+            default: "#2e2e2e",
             paper: "#000000"
         },
         text: {
-            default: "#000",
+            main: "#eee",
+            light: "#ccc",
+            dark: "#fff"
         }
     }
 });
@@ -76,6 +77,15 @@ export const ThemeProvider = ({ children }) => {
     const toggleTheme = () => {
         const newTheme = theme.title === 'light' ? darkTheme : lightTheme;
         setTheme(newTheme);
+        // document.getElementById('change-color-button').addEventListener('click', function() {
+        //     // Get all elements containing text
+        //     const textElements = document.querySelectorAll('body *:not(script):not(style)');
+            
+        //     // Change text color to white
+        //     textElements.forEach(element => {
+        //         element.style.color = 'white';
+        //     });
+        // });
         localStorage.setItem('theme', JSON.stringify(newTheme));
     };
 

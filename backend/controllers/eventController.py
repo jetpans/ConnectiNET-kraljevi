@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request,render_template, session
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest, Country
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import random
@@ -14,6 +14,7 @@ class EventController(Controller):
 
         
         self.app.add_url_rule("/getEvents", view_func=self.getEvents, methods=["GET"])
+        self.app.add_url_rule("/getOrganizerPublicProfile/<int:organizerId>", view_func=self.getOrganizerPublicProfile, methods=["GET"])
         
     
     
@@ -34,4 +35,33 @@ class EventController(Controller):
                 "priority":str(int(random.random()*50))
             }, result_dict))
         return {"success":True, "data": toList}
-        
+    
+    def getOrganizerPublicProfile(self, organizerId):
+        organizer = self.db.session.query(Organizer).filter_by(accountId=organizerId).first()
+        if organizer:
+            account = self.db.session.query(Account).filter_by(accountId=organizerId).first()
+            country = self.db.session.query(Country).filter_by(countryCode=account.countryCode).first()
+            profile = {
+                "username": account.username,
+                "organizerName": organizer.organizerName,
+                "eMail": account.eMail,
+                "profileImage": account.profileImage,
+                "country": country.name,
+                "socials": organizer.socials
+            }
+
+            dbResp = self.db.session.query(Event).filter_by(accountId=organizerId).all() 
+            result_dict = [u.__dict__ for u in dbResp]
+            toList = list(map( lambda event:
+                {
+                    "id":event["eventId"],
+                    "title":event["title"],
+                    "image":event["displayImageSource"],
+                    "description":event["description"],
+                    "time":str(event["dateTime"]),
+                    "priority":str(int(random.random()*50))
+                }, result_dict))
+
+            return jsonify({"success": True, "organizerInfo": profile, "organizerEvents": toList})
+        else:
+            return jsonify({"success": False, "message": "Organizer not found"})

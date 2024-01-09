@@ -6,6 +6,7 @@ import EventsPage from "./views/EventsPage";
 import RegisterPage from "./views/RegisterPage";
 import SubscribePage from "./views/SubscribePage";
 import AccountPage from "./views/AccountPage";
+import PublicProfilePage from "./views/PublicProfilePage";
 import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
 
         <Route path="/events" element={<EventsPage />} />
         <Route path="/account" element={<AccountPage />} />
+        <Route path="/organizer/:organizerId" element={<PublicProfilePage />} />
 
         <Route path="/premium" element={<SubscribePage />} />
         

@@ -7,7 +7,7 @@ import MainFooter from "../ui/MainFooter";
 import { ProtectedComponent } from "../utils/ProtectedComponent";
 export default function UploadImagePageTemp() {
   return (
-    <ProtectedComponent>
+    <ProtectedComponent roles={[1, -1]}>
       <MainHeader />
 
       <ImageUploadButton

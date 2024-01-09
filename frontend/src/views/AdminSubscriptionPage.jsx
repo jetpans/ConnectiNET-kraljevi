@@ -236,7 +236,7 @@ export default function AdminSubscription(props) {
 `
   );
   return (
-    <ProtectedComponent>
+    <ProtectedComponent roles={[-1]}>
       <Box
         sx={{
           my: 8,

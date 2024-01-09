@@ -214,8 +214,7 @@ export default function AccountPage() {
   }, []);
 
   return (
-
-    <ProtectedComponent>
+    <ProtectedComponent roles={[0, 1, -1]}>
       <Paper
         sx={{
           bgcolor: mainTheme.palette.background.default,

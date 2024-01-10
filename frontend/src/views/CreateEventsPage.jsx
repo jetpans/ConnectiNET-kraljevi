@@ -25,15 +25,15 @@ export default function CreateEventsPage() {
         <div>
             <ProtectedComponent>
                 <CssBaseline />
-                <MainHeader />
+                <MainHeader for="Create Event"/>
                 <Container maxWidth="sm">
-                    <Typography variant="h4" align="center" gutterBottom marginTop={3}>
+                    {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                         Create Event
-                    </Typography>
+                    </Typography> */}
                     <Card elevation="4">
                         <CardContent>
                             <form>
-                                <Grid container spacing={3}>
+                                <Grid container spacing={2}>
                                     <Grid item xs={12}>
                                         <TextField
                                             required
@@ -56,22 +56,46 @@ export default function CreateEventsPage() {
                                         <TextField
                                             required
                                             fullWidth
-                                            label="Location (City)"
+                                            label="City"
                                             name="location"
+
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            label="Address"
+                                            name="address"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            name="country"
+                                            label="Country code"
+                                            type="country"
+                                            id="country"
+                                            autoComplete="country"
+                                            helperText="3-letter country code, ex: HRV, AUT..."
+                                        />
+                                   </Grid>
+                                    <Grid item xs={12}>
                                         <InputLabel>Category</InputLabel>
-                                        <FormControl fullWidth>
+                                        <FormControl fullWidth >
                                             <Select
                                                 name="category"
                                                 defaultValue="none"
+                                                required
                                             >
                                                 <MenuItem value="none" disabled>Select a category</MenuItem>
                                                 <MenuItem value="music">Music</MenuItem>
                                                 <MenuItem value="sports">Sports</MenuItem>
                                                 <MenuItem value="food">Food</MenuItem>
                                                 <MenuItem value="technology">Technology</MenuItem>
+                                                <MenuItem value="business">Culture</MenuItem>
+                                                <MenuItem value="other">Education</MenuItem>
                                                 <MenuItem value="other">Other</MenuItem>
                                             </Select>
                                         </FormControl>

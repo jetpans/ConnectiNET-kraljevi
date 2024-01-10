@@ -108,8 +108,8 @@ export default function CreateEventsPage() {
                                 <Grid item xs={12}>
                                     <TextField
                                         inputProps={{
-                                            pattern: ".{20,1000}",
-                                            title: "Must be between 20 and 1000 characters long",
+                                            maxLength: 2000,
+                                            title: "Must be under 2000 characters long",
                                         }}
                                         required
                                         fullWidth
@@ -122,8 +122,8 @@ export default function CreateEventsPage() {
                                 <Grid item xs={12}>
                                     <TextField
                                         inputProps={{
-                                            pattern: ".{1,50}",
-                                            title: "Must be under 50 characters long",
+                                            pattern: "[A-Za-z]{1,50}",
+                                            title: "Letters only (max 50 characters)",
                                         }}
                                         required
                                         fullWidth
@@ -179,6 +179,11 @@ export default function CreateEventsPage() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        inputProps={{
+                                            min: "2024-01-01T00:00", // min date is 2024
+                                            max: "2101-12-31T23:59", // max date is 2101
+                                            title: "Must be a valid date"
+                                        }}
                                         required
                                         fullWidth
                                         label="From Date"
@@ -191,6 +196,11 @@ export default function CreateEventsPage() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        inputProps={{
+                                            min: "2024-01-01T00:00", // min date is 2024
+                                            max: "2101-12-31T23:59", // max date is 2101
+                                            title: "Must be a valid date"
+                                        }}
                                         required
                                         fullWidth
                                         label="To Date"

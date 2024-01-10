@@ -12,7 +12,9 @@ import dataController from "../utils/DataController";
 export default function CreateEventsPage() {
     const [paid, setPaid] = useState(false); // paid option selected in radio button
     const [countries, setCountries] = useState(null);
+    const [categories, setCategories] = useState(null);
 
+    const accessToken = localStorage.getItem("jwt");
     const API_URL = process.env.REACT_APP_API_URL;
     const dc = new dataController();
     const fetchCountries = async () => {
@@ -23,10 +25,21 @@ export default function CreateEventsPage() {
           console.log(resp);
         });
     };
+    const fetchCategories = async () => {
+        await dc
+          .GetData(API_URL + "/api/getEventTypes", accessToken)
+          .then((resp) => setCategories(resp.data.data))
+          .catch((resp) => {
+            console.log(resp);
+          });
+    }
 
     // TODO: wrap in useEffect thingy?
     if (!countries) {
         fetchCountries();
+    }
+    if (!categories) {
+        fetchCategories();
     }
 
     function handleRadioChange(event) {
@@ -101,7 +114,7 @@ export default function CreateEventsPage() {
                                                 ))}
                                             </Select>
                                         </FormControl>
-                                        {/* <TextField
+                                        {/* <TextField  // TODO: clean up
                                             required
                                             fullWidth
                                             name="country"
@@ -121,13 +134,19 @@ export default function CreateEventsPage() {
                                                 required
                                             >
                                                 <MenuItem value="none" disabled>Select a category</MenuItem>
-                                                <MenuItem value="music">Music</MenuItem>
+                                                {/* <MenuItem value="music">Music</MenuItem>
                                                 <MenuItem value="sports">Sports</MenuItem>
                                                 <MenuItem value="food">Food</MenuItem>
                                                 <MenuItem value="technology">Technology</MenuItem>
                                                 <MenuItem value="business">Culture</MenuItem>
                                                 <MenuItem value="other">Education</MenuItem>
-                                                <MenuItem value="other">Other</MenuItem>
+                                                <MenuItem value="other">Other</MenuItem> */}
+                                                {categories && categories.map((category) => (
+                                                    <MenuItem 
+                                                        key={category.typeId} 
+                                                        value={category.typeId}
+                                                    >{category.typeName}</MenuItem>
+                                                ))}
                                             </Select>
                                         </FormControl>
                                     </Grid>

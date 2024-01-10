@@ -63,11 +63,12 @@ export default function CreateEventsPage() {
             countryCode: data.get("country"), // check if this is correct
             category: data.get("eventType"),
             dateTime: data.get("fromDate"),
-            duration: data.get("duration"), // TODO: figure out duration
+            duration: data.get("toDate"), // TODO: figure out duration
             //durationUnit: data.get("durationUnit"),
-            price: data.get("price")
+            price: data.get("price") || 0 // set price to 0 if it is null
         };
         console.log(newEventData);
+        
         // TODO: add missing fields
 
         // TODO: (sanitize?) and send data to backend
@@ -84,171 +85,168 @@ export default function CreateEventsPage() {
                     </Typography> */}
                     <Card elevation={4}>
                         <CardContent>
-                            <form>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="Event Name"
-                                            name="eventName"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="Description"
-                                            name="description"
-                                            multiline
-                                            rows={4}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="City"
-                                            name="city"
-
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="Address"
-                                            name="location"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <FormControl fullWidth >
-                                            <InputLabel id="country-select-label">Country</InputLabel>
-                                            <Select
-                                                labelId="country-select-label"
-                                                label="Country"
-                                                name="country"
-                                                defaultValue="none"
-                                                required
-                                            >
-                                                <MenuItem value="none" disabled>Select a country</MenuItem>
-                                                {countries && countries.map((country) => (
-                                                    <MenuItem key={country.countryCode} value={country.countryCode}>{country.name}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                   </Grid>
-                                    <Grid item xs={12}>
-                                        <FormControl fullWidth>
-                                            <InputLabel id="event-type-select-label">Event Type</InputLabel>
-                                            <Select
-                                                labelId="event-type-select-label"
-                                                label="Event Type"
-                                                name="eventType"
-                                                defaultValue="none"
-                                                required
-                                            >
-                                                <MenuItem value="none" disabled>Select a Type</MenuItem>
-                                                {categories && categories.map((category) => (
-                                                    <MenuItem 
-                                                        key={category.typeId} 
-                                                        value={category.typeId}
-                                                    >{category.typeName}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="From Date"
-                                            name="fromDate"
-                                            type="datetime-local"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="To Date"
-                                            name="toDate"
-                                            type="datetime-local"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                    </Grid>
-                                    {/* <Grid item xs={6}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="Duration"
-                                            name="duration"
-                                            type="number"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <FormControl fullWidth>
-                                            <Select
-                                                name="durationUnit"
-                                                defaultValue="minutes"
-                                                required
-                                            >
-                                                <MenuItem value="minutes">Minutes</MenuItem>
-                                                <MenuItem value="hours">Hours</MenuItem>                                                </Select>
-                                        </FormControl>
-                                    </Grid> */}
-                                    <Grid item xs={12}>
-                                        <InputLabel>Pricing</InputLabel>
-                                        <FormControl>
-                                            <FormControl component="fieldset">
-                                                <RadioGroup name="priceOptions" defaultValue="free" onChange={handleRadioChange}>
-                                                    <FormControlLabel value="free" control={<Radio />} label="Free" />
-                                                    <FormControlLabel value="paid" control={<Radio />} label="Paid" /> 
-                                                    <TextField
-                                                        fullWidth
-                                                        label="Entry fee"
-                                                        name="price"
-                                                        defaultValue={0}
-                                                        disabled={!paid}
-                                                        required={paid}
-                                                        InputProps={{
-                                                            endAdornment: <InputAdornment position="end">€</InputAdornment>,
-                                                        }}
-                                                            type="number"
-                                                            margin="normal"
-                                                    />
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </FormControl>
-                                    </Grid>
-                                    {/* {<Grid item xs={12}>    // image upload placeholder
-                                        <input
-                                            accept="image/*"
-                                            id="event-image-upload"
-                                            multiple
-                                            type="file"
-                                        />
-                                        <label htmlFor="event-image-upload">
-                                            <Button variant="contained" component="span">
-                                                Upload Event Picture
-                                            </Button>
-                                        </label>
-                                    </Grid>} */}
-                                    <Grid item xs={12}>
-                                        <Button variant="contained" color="primary" fullWidth>
-                                            Create Event
-                                        </Button>
-                                    </Grid>
+                            <Grid container spacing={2} component="form" onSubmit={handleSubmit}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="Event Name"
+                                        name="eventName"
+                                    />
                                 </Grid>
-                            </form>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="Description"
+                                        name="description"
+                                        multiline
+                                        rows={4}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="City"
+                                        name="city"
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="Address"
+                                        name="location"
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl fullWidth >
+                                        <InputLabel id="country-select-label">Country</InputLabel>
+                                        <Select
+                                            labelId="country-select-label"
+                                            label="Country"
+                                            name="country"
+                                            defaultValue="none"
+                                            required
+                                        >
+                                            <MenuItem value="none" disabled>Select a country</MenuItem>
+                                            {countries && countries.map((country) => (
+                                                <MenuItem key={country.countryCode} value={country.countryCode}>{country.name}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                               </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="event-type-select-label">Event Type</InputLabel>
+                                        <Select
+                                            labelId="event-type-select-label"
+                                            label="Event Type"
+                                            name="eventType"
+                                            defaultValue="none"
+                                            required
+                                        >
+                                            <MenuItem value="none" disabled>Select a Type</MenuItem>
+                                            {categories && categories.map((category) => (
+                                                <MenuItem 
+                                                    key={category.typeId} 
+                                                    value={category.typeId}
+                                                >{category.typeName}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="From Date"
+                                        name="fromDate"
+                                        type="datetime-local"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="To Date"
+                                        name="toDate"
+                                        type="datetime-local"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                </Grid>
+                                {/* <Grid item xs={6}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="Duration"
+                                        name="duration"
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <FormControl fullWidth>
+                                        <Select
+                                            name="durationUnit"
+                                            defaultValue="minutes"
+                                            required
+                                        >
+                                            <MenuItem value="minutes">Minutes</MenuItem>
+                                            <MenuItem value="hours">Hours</MenuItem>                                                </Select>
+                                    </FormControl>
+                                </Grid> */}
+                                <Grid item xs={12}>
+                                    <InputLabel>Pricing</InputLabel>
+                                    <FormControl>
+                                        <FormControl component="fieldset">
+                                            <RadioGroup name="priceOptions" defaultValue="free" onChange={handleRadioChange}>
+                                                <FormControlLabel value="free" control={<Radio />} label="Free" />
+                                                <FormControlLabel value="paid" control={<Radio />} label="Paid" /> 
+                                                <TextField
+                                                    fullWidth
+                                                    label="Entry fee"
+                                                    name="price"
+                                                    defaultValue={0}
+                                                    disabled={!paid}
+                                                    required={paid}
+                                                    InputProps={{
+                                                        endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                                                    }}
+                                                        type="number"
+                                                        margin="normal"
+                                                />
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </FormControl>
+                                </Grid>
+                                {/* {<Grid item xs={12}>    // image upload placeholder
+                                    <input
+                                        accept="image/*"
+                                        id="event-image-upload"
+                                        multiple
+                                        type="file"
+                                    />
+                                    <label htmlFor="event-image-upload">
+                                        <Button variant="contained" component="span">
+                                            Upload Event Picture
+                                        </Button>
+                                    </label>
+                                </Grid>} */}
+                                <Grid item xs={12}>
+                                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                                        Create Event
+                                    </Button>
+                                </Grid>
+                            </Grid>
                         </CardContent>
                     </Card>
                 </Container>

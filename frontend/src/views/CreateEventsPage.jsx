@@ -45,10 +45,10 @@ export default function CreateEventsPage() {
     function handleRadioChange(event) {
         if (event.target.value === "paid") {
             setPaid(true);
-            console.log("paid");
+            //console.log("paid");
         } else {
             setPaid(false);
-            console.log("free");
+            //console.log("free");
         }
     }
 
@@ -162,18 +162,30 @@ export default function CreateEventsPage() {
                                             }}
                                         />
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            required
-                                            fullWidth
-                                            label="To Date"
-                                            name="toDate"
-                                            type="datetime-local"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                    </Grid>
+                                        <Grid item xs={6}>
+                                            <TextField
+                                                required
+                                                fullWidth
+                                                label="Duration"
+                                                name="duration"
+                                                type="number"
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <FormControl fullWidth>
+                                                <Select
+                                                    name="durationUnit"
+                                                    defaultValue="minutes"
+                                                    required
+                                                >
+                                                    <MenuItem value="minutes">Minutes</MenuItem>
+                                                    <MenuItem value="hours">Hours</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
                                         <Grid item xs={12}>
                                             <InputLabel>Pricing</InputLabel>
                                             <FormControl>

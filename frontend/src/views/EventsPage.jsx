@@ -26,6 +26,13 @@ import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
 import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
 import { styled } from '@mui/system';
 
+import Slider from '@mui/material/Slider';
+import Button from '@mui/material/Button';
+import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
+
 
 
 export default function EventsPage(props) {
@@ -35,12 +42,16 @@ export default function EventsPage(props) {
   const [currentTab, setCurrentTab] = useState(0);
   const [cardSize, setCardSize] = useState(12);
   const navigate = useNavigate();
+  const [cards_help, setCards_help] = useState(null);
+  const [length, setLenght] = useState(null);
+
   //const [sort, setSort] = useState(1);
 
 
   const { user, updateUser, logout, loading } = useUser();
 
   const dc = new dataController();
+  const numOfEventsPerPage = 2;
 
   const fetchData = async () => {
     const accessToken = localStorage.getItem("jwt");
@@ -49,6 +60,9 @@ export default function EventsPage(props) {
       if (resp.data.success === true) {
         // console.log("Cards set to :", resp.data.data);
         setCards(resp.data.data);
+        setCards_help(resp.data.data);
+        setLenght(Math.ceil(resp.data.data.length / numOfEventsPerPage))
+
       }
     });
   };
@@ -67,6 +81,8 @@ export default function EventsPage(props) {
       fetchData();
     }
   }, []);
+
+  
 
   const lightTheme = createTheme({
     palette: {
@@ -195,6 +211,16 @@ export default function EventsPage(props) {
     }
     `,
   );
+  const centerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: '20px', // Dodajte željeni razmak iznad Pagination komponente
+  };
+  
+  const paginationStyle = {
+    fontSize: '1.5rem', // Povećajte veličinu fonta
+  };
 
   const mainTheme = lightTheme;
 
@@ -223,6 +249,72 @@ export default function EventsPage(props) {
 
   }
 
+  const [lowerPrice, setLowerPrice] = useState(0);
+  const [upperPrice, setUpperPrice] = useState(100);
+
+  const handleChange = (event, newValue) => {
+    setLowerPrice(newValue[0]);
+    setUpperPrice(newValue[1]);
+  };
+
+  
+  const handleFilter = () => {
+    const oneDay = 24 * 60 * 60 * 1000; // 24 sata
+    const sevenDays = 7 * oneDay;
+    //najmerno stavljeno 6 mjeseci radi testiranja
+    const oneMonth = 6 * 30 * oneDay; 
+
+    const currentTime = new Date();
+
+    
+
+    const filteredCards = cards_help.filter((card) => {
+      const cardPrice = card.price; // Pretpostavljeno ime atributa cijene u objektu kartice
+      return cardPrice >= lowerPrice && cardPrice <= upperPrice;
+    });
+
+    const filteredCards_time = filteredCards.filter((card) => {
+      const cardTime = new Date(card.time); // Pretpostavljeno ime atributa cijene u objektu kartice
+      const difference = currentTime - cardTime;
+      switch (selectedValue) {
+        case "today":
+          return difference <= oneDay;
+        case "week":
+          return difference <= sevenDays;
+        case "month":
+          return difference <= oneMonth;
+        default:
+          return true;
+      }     
+    });
+
+    if (Array.isArray(filteredCards_time)) {
+      const sizeOfCards = Math.ceil(filteredCards_time.length / numOfEventsPerPage);
+      setLenght(sizeOfCards)
+    } 
+    // Ovdje koristite filtrirane kartice kako god želite
+    setCards(filteredCards_time)
+  };
+
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const handleChange_time = (event) => {
+    setSelectedValue(event.target.value);
+    // Ovdje možete dodati logiku ili akcije na promjenu odabrane vrijednosti
+  };
+
+  const clearFilter = () => {
+    setCards(cards_help)
+    setLowerPrice(0);
+    setUpperPrice(40);
+  }
+
+  const [currentPage, setCurrentPage] = useState(1); // Postavljanje trenutne stranice na 1, kao primjer
+
+  const handlePageChange = (event, pageNumber) => {
+    setCurrentPage(pageNumber); 
+  };
+
   return (
     <Paper sx={{ bgcolor: mainTheme.background.default }}>
       <ThemeProvider theme={mainTheme}>
@@ -249,30 +341,75 @@ export default function EventsPage(props) {
 
             <div>
             <br></br>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <Dropdown>
+                  <MenuButton>Sort by</MenuButton>
+                  <Menu slots={{ listbox: Listbox }}>
+                    <MenuItem onClick={() => sortCards(1)}>Newest</MenuItem>
+                    <MenuItem onClick={() => sortCards(2)}>
+                      High price
+                    </MenuItem>
+                    <MenuItem onClick={() => sortCards(3)}>
+                      Low price
+                    </MenuItem>
+                    <MenuItem onClick={() => sortCards(4)}>Most Interest</MenuItem>
+                  </Menu>
+                </Dropdown> 
+              
+                <Dropdown>
+                  <MenuButton>Price</MenuButton>
+                  <Menu slots={{ listbox: Listbox }}>
+                    <MenuItem>
+                      <Slider
+                        value={[lowerPrice, upperPrice]}
+                        onChange={handleChange}
+                        min={0}
+                        max={40}
+                        valueLabelDisplay="auto"
+                        aria-labelledby="range-slider"
+                        sx={{ width: 200 }} 
+                        />
+                    </MenuItem>
+                  </Menu>
+                </Dropdown>
+              
+              <Dropdown>
+                <MenuButton>Time</MenuButton>
+                <Menu slots={{ listbox: Listbox }}>
+                  <FormControl component="fieldset">
+                    <RadioGroup
+                      aria-label="gender"
+                      name="gender"
+                      value={selectedValue}
+                      onChange={handleChange_time}
+                    >
+                      <FormControlLabel value="today" control={<Radio />} label="Today" />
+                      <FormControlLabel value="week" control={<Radio />} label="This week" />
+                      <FormControlLabel value="month" control={<Radio />} label="This month" />
+                    </RadioGroup>
+                  </FormControl>
+                </Menu>
+              </Dropdown>
+            </div>
+              <div><Button variant="contained" onClick={handleFilter}>
+                Filter
+              </Button>
+              
+              <Button variant="contained" onClick={clearFilter}>
+                Clear filter
+              </Button></div>
+            </div>
 
-            <Dropdown>
-              <MenuButton>Sort by</MenuButton>
-              <Menu slots={{ listbox: Listbox }}>
-                <MenuItem onClick={() => sortCards(1)}>Newest</MenuItem>
-                 <MenuItem onClick={() => sortCards(2)}>
-                  High price
-                </MenuItem>
-                <MenuItem onClick={() => sortCards(3)}>
-                  Low price
-                </MenuItem>
-                <MenuItem onClick={() => sortCards(4)}>Most Interest</MenuItem>
-              </Menu>
-            </Dropdown> 
+            
               <br></br>
               <br></br>
-
-
             </div>
 
             {currentTab === 0 ? (
               <Grid container spacing={4}>
                 {cards && cards !== null ? (
-                cards.slice().map((card) => (
+                cards.slice((currentPage - 1) * numOfEventsPerPage, currentPage * numOfEventsPerPage).map((card) => (
                   <Grid item key={card.id} xs={12} sm={6} md={6}>
                     <EventCard card={card} />
                   </Grid>
@@ -293,7 +430,7 @@ export default function EventsPage(props) {
               <Grid container spacing={4}>
                 {cards && cards !== null
                   ? cards
-                      .slice()
+                      .slice( (currentPage - 1) * 4, currentPage * 4)
                       .map((card) => (
                         <Grid item key={card} xs={12} sm={6} md={12}>
                           <EventCard card={card} />
@@ -315,9 +452,14 @@ export default function EventsPage(props) {
                   : null}
               </Grid>
             ) : null}
+            <br></br>
+
+            <Stack spacing={2} sx={centerStyle}>
+              <Pagination count={length} sx={paginationStyle} page={currentPage} onChange={handlePageChange}/>
+            </Stack>;
           </Container>
         </>
-
+        
         {/* Footer */}
         <MainFooter></MainFooter>
         {/* End footer */}

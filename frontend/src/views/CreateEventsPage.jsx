@@ -7,9 +7,27 @@ import MainFooter from "../ui/MainFooter";
 import { ProtectedComponent } from "../utils/ProtectedComponent";
 import { Card, CardContent, Container, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, Typography } from "@mui/material";
 import { Radio, RadioGroup, FormControlLabel, InputAdornment } from "@mui/material";
+import dataController from "../utils/DataController";
 
 export default function CreateEventsPage() {
     const [paid, setPaid] = useState(false); // paid option selected in radio button
+    const [countries, setCountries] = useState(null);
+
+    const API_URL = process.env.REACT_APP_API_URL;
+    const dc = new dataController();
+    const fetchCountries = async () => {
+      await dc
+        .GetData(API_URL + "/api/countries")
+        .then((resp) => setCountries(resp.data.data))
+        .catch((resp) => {
+          console.log(resp);
+        });
+    };
+
+    // TODO: wrap in useEffect thingy?
+    if (!countries) {
+        fetchCountries();
+    }
 
     function handleRadioChange(event) {
         if (event.target.value === "paid") {
@@ -30,7 +48,7 @@ export default function CreateEventsPage() {
                     {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                         Create Event
                     </Typography> */}
-                    <Card elevation="4">
+                    <Card elevation={4}>
                         <CardContent>
                             <form>
                                 <Grid container spacing={2}>
@@ -70,7 +88,20 @@ export default function CreateEventsPage() {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <TextField
+                                        <InputLabel>Country</InputLabel>
+                                        <FormControl fullWidth >
+                                            <Select
+                                                name="country"
+                                                defaultValue="none"
+                                                required
+                                            >
+                                                <MenuItem value="none" disabled>Select a country</MenuItem>
+                                                {countries && countries.map((country) => (
+                                                    <MenuItem key={country.countryCode} value={country.countryCode}>{country.name}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        {/* <TextField
                                             required
                                             fullWidth
                                             name="country"
@@ -79,7 +110,7 @@ export default function CreateEventsPage() {
                                             id="country"
                                             autoComplete="country"
                                             helperText="3-letter country code, ex: HRV, AUT..."
-                                        />
+                                        /> */}
                                    </Grid>
                                     <Grid item xs={12}>
                                         <InputLabel>Category</InputLabel>
@@ -147,7 +178,7 @@ export default function CreateEventsPage() {
                                                 </FormControl>
                                             </FormControl>
                                         </Grid>
-                                    {/* {<Grid item xs={12}>
+                                    {/* {<Grid item xs={12}>    // image upload placeholder
                                         <input
                                             accept="image/*"
                                             id="event-image-upload"

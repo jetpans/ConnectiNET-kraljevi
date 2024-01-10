@@ -121,9 +121,11 @@ export default function CreateEventsPage() {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <InputLabel>Country</InputLabel>
                                         <FormControl fullWidth >
+                                            <InputLabel id="country-select-label">Country</InputLabel>
                                             <Select
+                                                labelId="country-select-label"
+                                                label="Country"
                                                 name="country"
                                                 defaultValue="none"
                                                 required
@@ -134,21 +136,13 @@ export default function CreateEventsPage() {
                                                 ))}
                                             </Select>
                                         </FormControl>
-                                        {/* <TextField  // TODO: clean up
-                                            required
-                                            fullWidth
-                                            name="country"
-                                            label="Country code"
-                                            type="country"
-                                            id="country"
-                                            autoComplete="country"
-                                            helperText="3-letter country code, ex: HRV, AUT..."
-                                        /> */}
                                    </Grid>
                                     <Grid item xs={12}>
-                                        <InputLabel>Event Type</InputLabel>
-                                        <FormControl fullWidth >
+                                        <FormControl fullWidth>
+                                            <InputLabel id="event-type-select-label">Event Type</InputLabel>
                                             <Select
+                                                labelId="event-type-select-label"
+                                                label="Event Type"
                                                 name="eventType"
                                                 defaultValue="none"
                                                 required
@@ -235,6 +229,7 @@ export default function CreateEventsPage() {
                                                             endAdornment: <InputAdornment position="end">€</InputAdornment>,
                                                         }}
                                                             type="number"
+                                                            margin="normal"
                                                     />
                                                 </RadioGroup>
                                             </FormControl>

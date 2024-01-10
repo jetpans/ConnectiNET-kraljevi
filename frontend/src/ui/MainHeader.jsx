@@ -31,7 +31,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useTheme } from "../context/ThemeContext";
 import { useDialog } from "../context/DialogContext";
-import AddCardIcon from "@mui/icons-material/AddCard";
+import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 
 import { useSnackbar } from "../context/SnackbarContext";
 import UserUploadedAvatar from "./UserUploadedAvatar";
@@ -47,8 +47,8 @@ export default function MainHeader(props) {
   const [tabs, setTabs] = useState(
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === 1 ? ["Profile", "Events", "Create New Event", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", "Create New Event",/** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
     : ["Events"]); 
 
   const [profileImage, setProfileImage] = useState("");
@@ -63,8 +63,8 @@ export default function MainHeader(props) {
     setTabs(
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === 1 ? ["Profile", "Events", "Create New Event",/** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", "Create New Event",/** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
     : ["Events"]); 
   }, [user])
 
@@ -83,6 +83,10 @@ export default function MainHeader(props) {
 
       case "ConnectiNET Premium":
         navigate("/premium");
+        break;
+
+      case "Create New Event":
+        navigate("/create");
         break;
     }
   }
@@ -218,6 +222,8 @@ export default function MainHeader(props) {
                       <AccountCircleIcon />
                     ) : text === "My Events" ? (
                       <EditCalendarIcon />
+                    ) : text === "Create New Event" ? (
+                      <BookmarkAddIcon />
                     ) : null}
                   </ListItemIcon>
                   <ListItemText primary={text} />

@@ -8,4 +8,3 @@ datetime
 dateutils
 flask_mail
 mailjet_rest
-

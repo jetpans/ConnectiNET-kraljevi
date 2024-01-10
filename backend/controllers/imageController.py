@@ -1,5 +1,6 @@
+import logging
 from flask import Flask,jsonify,request,render_template, session, send_file
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import random
@@ -34,7 +35,7 @@ class ImageController(Controller):
     
     # @visitor_required()
     def fetch_image(self, image_name):
-        print("Image is being fetched!")
+        # print("Image is being fetched!")
         image_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] ,image_name)
         if os.path.isfile(image_path):
             try:
@@ -42,11 +43,12 @@ class ImageController(Controller):
             except Exception as e:
                 return str(e)
         else:
-            placeholder_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] ,"placeholder.png")
-            try:
-                return send_file(placeholder_path, mimetype='image/png')  # Adjust mimetype based on your image type
-            except Exception as e:
-                return str(e)
+            # placeholder_path = os.path.join(self.app.config['IMAGE_DIRECTORY'] ,"placeholder.png")
+            # try:
+            #     return send_file(placeholder_path, mimetype='image/png')  # Adjust mimetype based on your image type
+            # except Exception as e:
+            #     return str(e)
+            return jsonify({'success': False, 'error': 'No profile image found'})   
     
     @visitor_required()
     def usernameTempUpload(self):
@@ -56,10 +58,12 @@ class ImageController(Controller):
         file = request.files['image']
         
         if file:
-            new_filename = "temp_"+get_jwt_identity()+".png"  # Set your desired new filename here
+            myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
+            new_filename = get_jwt_identity()+".png"  # Set your desired new filename here
             file_path = os.path.join(self.app.config['IMAGE_DIRECTORY'], new_filename)      
             file.save(file_path)
-
+            myUser.profileImage = new_filename
+            self.db.session.commit()
             return jsonify({'success': True, 'message': 'Image uploaded and saved successfully'})
         
         return jsonify({'success': False, 'error': 'No image data received'})     

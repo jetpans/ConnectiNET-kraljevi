@@ -9,11 +9,13 @@ from controllers.authController import AuthController
 from controllers.eventController import EventController
 from controllers.imageController import ImageController
 from controllers.userController import UserController
-from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, NotificationOption, EventMedia, Interest
+from controllers.adminController import AdminController
+from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, Data, EventMedia, Interest
 from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
-
+from flask_mail import Mail
+from mailjet_rest import Client
 
 
 app = Flask(__name__)
@@ -23,6 +25,9 @@ app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["IMAGE_DIRECTORY"] = "images"
 
+app.config["MAIL_API_KEY"] = os.environ.get('MAIL_API_KEY')
+app.config["MAIL_SECRET"] = os.environ.get("MAIL_SECRET")
+ 
 app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
 
 
@@ -34,6 +39,8 @@ else:
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+mail = Client(auth=(os.environ.get('MAIL_API_KEY'), os.environ.get("MAIL_SECRET")), version='v3.1')
+
 
 @app.before_request
 def do():
@@ -65,7 +72,9 @@ def refresh_expiring_jwts(response):
         now = datetime.now(timezone.utc)
         target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
         if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
+            #access_token = create_access_token(identity=myUser.username, additional_claims={"roleId":myUser.roleId}, expires_delta=timedelta(hours=1))       
+
+            access_token = create_access_token(identity=get_jwt_identity(), additional_claims={"roleId":get_jwt()["roleId"]},expires_delta=timedelta(hours=1))
             data = response.get_json()
             if type(data) is dict:
                 data["access_token"] = access_token 
@@ -79,7 +88,8 @@ def refresh_expiring_jwts(response):
 
 
 
-authController = AuthController(app, db, bcrypt, jwt)
+authController = AuthController(app, db, bcrypt, jwt, mail)
 eventController = EventController(app, db, jwt)
 imageController = ImageController(app,db,jwt)
 userController = UserController(app,db,bcrypt,jwt)
+adminController = AdminController(app,db,jwt)

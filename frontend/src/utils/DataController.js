@@ -74,6 +74,9 @@ class dataController {
 async function handleRequest(response) {
   const text = await response.text();
   const data = text && JSON.parse(text);
+  if(data !== null && data.data !== undefined && data.data !== null && data.data.access_token !== undefined && data.data.access_token !== null) {
+    localStorage.setItem('jwt', data.data.access_token);
+  }
 
   if (!response.ok) {
     if (response.status === 401) {

@@ -4,16 +4,19 @@ import UserUploadedImage from "../ui/UserUploadedImage";
 
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
+import UserTable from "../ui/UserTable";
 export default function UploadImagePageTemp() {
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: "100vh",
+      }}
+    >
       <MainHeader />
-
-      <ImageUploadButton
-        route="/api/upload"
-        style={{ width: "200px", outerHeight: "100px" }}
-      ></ImageUploadButton>
-      <UserUploadedImage src="/image-demso.png"></UserUploadedImage>
+      <UserTable></UserTable>
 
       <MainFooter></MainFooter>
     </div>

@@ -14,6 +14,7 @@ import UserUploadedImage from "./UserUploadedImage";
 export default function EventCard(props) { 
     const { card } = props;
     const navigate = useNavigate();
+    const { theme, toggleTheme } = useTheme();
     const maxDescriptionLength = 150;
 
     function displayEvent() {   
@@ -23,7 +24,7 @@ export default function EventCard(props) {
     }
     return (
         <Card
-            sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+            sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: theme.palette.background.default, color: theme.palette.text }}
             elevation={24}
             onMouseEnter={() => {/*console.log("Mouse enter")*/}}
         >
@@ -41,7 +42,7 @@ export default function EventCard(props) {
                 </UserUploadedImage>
             </CardMedia>
             <CardContent sx={{ flexGrow: 1 }} key={card.id}>
-                <Typography gutterBottom variant="h5" component="h2">
+                <Typography gutterBottom variant="h5" component="h2" color={theme.palette.text.main}>
                     {card.title}
                 </Typography>
                 <Typography>
@@ -65,7 +66,9 @@ export default function EventCard(props) {
                 
             </CardContent>
             <CardActions>
-                <Button onClick={displayEvent} size="small">View</Button>
+                <Button size="small">
+                    <Typography onClick={displayEvent} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>See More</Typography>
+                </Button>
             </CardActions>
         </Card>
     )

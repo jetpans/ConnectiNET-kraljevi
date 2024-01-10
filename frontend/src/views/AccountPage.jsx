@@ -12,28 +12,142 @@ import {
   TextField,
   MenuItem,
   Hidden,
+  Grid,
+  Container,
+  Box,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 import { green, grey, indigo } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
 import dataController from "../utils/DataController";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ImageUploadButton from "../ui/ImageUploadButton";
 import UserUploadedImage from "../ui/UserUploadedImage";
+import { useTheme } from "../context/ThemeContext";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
+import { useSnackbar } from "../context/SnackbarContext";
+import { useDialog } from "../context/DialogContext";
+import AddCardIcon from "@mui/icons-material/AddCard";
 
 export default function AccountPage() {
   const [editMode, setEditMode] = useState(false);
   const [countries, setCountries] = useState(null);
+  const [eventTypes, setEventTypes] = useState([]);
   const [countryCode, setCountryCode] = useState("");
+  const [notificationCountryCode, setNotificationCountryCode] = useState("");
+  const [notificationEventType, setNotificationEventType] = useState("");
   const [hidden, setHidden] = useState(false);
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("user"))
   );
+  const { openSnackbar } = useSnackbar();
+  const { theme, toggleTheme } = useTheme();
+  const { dialogComponent, isDialogOpen, openDialog, closeDialog } =
+    useDialog();
+
+  const confirmDeleteAccountDialog = (
+    <Paper sx={{bgcolor: theme.palette.background.table}}>
+      <div className="dialog-content">
+        <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography variant="h6" color={theme.palette.text.main}>
+              Are you sure you want to delete your account?{" "}
+            </Typography>
+            <br />
+            <br />
+            <br />
+          </Grid>
+
+          <Box
+            fullWidth
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: "2rem",
+            }}
+          >
+            <Button
+              sx={{ bgcolor: "green" }}
+              type="submit"
+              form="edit-form"
+              onClick={() => handleDeleteAccount()}
+              variant="contained"
+            >
+              Yes
+            </Button>
+            <Button
+              sx={{ bgcolor: "red" }}
+              onClick={closeDialog}
+              variant="contained"
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Container>
+      </div>
+    </Paper>
+  );
+
+  const confirmChangeInformation = (
+    <Paper sx={{bgcolor: theme.palette.background.table}}>
+      <div className="dialog-content">
+        <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography variant="h6" color={theme.palette.text.main}>
+              Are you sure you want to change your information?
+            </Typography>
+            <br />
+            <br />
+            <br />
+          </Grid>
+          <Box
+            fullWidth
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: "2rem",
+            }}
+          >
+            <Button
+              sx={{ bgcolor: "green" }}
+              type="submit"
+              form="edit-form"
+              onClick={() => handleSubmitChange()}
+              variant="contained"
+            >
+              Yes
+            </Button>
+            <Button
+              sx={{ bgcolor: "red" }}
+              onClick={closeDialog}
+              variant="contained"
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Container>
+      </div>
+    </Paper>
+  );
+  const handleOpenChangeInformationDialog = () => {
+    openDialog(confirmChangeInformation);
+  };
+
+  const handleOpenDeleteAccountDialog = () => {
+    openDialog(confirmDeleteAccountDialog);
+  };
+
+  const [notification, setNotification] = useState({
+    countries: [],
+    eventTypes: [],
+  });
 
   const API_URL = process.env.REACT_APP_API_URL;
   const dc = new dataController();
@@ -42,47 +156,112 @@ export default function AccountPage() {
   const fetchCountries = async () => {
     await dc
       .GetData(API_URL + "/api/countries")
-      .then((resp) => setCountries(resp.data.data));
+      .then((resp) => setCountries(resp.data.data))
+      .catch((resp) => {
+        console.log(resp);
+      });
   };
 
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
+  const mainTheme = theme;
 
-  const mainTheme = lightTheme;
+  const handleAddCountry = () => {
+    if (notificationCountryCode == "") return;
+    dc.PostData(
+      API_URL + "/api/addNotificationCountry",
+      { countryCode: notificationCountryCode },
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.data.success === true) {
+          openSnackbar("success", "Successfuly added country.");
 
-  const handleSubmitChange = (event) => {
-    event.preventDefault();
+          navigate(0);
+        } else {
+          openSnackbar("error", "Failed to add country.");
+        }
+      })
+      .catch((e) => console.log(e));
+    return;
+  };
 
-    const data = new FormData(event.currentTarget);
+  const handleAddEventType = () => {
+    if (notificationEventType == "") return;
+    dc.PostData(
+      API_URL + "/api/addNotificationEventType",
+      { eventType: notificationEventType },
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.data.success === true) {
+          openSnackbar("success", "Successfuly added event type.");
+
+          navigate(0);
+        } else {
+          openSnackbar("error", "Failed to add event type.");
+        }
+      })
+      .catch((e) => console.log(e));
+    return;
+  };
+
+  const handleDeleteEventType = (e) => {
+    let eventTypeName = e.target.id;
+    dc.PostData(
+      API_URL + "/api/deleteNotificationEventType",
+      { typeName: eventTypeName },
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.data.success === true) {
+          openSnackbar("success", "Successfuly removed event type.");
+          navigate(0);
+        } else {
+          openSnackbar("error", "Failed to delete event type.");
+        }
+      })
+      .catch((e) => console.log(e));
+    return;
+  };
+
+  const handleDeleteCountry = (event) => {
+    let countryName = event.target.id;
+    dc.PostData(
+      API_URL + "/api/deleteNotificationCountry",
+      { countryName: countryName },
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.data.success === true) {
+          openSnackbar("success", "Successfuly removed country.");
+          navigate(0);
+        } else {
+          openSnackbar("error", "Failed to delete country type.");
+        }
+      })
+      .catch((e) => console.log(e));
+    return;
+  };
+
+  const handleDeleteAccount = () => {
+    closeDialog();
+
+    dc.PostData(API_URL + "/api/deleteAccount", "", accessToken)
+      .then((resp) => {
+        if (resp.data.success === true) {
+          openSnackbar("success", "Successfuly deleted.");
+          localStorage.clear();
+          navigate("/login");
+        } else {
+          openSnackbar("error", "Failed to delete account.");
+        }
+      })
+      .catch((e) => console.log(e));
+    return;
+  };
+  const handleSubmitChange = () => {
+    closeDialog();
+
+    const data = new FormData(document.getElementById("edit-form"));
 
     const loginData = {
       email: data.get("email"),
@@ -98,26 +277,42 @@ export default function AccountPage() {
     dc.PostData(API_URL + "/api/changeInformation", loginData, accessToken)
       .then((resp) => {
         if (resp.success === true && resp.data.success === true) {
-          alert("Change successful!");
+          openSnackbar("success", "Change successful!");
           navigate(0);
         } else {
-          alert("Change unsuccessful. " + resp.data);
+          openSnackbar("error", "Change unsuccessful. " + resp.data);
         }
       })
       .catch((resp) => {
-        alert("Change unsuccessful. " + resp.data);
+        openSnackbar("error", "Change unsuccessful. " + resp.data);
       });
   };
 
   const fetchUserData = async () => {
     const accessToken = localStorage.getItem("jwt");
-    dc.GetData(API_URL + "/api/getInformation", accessToken).then((resp) => {
-      console.log(resp.data.data);
-      setUserData(resp.data.data);
-      setCountryCode(resp.data.data.countryCode);
-      setHidden(resp.data.data.hidden == "True");
-    });
+    dc.GetData(API_URL + "/api/getInformation", accessToken)
+      .then((resp) => {
+        setUserData(resp.data.data);
+        setCountryCode(resp.data.data.countryCode);
+        setHidden(resp.data.data.hidden == "True");
+      })
+      .catch((resp) => {
+        console.log(resp);
+      });
+
+    dc.GetData(API_URL + "/api/getNotificationOptions", accessToken)
+      .then((resp) => {
+        setNotification(resp.data.data);
+      })
+      .catch((e) => console.log(e));
+
+    dc.GetData(API_URL + "/api/getEventTypes", accessToken)
+      .then((resp) => {
+        setEventTypes(resp.data.data);
+      })
+      .catch((e) => console.log(e));
   };
+
   useEffect(() => {
     const accessToken = localStorage.getItem("jwt");
     if (accessToken == null) {
@@ -128,26 +323,45 @@ export default function AccountPage() {
   }, []);
 
   return (
-    <Paper
-      sx={{
-        bgcolor: mainTheme.background.default,
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
-      <ThemeProvider theme={mainTheme}>
+    <ProtectedComponent roles={[0, 1, -1]}>
+      <Paper
+        sx={{
+          bgcolor: mainTheme.palette.background.default,
+          minHeight: "100vh",
+          display: "flex",
+          flexWrap: "wrap",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
         <CssBaseline />
         <MainHeader for="Account" />
 
         <TableContainer
           sx={{
-            bgcolor: mainTheme.background.default,
-            padding: "2rem 20rem",
+            bgcolor: mainTheme.palette.background.default,
+            padding: "1rem 1rem",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "2rem"
           }}
         >
-          <Table aria-label="user-data-table" component={Paper}>
+          <Box sx={{
+            bgcolor: mainTheme.palette.background.default,
+            padding: "1rem 1rem",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "2rem"
+          }}>
+          <Table
+            aria-label="user-data-table"
+            component={Paper}
+            sx={{ bgcolor: mainTheme.palette.background.table, maxWidth: "40rem", flex: "1 1 auto" }}
+          >
             <TableBody>
               <TableCell>
                 <Table
@@ -159,35 +373,47 @@ export default function AccountPage() {
                   <TableBody>
                     <TableRow>
                       <TableCell
-                        colSpan={2}
+                        colSpan={1}
                         sx={{
-                          display: "flex",
+                          display: "flex"
                         }}
                       >
-                        <Typography component="h1" variant="h5">
+                        <Typography component="h1" variant="h5" color={theme.palette.text.main}>
                           Account information
                         </Typography>
 
                         <Button
                           onClick={() => {
-                            console.log(countries);
-
                             setEditMode(!editMode);
                           }}
                         >
                           <EditIcon style={{ margin: "0 10px" }}></EditIcon>
                         </Button>
                       </TableCell>
-                      <TableCell colSpan={1}></TableCell>
+                      {userData.roleId == 0 ? (
+                        <TableCell colSpan={1}>
+                          <Button
+                            sx={{ bgcolor: "red" }}
+                            variant="countained"
+                            onClick={handleOpenDeleteAccountDialog}
+                          >
+                            <Typography color="white">
+                              Delete account
+                            </Typography>{" "}
+                          </Button>
+                        </TableCell>
+                      ) : (
+                        <TableCell></TableCell>
+                      )}
                     </TableRow>
 
                     <TableRow>
-                      <TableCell>Username</TableCell>
-                      <TableCell>{userData.username}</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Username</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>{userData.username}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Role ID</TableCell>
-                      <TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Role ID</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>
                         {userData.roleId == -1
                           ? "Administrator"
                           : userData.roleId == 1
@@ -196,7 +422,7 @@ export default function AccountPage() {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell>Email</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Email</TableCell>
                       {editMode ? (
                         <TextField
                           inputProps={{
@@ -208,13 +434,25 @@ export default function AccountPage() {
                           fullWidth
                           name="email"
                           autoComplete="email"
+                          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                            color: theme.palette.text.main, // Set text color of the TextField input
+                          } }}
+                          SelectProps={{
+                            MenuProps: {
+                              PaperProps: {
+                                style: {
+                                  backgroundColor: theme.palette.background.default,
+                                },
+                              },
+                            },
+                          }}  
                         />
                       ) : (
-                        <TableCell>{userData.eMail}</TableCell>
+                        <TableCell sx={{color: theme.palette.text.main}}>{userData.eMail}</TableCell>
                       )}
                     </TableRow>
                     <TableRow>
-                      <TableCell>Country Code</TableCell>
+                      <TableCell sx={{color: theme.palette.text.main}}>Country Code</TableCell>
                       {editMode ? (
                         <TextField
                           required
@@ -230,29 +468,42 @@ export default function AccountPage() {
                           defaultValue={countryCode}
                           placeholder={countryCode}
                           select
+                          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                            color: theme.palette.text.main, // Set text color of the TextField input
+                          } }}
+                          SelectProps={{
+                            MenuProps: {
+                              PaperProps: {
+                                style: {
+                                  backgroundColor: theme.palette.background.default,
+                                },
+                              },
+                            },
+                          }}  
                         >
                           {countries != null ? (
                             countries.map((country) => (
                               <MenuItem
                                 key={country.countryCode}
                                 value={country.countryCode}
+                                sx={{ color: theme.palette.text.main }}
                               >
                                 {country.name}
                               </MenuItem>
                             ))
                           ) : (
-                            <MenuItem value={""}>Loading...</MenuItem>
+                            <MenuItem sx={{ color: theme.palette.text.main }} value={""}>Loading...</MenuItem>
                           )}
                         </TextField>
                       ) : (
-                        <TableCell>{userData.countryCode}</TableCell>
+                        <TableCell sx={{color: theme.palette.text.main}}>{userData.countryCode}</TableCell>
                       )}
                     </TableRow>
 
                     {userData.roleId == 1 ? (
                       <>
                         <TableRow>
-                          <TableCell>Organiser Name</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>Organizer Name</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -266,13 +517,25 @@ export default function AccountPage() {
                               required
                               id="organizerName"
                               autoFocus
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}  
                             />
                           ) : (
-                            <TableCell>{userData.organiserName}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.organiserName}</TableCell>
                           )}
                         </TableRow>
                         <TableRow>
-                          <TableCell>Hidden profile</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>Hidden profile</TableCell>
                           {editMode ? (
                             <TextField
                               required
@@ -286,19 +549,31 @@ export default function AccountPage() {
                               }
                               placeholder={hidden}
                               select
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             >
                               <MenuItem value={true}>True</MenuItem>
                               <MenuItem value={false}>False</MenuItem>
                             </TextField>
                           ) : (
-                            <TableCell>{userData.hidden}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.hidden}</TableCell>
                           )}
                         </TableRow>
                       </>
                     ) : (
                       <>
                         <TableRow>
-                          <TableCell>First Name</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>First Name</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -312,13 +587,25 @@ export default function AccountPage() {
                               fullWidth
                               id="firstName"
                               autoFocus
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             />
                           ) : (
-                            <TableCell>{userData.firstName}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.firstName}</TableCell>
                           )}
                         </TableRow>
                         <TableRow>
-                          <TableCell>LastName</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>LastName</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -331,14 +618,26 @@ export default function AccountPage() {
                               id="lastName"
                               name="lastName"
                               autoComplete="family-name"
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             />
                           ) : (
-                            <TableCell>{userData.lastName}</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>{userData.lastName}</TableCell>
                           )}
                         </TableRow>
 
                         <TableRow>
-                          <TableCell>Password</TableCell>
+                          <TableCell sx={{color: theme.palette.text.main}}>Password</TableCell>
                           {editMode ? (
                             <TextField
                               inputProps={{
@@ -351,9 +650,21 @@ export default function AccountPage() {
                               type={"password"}
                               id="password"
                               autoComplete="new-password"
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             />
                           ) : (
-                            <TableCell>*********</TableCell>
+                            <TableCell sx={{color: theme.palette.text.main}}>*********</TableCell>
                           )}
                         </TableRow>
                       </>
@@ -366,8 +677,7 @@ export default function AccountPage() {
                           margin: "1rem",
                           opacity: editMode ? 1 : 0,
                         }}
-                        type="submit"
-                        form="edit-form"
+                        onClick={handleOpenChangeInformationDialog}
                       >
                         Save changes
                       </Button>
@@ -375,39 +685,199 @@ export default function AccountPage() {
                   </TableBody>
                 </Table>
               </TableCell>
-              <TableCell
-                style={{
-                  width: "200px",
-                  display: "grid",
-                }}
-              >
-                <Typography component="h4" variant="h5">
-                  Current profile image
-                </Typography>
-                <UserUploadedImage
-                  style={{
-                    border: "1px solid black",
-                  }}
-                  src={"/" + userData.profileImage}
-                ></UserUploadedImage>
-
-                {editMode ? (
-                  <>
-                    <Typography component="h4" variant="h5">
-                      Upload new profile image
-                    </Typography>
-                    <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </TableCell>
             </TableBody>
           </Table>
+
+          {userData.roleId == 0 ? (
+            <Paper
+              sx={{
+                flex: "1 1 auto",
+                padding: "1rem",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-around",
+                maxWidth: "40rem",
+                bgcolor: mainTheme.palette.background.table
+              }}
+            >
+              <Table style={{ tableLayout: "fixed" }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={2}>
+                      <Typography component="h1" variant="h5" color={theme.palette.text.main}>
+                        Your notification preferences
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography component="h5" variant="h6" color={theme.palette.text.main}>
+                        Country preferences
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography component="h5" variant="h6" color={theme.palette.text.main}>
+                        Event type preferences
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Table style={{ tableLayout: "fixed" }}>
+                        <TableBody>
+                          {notification.countries.map((country) => (
+                            <TableRow>
+                              <TableCell>{country}</TableCell>
+                              <TableCell>
+                                <Button
+                                  key={country}
+                                  onClick={(e) => handleDeleteCountry(e)}
+                                >
+                                  <DeleteIcon id={country}></DeleteIcon>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableCell>
+                    <TableCell>
+                      <Table style={{ tableLayout: "fixed" }}>
+                        <TableBody>
+                          {notification.eventTypes.map((type) => (
+                            <TableRow>
+                              <TableCell>{type}</TableCell>
+                              <TableCell>
+                                <Button
+                                  key={type}
+                                  onClick={(e) => handleDeleteEventType(e)}
+                                >
+                                  <DeleteIcon id={type}></DeleteIcon>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <TableCell>
+                      <TextField
+                        required
+                        name="notif-country"
+                        id="notif-country"
+                        inputProps={{ value: notificationCountryCode }}
+                        fullWidth
+                        label="Choose new country"
+                        onChange={(event) =>
+                          setNotificationCountryCode(event.target.value)
+                        }
+                        select
+                      >
+                        {countries != null ? (
+                          countries.map((country) =>
+                            !notification.countries.includes(country.name) ? (
+                              <MenuItem
+                                key={country.countryCode}
+                                value={country.countryCode}
+                              >
+                                {country.name}
+                              </MenuItem>
+                            ) : null
+                          )
+                        ) : (
+                          <MenuItem value={""}>Loading...</MenuItem>
+                        )}
+                      </TextField>
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        required
+                        name="notif-eventType"
+                        id="notif-eventType"
+                        label="Choose new event type"
+                        inputProps={{ value: notificationEventType }}
+                        fullWidth
+                        onChange={(event) =>
+                          setNotificationEventType(event.target.value)
+                        }
+                        select
+                      >
+                        {eventTypes != null ? (
+                          eventTypes.map((type) =>
+                            !notification.eventTypes.includes(type.typeName) ? (
+                              <MenuItem key={type.typeId} value={type.typeId}>
+                                {type.typeName}
+                              </MenuItem>
+                            ) : null
+                          )
+                        ) : (
+                          <MenuItem value={""}>Loading...</MenuItem>
+                        )}
+                      </TextField>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        sx={{ width: "80%" }}
+                        onClick={() => handleAddCountry()}
+                      >
+                        Add country
+                      </Button>
+                    </TableCell>{" "}
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        sx={{ width: "80%" }}
+                        onClick={() => handleAddEventType()}
+                      >
+                        Add event
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Paper>
+          ) : null}
+
+          <Paper
+            sx={{
+              flex: "1 1 auto",
+              maxWidth: "20rem",
+              padding: "1rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-around",
+              bgcolor: mainTheme.palette.background.table
+            }}
+          >
+            {" "}
+            <div>
+              <Typography component="h4" variant="h5" color={theme.palette.text.main}>
+                Current profile image:
+              </Typography>
+              <Box mt={5} sx={{ display: "flex", justifyContent: "center" }}>
+                <UserUploadedImage
+                  src={"/" + userData.profileImage}
+                ></UserUploadedImage>
+              </Box>
+            </div>
+            <div>
+              <Typography component="h4" variant="h5" color={theme.palette.text.main} mb={4}>
+                Upload new profile image:
+              </Typography>
+              <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
+            </div>
+          </Paper>
+          </Box>
         </TableContainer>
 
         <MainFooter />
-      </ThemeProvider>
-    </Paper>
+      </Paper>
+    </ProtectedComponent>
   );
 }

@@ -9,9 +9,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { green, grey, indigo } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Divider, Paper } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import EventCard from "../ui/EventCard";
 import dataController from "../utils/DataController";
 
@@ -25,14 +23,14 @@ import { Menu } from '@mui/base/Menu';
 import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
 import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
 import { styled } from '@mui/system';
-
 import Slider from '@mui/material/Slider';
 import Button from '@mui/material/Button';
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
-
+import { useTheme } from "../context/ThemeContext";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
+import { useSnackbar } from "../context/SnackbarContext";
 
 
 export default function EventsPage(props) {
@@ -47,11 +45,16 @@ export default function EventsPage(props) {
 
   //const [sort, setSort] = useState(1);
 
-
   const { user, updateUser, logout, loading } = useUser();
+  
+  const { openSnackbar } = useSnackbar();
 
   const dc = new dataController();
   const numOfEventsPerPage = 2;
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const fetchData = async () => {
     const accessToken = localStorage.getItem("jwt");
@@ -64,6 +67,9 @@ export default function EventsPage(props) {
         setLenght(Math.ceil(resp.data.data.length / numOfEventsPerPage))
 
       }
+    }).catch((e) => {
+      console.log(e);
+      openSnackbar('error', 'Error fetching Event Data')
     });
   };
 
@@ -71,159 +77,7 @@ export default function EventsPage(props) {
     setCurrentTab(newValue);
   }
 
-  
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem("jwt");
-    if (accessToken === null) {
-      navigate("/login");
-    } else {
-      fetchData();
-    }
-  }, []);
-
-  
-
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
-  const blue = {
-    50: '#F0F7FF',
-    100: '#C2E0FF',
-    200: '#99CCF3',
-    300: '#66B2FF',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E6',
-    700: '#0059B3',
-    800: '#004C99',
-    900: '#003A75',
-  };
-  
-  
-  
-  const Listbox = styled('ul')(
-    ({ theme }) => `
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    box-sizing: border-box;
-    padding: 6px;
-    margin: 12px 0;
-    min-width: 200px;
-    border-radius: 12px;
-    overflow: auto;
-    outline: 0px;
-    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    box-shadow: 0px 4px 6px ${
-      theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
-    };
-    z-index: 1;
-    `,
-  );
-  
-  const MenuItem = styled(BaseMenuItem)(
-    ({ theme }) => `
-    list-style: none;
-    padding: 8px;
-    border-radius: 8px;
-    cursor: default;
-    user-select: none;
-  
-    &:last-of-type {
-      border-bottom: none;
-    }
-  
-    &.${menuItemClasses.focusVisible} {
-      outline: 3px solid ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
-      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
-      color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    }
-  
-    &.${menuItemClasses.disabled} {
-      color: ${theme.palette.mode === 'dark' ? grey[700] : grey[400]};
-    }
-  
-    &:hover:not(.${menuItemClasses.disabled}) {
-      background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[50]};
-      color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
-    }
-    `,
-  );
-  
-  const MenuButton = styled(BaseMenuButton)(
-    ({ theme }) => `
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    padding: 8px 16px;
-    border-radius: 8px;
-    color: white;
-    transition: all 150ms ease;
-    cursor: pointer;
-    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  
-    &:hover {
-      background: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
-    }
-  
-    &:active {
-      background: ${theme.palette.mode === 'dark' ? grey[700] : grey[100]};
-    }
-  
-    &:focus-visible {
-      box-shadow: 0 0 0 4px ${theme.palette.mode === 'dark' ? blue[300] : blue[200]};
-      outline: none;
-    }
-    `,
-  );
-  const centerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: '20px', // Dodajte željeni razmak iznad Pagination komponente
-  };
-  
-  const paginationStyle = {
-    fontSize: '1.5rem', // Povećajte veličinu fonta
-  };
-
-  const mainTheme = lightTheme;
-
+  const { theme, toggleTheme } = useTheme();
   
   function sortCards(value) {
     let fakeCard = cards;
@@ -316,8 +170,8 @@ export default function EventsPage(props) {
   };
 
   return (
-    <Paper sx={{ bgcolor: mainTheme.background.default }}>
-      <ThemeProvider theme={mainTheme}>
+    <ProtectedComponent roles={[0, 1, -1]}>
+      <Paper sx={{ bgcolor: theme.palette.background.default }}>
         <CssBaseline />
         <MainHeader for="Events"></MainHeader>
         <>
@@ -327,15 +181,21 @@ export default function EventsPage(props) {
               variant="fullWidth"
               value={currentTab}
               onChange={handleTabChange}
+              TabIndicatorProps={{
+                style: {
+                  backgroundColor: theme.palette.primary.main
+                }
+              }}
+              textColor="inherit"
             >
               <Tab
                 label="Top Picks"
-                sx={{ color: mainTheme.palette.text.main }}
+                sx={{ color: theme.palette.text.main }}
               />
-              <Tab label="New" sx={{ color: mainTheme.palette.text.main }} />
+              <Tab label="New" sx={{ color: theme.palette.text.main }} />
               <Tab
                 label="Near You"
-                sx={{ color: mainTheme.palette.text.main }}
+                sx={{ color: theme.palette.text.main }}
               />
             </Tabs>
 
@@ -423,6 +283,20 @@ export default function EventsPage(props) {
                   component="footer"
                 />
               )} 
+                  {/* cards.map((card) => (
+                    <Grid item key={card.id} xs={12} sm={6} md={6}>
+                      <EventCard card={card} />
+                    </Grid>
+                  ))
+                ) : (
+                  <Box
+                    sx={{
+                      bgcolor: theme.palette.secondary.light,
+                      height: "1000px",
+                    }}
+                    component="footer"
+                  />
+                )} */}
               </Grid>
             ) : null}
 
@@ -463,8 +337,8 @@ export default function EventsPage(props) {
         {/* Footer */}
         <MainFooter></MainFooter>
         {/* End footer */}
-      </ThemeProvider>
-    </Paper>
+      </Paper>
+    </ProtectedComponent>
   );
 
   

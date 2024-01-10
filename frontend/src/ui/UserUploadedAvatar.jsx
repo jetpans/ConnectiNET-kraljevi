@@ -5,10 +5,10 @@ import { Avatar } from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useTheme } from "../context/ThemeContext";
 
-export default function UserUploadedImage(props) {
+export default function UserUploadedAvatar(props) {
   const [image, setImage] = useState(null);
-  const dc = new dataController();
   const { theme } = useTheme();
+  const dc = new dataController();
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -30,16 +30,10 @@ export default function UserUploadedImage(props) {
 
   return (
     <div {...props}>
-      {image && image !== null ? (
-        <img
-          src={image}
-          alt="img"
-          style={{ width: "100%", height: "100%", maxHeight: 128, maxWidth: 128 }} // Adjust the styles as needed
-        />
-      ) : 
-      <Avatar sx={{ color: theme.palette.background.default, bgcolor: theme.palette.primary.main, width: 128, height: 128 }}>
-        <AccountCircleIcon color={theme.palette.background.default} sx={{width: 128, height: 128}}/>
-      </Avatar>}
+      {image && image !== null ? <Avatar alt="img" src={image} sx={{width: 30, height: 30}} />
+      : <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+          <AccountCircleIcon color={theme.palette.background.default} sx={{width: 28, height: 28}}/>
+        </Avatar>}
     </div>
   );
 }

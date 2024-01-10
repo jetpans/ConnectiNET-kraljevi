@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import {
+  Box,
   Button,
   MenuItem,
   Paper,
   Table,
   TableCell,
+  TableContainer,
   TableRow,
   TextField,
   Typography,
 } from "@mui/material";
 import dataController from "../utils/DataController";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
+import { useSnackbar } from "../context/SnackbarContext";
+
+
 export default function UserTable() {
   const API_URL = process.env.REACT_APP_API_URL;
   const accessToken = localStorage.getItem("jwt");
@@ -28,6 +34,8 @@ export default function UserTable() {
       })
       .catch((e) => console.log(e));
   };
+
+  const { openSnackbar } = useSnackbar();
 
   useEffect(() => {
     fetchData();
@@ -104,10 +112,10 @@ export default function UserTable() {
     dc.PostData(API_URL + "/api/admin/makeAdmin/" + accountId, "", accessToken)
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Successfuly made admin.");
+          openSnackbar("success", "Successfuly made admin.");
           navigate(0);
         } else {
-          alert("Something went wrong.");
+          openSnackbar("error", "Something went wrong.");
         }
       })
       .catch((e) => console.log(e));
@@ -124,10 +132,10 @@ export default function UserTable() {
     )
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Successfuly deleted account.");
+          openSnackbar("success", "Successfuly deleted account.");
           navigate(0);
         } else {
-          alert("Something went wrong.");
+          openSnackbar("error", "Something went wrong.");
         }
       })
       .catch((e) => console.log(e));
@@ -144,10 +152,10 @@ export default function UserTable() {
     )
       .then((resp) => {
         if (resp.data.success === true) {
-          alert("Successfuly canceled subscription.");
+          openSnackbar("success", "Successfuly canceled subscription.");
           navigate(0);
         } else {
-          alert("Something went wrong.");
+          openSnackbar("error", "Something went wrong.");
         }
       })
       .catch((e) => console.log(e));
@@ -156,74 +164,94 @@ export default function UserTable() {
   const handleFilterByChange = (e) => {
     setFilterBy(e.target.value);
   };
+
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <Paper sx={{ padding: "2rem" }}>
-      <div style={{ display: "flex", flexDirection: "row" }}>
+    <Paper sx={{ bgcolor: theme.palette.background.defaut }} >
+      <TableContainer 
+        sx={{
+          bgcolor: theme.palette.background.table,
+          padding: "2rem",
+      }}>
+      <Box sx={{ display: "flex", flexDirection: "row", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, label: { color: theme.palette.text.main } }}>
         <TextField
           label="Filter by:"
           select
           defaultValue="username"
           onChange={handleFilterByChange}
-          sx={{ marginRight: "2rem" }}
+          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+            color: theme.palette.text.main, // Set text color of the TextField input
+          } }}
+          SelectProps={{
+            MenuProps: {
+              PaperProps: {
+                style: {
+                  backgroundColor: theme.palette.background.default,
+                },
+              },
+            },
+          }}  
         >
-          <MenuItem value="username">Username</MenuItem>
-          <MenuItem value="organizer">Organizer Name</MenuItem>
-          <MenuItem value="firstName">First Name</MenuItem>
+          <MenuItem value="username" sx={{ color: theme.palette.text.main }}>Username</MenuItem>
+          <MenuItem value="organizer" sx={{ color: theme.palette.text.main }}>Organizer Name</MenuItem>
+          <MenuItem value="firstName" sx={{ color: theme.palette.text.main }}>First Name</MenuItem>
         </TextField>
         <TextField
           label="Filter"
           onChange={(e) => setFilterValue(e.target.value)}
         ></TextField>
-      </div>
+      </Box>
       <br></br>
       <br></br>
-      <Table>
-        <TableRow sx={{ backgroundColor: "black", color: "white" }}>
+      
+      <Table sx={{bgcolor: theme.palette.background.defaut}}>
+        <TableRow sx={{ backgroundColor: theme.palette.primary.main, color: "white" }}>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Username</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Username</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Role</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Role</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>E-Mail</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>E-Mail</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>First name</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>First name</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Last name</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Last name</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Organizer name</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Organizer name</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Country</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Country</Typography>
           </TableCell>
           <TableCell>
             {" "}
-            <Typography sx={{ fontWeight: "bold" }}>Options</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Options</Typography>
           </TableCell>
         </TableRow>
 
         {users ? (
           users.filter(filterFunction).map((user) => (
             <TableRow>
-              <TableCell>{user.username ? user.username : "-"}</TableCell>
-              <TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{user.username ? user.username : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>
                 {user.roleId == 1
                   ? "Organizer"
                   : user.roleId == 0
                   ? "Visitor"
                   : "Administrator"}
               </TableCell>
-              <TableCell>{user.eMail ? user.eMail : "-"}</TableCell>
-              <TableCell>{user.firstName ? user.firstName : "-"}</TableCell>
-              <TableCell>{user.lastName ? user.lastName : "-"}</TableCell>
-              <TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{user.eMail ? user.eMail : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{user.firstName ? user.firstName : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{user.lastName ? user.lastName : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>
                 {user.organizerName ? user.organizerName : "-"}
               </TableCell>
-              <TableCell>{user.countryName ? user.countryName : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{user.countryName ? user.countryName : "-"}</TableCell>
               <TableCell>
                 {user.roleId == 1 ? (
                   <>
@@ -231,6 +259,7 @@ export default function UserTable() {
                       <Button
                         id={user.accountId}
                         onClick={(e) => handleClickEvents(e)}
+                        sx={{color: theme.palette.primary.main}}
                       >
                         Browse events
                       </Button>
@@ -241,6 +270,7 @@ export default function UserTable() {
                         onClick={(e) => {
                           handleCancelSubscription(e);
                         }}
+                        sx={{color: theme.palette.primary.main}}
                       >
                         Cancel subscription
                       </Button>
@@ -251,6 +281,7 @@ export default function UserTable() {
                     <Button
                       id={user.accountId}
                       onClick={(e) => handleMakeAdmin(e)}
+                      sx={{color: theme.palette.primary.main}}
                     >
                       Make Administrator
                     </Button>{" "}
@@ -260,6 +291,7 @@ export default function UserTable() {
                         onClick={(e) => {
                           handleClickReviews(e);
                         }}
+                        sx={{color: theme.palette.primary.main}}
                       >
                         Browse reviews
                       </Button>
@@ -271,6 +303,7 @@ export default function UserTable() {
                       onClick={(e) => {
                         handleDeleteAccount(e);
                       }}
+                      sx={{color: theme.palette.primary.main}}
                     >
                       Delete account
                     </Button>
@@ -283,6 +316,7 @@ export default function UserTable() {
           <></>
         )}
       </Table>
+      </TableContainer>
     </Paper>
   );
 }

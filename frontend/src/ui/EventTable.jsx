@@ -5,12 +5,16 @@ import {
   Paper,
   Table,
   TableCell,
+  TableContainer,
   TableRow,
   TextField,
   Typography,
 } from "@mui/material";
 import dataController from "../utils/DataController";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
+import { useSnackbar } from "../context/SnackbarContext";
+
 export default function EventTable(props) {
   const API_URL = process.env.REACT_APP_API_URL;
   const accessToken = localStorage.getItem("jwt");
@@ -18,6 +22,8 @@ export default function EventTable(props) {
   const navigate = useNavigate();
 
   const [events, setEvents] = useState([]);
+
+  const { openSnackbar } = useSnackbar();
 
   const fetchData = async () => {
     dc.GetData(
@@ -48,64 +54,72 @@ export default function EventTable(props) {
     )
       .then((resp) => {
         if (resp.success === true) {
-          alert("Successfuly deleted event.");
+          openSnackbar("success", "Successfuly deleted event.");
           navigate(0);
         } else {
-          alert("Faield to delete event.");
+          openSnackbar("error", "Faield to delete event.");
         }
       })
-      .catch((e) => alert(e));
+      .catch((e) => console.log(e));
   };
 
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <Paper sx={{ padding: "2rem" }}>
-      <Table>
-        <TableRow sx={{ bgcolor: "black", color: "white" }}>
+    <Paper sx={{ bgcolor: theme.palette.background.defaut }}>
+      <TableContainer 
+        sx={{
+          bgcolor: theme.palette.background.table,
+          padding: "2rem",
+      }}>
+      <Table sx={{bgcolor: theme.palette.background.defaut}}>
+        <TableRow sx={{ backgroundColor: theme.palette.primary.main, color: "white" }}>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Event name</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Event name</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Organizer</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Organizer</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Date</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Date</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Time</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Time</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>City</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>City</Typography>
           </TableCell>
 
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Price</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Price</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Country</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Country</Typography>
           </TableCell>
           <TableCell>
-            <Typography sx={{ fontWeight: "bold" }}>Options</Typography>
+            <Typography sx={{ fontWeight: "bold" }} color={theme.palette.text.white}>Options</Typography>
           </TableCell>
         </TableRow>
 
         {events ? (
           events.map((event) => (
             <TableRow>
-              <TableCell>{event.title ? event.title : "-"}</TableCell>
-              <TableCell>{event.organizerName}</TableCell>
-              <TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{event.title ? event.title : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{event.organizerName}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>
                 {event.dateTime ? event.dateTime.toDateString() : "-"}
               </TableCell>
-              <TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>
                 {event.dateTime ? event.dateTime.toLocaleTimeString() : "-"}
               </TableCell>
-              <TableCell>{event.city ? event.city : "-"}</TableCell>
-              <TableCell>{event.price ? event.price : "-"}</TableCell>
-              <TableCell>{event.countryName}</TableCell>
-              <TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{event.city ? event.city : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{event.price ? event.price : "-"}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>{event.countryName}</TableCell>
+              <TableCell sx={{color: theme.palette.text.main}}>
                 <Button
                   id={event.eventId}
                   onClick={(e) => handleDeleteEvent(e)}
+                  sx={{color: theme.palette.primary.main}}
                 >
                   Delete event
                 </Button>
@@ -116,6 +130,7 @@ export default function EventTable(props) {
           <></>
         )}
       </Table>
+      </TableContainer>
     </Paper>
   );
 }

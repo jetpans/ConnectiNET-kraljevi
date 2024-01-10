@@ -24,7 +24,7 @@ class AdminController(Controller):
         self.app.add_url_rule("/api/getAllEventsForOrganizer/<accountId>", view_func=self.getAllEvents, methods=["GET"])
         self.app.add_url_rule("/api/getAllReviewsForAccount/<accountId>", view_func=self.getAllReviews, methods=["GET"])
         self.app.add_url_rule("/api/admin/makeAdmin/<accountId>", view_func=self.makeAdmin, methods=["POST"])
-        self.app.add_url_rule("/api/admin/deleteAccount/<accountId>", view_func=self.deleteAccount, methods=["POST"])
+        self.app.add_url_rule("/api/admin/deleteAccount/<accountId>", view_func=self.deleteAccountAdmin, methods=["POST"])
         self.app.add_url_rule("/api/admin/cancelSubscription/<accountId>", view_func=self.cancelSubscription, methods=["POST"])
         self.app.add_url_rule("/api/admin/deleteEvent/<eventId>", view_func=self.deleteEvent, methods=["POST"])
         self.app.add_url_rule("/api/admin/deleteReview/<reviewId>", view_func=self.deleteReview, methods=["POST"])
@@ -97,7 +97,7 @@ class AdminController(Controller):
         return {"success":True, "message":"Success."}
     
     @admin_required()
-    def deleteAccount(self, accountId):
+    def deleteAccountAdmin(self, accountId):
         try:
             myUser = self.db.session.query(Account).filter(Account.accountId == accountId).first()
             if myUser.roleId != 0:

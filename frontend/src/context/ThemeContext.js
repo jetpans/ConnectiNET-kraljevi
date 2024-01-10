@@ -26,7 +26,8 @@ const lightTheme = createTheme({
         text: {
             main: "#222111",
             light: "#333222",
-            dark: "#111000"
+            dark: "#111000",
+            white: "#eeefef"
         },
         border: {
             main: grey[300]
@@ -55,7 +56,8 @@ const darkTheme = createTheme({
         text: {
             main: "#eee",
             light: "#ccc",
-            dark: "#fff"
+            dark: "#fff",
+            white: "#eeefef"
         },
         border: {
             main: grey[700]

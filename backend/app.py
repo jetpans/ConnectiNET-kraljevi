@@ -14,7 +14,8 @@ from models import Account, Visitor, Organizer,Event, Review, Payment, Subscript
 from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
-
+from flask_mail import Mail
+from mailjet_rest import Client
 
 
 app = Flask(__name__)
@@ -24,6 +25,9 @@ app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["IMAGE_DIRECTORY"] = "images"
 
+app.config["MAIL_API_KEY"] = os.environ.get('MAIL_API_KEY')
+app.config["MAIL_SECRET"] = os.environ.get("MAIL_SECRET")
+ 
 app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
 
 
@@ -35,6 +39,8 @@ else:
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+mail = Client(auth=(os.environ.get('MAIL_API_KEY'), os.environ.get("MAIL_SECRET")), version='v3.1')
+
 
 @app.before_request
 def do():
@@ -82,7 +88,7 @@ def refresh_expiring_jwts(response):
 
 
 
-authController = AuthController(app, db, bcrypt, jwt)
+authController = AuthController(app, db, bcrypt, jwt, mail)
 eventController = EventController(app, db, jwt)
 imageController = ImageController(app,db,jwt)
 userController = UserController(app,db,bcrypt,jwt)

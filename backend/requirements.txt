@@ -6,3 +6,6 @@ gunicorn
 flask_jwt_extended
 datetime
 dateutils
+flask_mail
+mailjet_rest
+

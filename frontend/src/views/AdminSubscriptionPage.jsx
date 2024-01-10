@@ -29,6 +29,7 @@ import { useState, useContext, useEffect } from "react";
 import MainHeader from "../ui/MainHeader.jsx";
 import MainFooter from "../ui/MainFooter";
 import { dblClick } from "@testing-library/user-event/dist/click";
+import { ProtectedComponent } from "../utils/ProtectedComponent";
 
 export default function AdminSubscription(props) {
   const [value, setValue] = useState(0);
@@ -266,18 +267,7 @@ export default function AdminSubscription(props) {
     fetchData();
   }, []);
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        minHeight: "100vh",
-        width: "100vw",
-        bgcolor: "#f5f5f5",
-      }}
-    >
-      <MainHeader for="Subscription"></MainHeader>
-
+    <ProtectedComponent roles={[-1]}>
       <Paper
         sx={{
           display: "flex",
@@ -292,17 +282,21 @@ export default function AdminSubscription(props) {
         <Typography variant="h6" noWrap sx={{ marginTop: "15px" }}>
           Current subscription price: {price}
         </Typography>
+
         <Box
           sx={{
-            display: "grid",
-
-            justifyItems: "center",
-            marginTop: "10px",
-            marginBottom: "10px",
+            my: 8,
+            mx: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "65vw",
+            border: "2px solid #3399FF",
+            borderRadius: "10px",
           }}
         >
-          <Typography variant="h6" noWrap>
-            Enter new subscription price:
+          <Typography variant="h6" noWrap sx={{ marginTop: "15px" }}>
+            Current subscription price:
           </Typography>
           <TextField
             inputProps={{ type: "number", min: 0, value: value }}
@@ -318,6 +312,6 @@ export default function AdminSubscription(props) {
       </Paper>
 
       <MainFooter></MainFooter>
-    </Box>
+    </ProtectedComponent>
   );
 }

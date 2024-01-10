@@ -127,8 +127,7 @@ class Payment(db.Model):
 
     organizer = db.relationship('Organizer', backref='payments')
 
-    def __init__(self, paymentId, date, amount, paymentMethod, accountId):
-        self.paymentId = paymentId
+    def __init__(self,  date, amount, paymentMethod, accountId):
         self.date = date
         self.amount = amount
         self.paymentMethod = paymentMethod
@@ -144,8 +143,8 @@ class Subscription(db.Model):
 
     organizer = db.relationship('Organizer', backref='subscriptions')
 
-    def __init__(self, subscriptionId, startDate, expireDate, accountId):
-        self.subscriptionId = subscriptionId
+    def __init__(self, startDate, expireDate, accountId):
+
         self.startDate = startDate
         self.expireDate = expireDate
         self.accountId = accountId

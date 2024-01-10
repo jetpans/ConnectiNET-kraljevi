@@ -15,32 +15,58 @@ import {
   ListItemButton,
   ListItemText,
   ListItemIcon,
+  Paper,
+  Container,
+  Grid,
+  Menu,
+  MenuItem
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { createTheme } from "@mui/material/styles";
-import { green, grey, indigo } from "@mui/material/colors";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import { useTheme } from "../context/ThemeContext";
+import { useDialog } from "../context/DialogContext";
+import AddCardIcon from "@mui/icons-material/AddCard";
+
+import { useSnackbar } from "../context/SnackbarContext";
+import UserUploadedAvatar from "./UserUploadedAvatar";
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
-  const tabs = [
-    "Profile",
-    "Events",
-    "My Events",
-    "Account",
-    "Temp",
-    "Browse users",
-    "Payment",
-  ];
   const [currentTab, setCurrentTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { user, updateUser, logout, loading } = useUser();
   const navigate = useNavigate();
 
-  const { user, updateUser, logout, loading } = useUser();
+  const [tabs, setTabs] = useState(
+      user === null ? ["Events"] :
+      user.roleId === 0 ? ["Events", "Account"] 
+    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : ["Events"]); 
+
+  const [profileImage, setProfileImage] = useState("");
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    setTabs(
+      user === null ? ["Events"] :
+      user.roleId === 0 ? ["Events", "Account"] 
+    : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */, "Browse users"]
+    : ["Events"]); 
+  }, [user])
 
   const dc = new dataController();
 
@@ -50,17 +76,21 @@ export default function MainHeader(props) {
       case "Account":
         navigate("/account");
         break;
-      case "Temp":
-        navigate("/temp");
-        break;
+
       case "Events":
         navigate("/events");
         break;
+
+      case "ConnectiNET Premium":
+        navigate("/premium");
+        break;
+
+      case "Profile":
+        navigate("/organizer/" + user.id);
+        break;
+
       case "Browse users":
         navigate("/admin/browseUsers");
-        break;
-      case "Payment":
-        navigate("/admin/subscription");
         break;
     }
   }
@@ -70,12 +100,16 @@ export default function MainHeader(props) {
   }
 
   function handleLogout() {
-    dc.PostData(API_URL + "/logout").then((resp) => {
-      if (resp.success === true) {
-        logout();
-        navigate("/login");
-      }
-    });
+    dc.PostData(API_URL + "/logout")
+      .then((resp) => {
+        if (resp.success === true) {
+          logout();
+          navigate("/login");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 
   useEffect(() => {
@@ -85,67 +119,81 @@ export default function MainHeader(props) {
     }
   }, []);
 
-  const lightTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[400],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-    },
-    background: {
-      default: grey[100],
-    },
-  });
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: indigo[300],
-      },
-      secondary: {
-        main: grey[500],
-        other: grey[200],
-      },
-      text: {
-        main: grey[900],
-      },
-    },
-    background: {
-      default: grey[900],
-    },
-  });
+  const { theme, toggleTheme } = useTheme();
+  
+  const handleOpenMenu = () => {
+    setAnchorEl(document.getElementById("profile-image"));
+  }
 
-  const mainTheme = lightTheme;
+  useEffect(() => {
+    if(user && user !== null && user.profileImage) {
+      setProfileImage(user.profileImage);
+    }
+  }, [user]);
+
   return (
     <div>
-      <AppBar position="relative">
+      <AppBar position="relative" sx={{ bgcolor: theme.palette.primary.main }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={toggleDrawer}>
-            <TableRowsIcon sx={{ color: mainTheme.palette.secondary.other }} />
+            <TableRowsIcon sx={{ color: theme.palette.secondary.light }} />
           </Button>
 
-          <Typography
-            variant="h5"
-            color={mainTheme.palette.secondary.other}
-            noWrap
-          >
+          <Typography variant="h5" color={theme.palette.secondary.light} noWrap>
             {props.for}
           </Typography>
 
           <div>
-            <Button onClick={handleLogout}>
-              <LogoutIcon sx={{ color: mainTheme.palette.secondary.other }} />
+            <Button onClick={toggleTheme} id="change-color-button">
+              <Brightness4Icon sx={{ color: '#FFF' }} />
             </Button>
-            <Typography variant="h6" color={mainTheme.palette.secondary.other}>
+            <Button onClick={handleOpenMenu} id="profile-image">
+              {profileImage && profileImage !== "" ? (
+                <UserUploadedAvatar
+                  src={"/" + profileImage}
+                ></UserUploadedAvatar>
+              ) : null}
+            </Button>
+            {/* <Avatar alt="User Profile Picture" src={"/" + user.profileImage ? user.profileImage : ""} /> */}
+            {/* <Button onClick={handleLogout}>
+              <LogoutIcon sx={{ color: theme.palette.secondary.light }} />
+            </Button> */}
+            <Menu
+              id="profile-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button'
+              }}
+            >
+              <MenuItem onClick={() => {navigate('/account')}}>
+                <Typography marginRight={2}>Account</ Typography>
+                <ManageAccountsIcon marginBottom={1} htmlColor={theme.palette.secondary.dark} />
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <Typography marginRight={3}>Log Out</ Typography>
+                <LogoutIcon marginBottom={1} htmlColor={theme.palette.secondary.dark} />
+              </MenuItem>
+            </Menu>
+
+            {/* <Typography variant="h6" color={theme.palette.secondary.light}>
               Log out
-            </Typography>
+            </Typography> */}
           </div>
         </Toolbar>
       </AppBar>
 
-      <Drawer open={drawerOpen} onClose={toggleDrawer}>
+      <Drawer open={drawerOpen} PaperProps={{
+          sx: {
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.main
+          }
+        }}
+      >
+        <Button onClick={toggleDrawer} >
+            <TableRowsIcon sx={{ color: theme.palette.text.light }} />
+          </Button>
         <Typography variant="h5" sx={{ textAlign: "center", mt: 2, mb: 2 }}>
           ConnectiNET
         </Typography>
@@ -164,14 +212,21 @@ export default function MainHeader(props) {
                   value={text}
                   onClick={(e) => handleTabChange(e)}
                 >
-                  <ListItemIcon>
-                    {index === 1 ? (
+                <ListItemIcon sx={{
+                  backgroundColor: theme.palette.background.default,
+                  color: theme.palette.text.light
+                }}>
+                    {text === "Events" ? (
                       <EventIcon />
-                    ) : index === 0 ? (
+                    ) : text === "Account" ? (
+                      <ManageAccountsIcon/>
+                    ) : text === "ConnectiNET Premium" ? (
+                      <WorkspacePremiumIcon />
+                    ) : text === "Profile" ? (
                       <AccountCircleIcon />
-                    ) : (
+                    ) : text === "My Events" ? (
                       <EditCalendarIcon />
-                    )}
+                    ) : null}
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>

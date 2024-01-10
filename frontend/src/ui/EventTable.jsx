@@ -31,13 +31,10 @@ export default function EventTable(props) {
       accessToken
     )
       .then((resp) => {
-        console.log("hi");
-        console.log(resp.data.data);
         let temp = resp.data.data.map(
           (event) => (event.dateTime = new Date(event.dateTime))
         );
         setEvents(resp.data.data);
-        console.log("set events");
       })
       .catch((e) => console.log(e));
   };

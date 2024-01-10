@@ -85,7 +85,7 @@ class UserController(Controller):
     def getMoreInfo(self):
         claims = get_jwt()
         r  = {}
-        if claims["roleId"] == 0:
+        if claims["roleId"] in [0, -1]:
             r = self.db.session.query(Account,Visitor.firstName, Visitor.lastName).join(Visitor, Account.accountId == Visitor.accountId).filter(Account.username == get_jwt_identity()).first()
             dict = r[0].__dict__
             dict["firstName"] = r[1]

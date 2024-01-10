@@ -31,13 +31,10 @@ export default function ReviewTable(props) {
       accessToken
     )
       .then((resp) => {
-        console.log("hi");
-        console.log(resp.data.data);
         let temp = resp.data.data.map(
           (review) => (review.dateTime = new Date(review.dateTime))
         );
         setReviews(resp.data.data);
-        console.log("set events");
       })
       .catch((e) => console.log(e));
   };

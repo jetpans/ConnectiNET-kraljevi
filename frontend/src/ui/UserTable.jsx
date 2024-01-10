@@ -28,9 +28,7 @@ export default function UserTable() {
   const fetchData = async () => {
     dc.GetData(API_URL + "/api/getAllUsers", accessToken)
       .then((resp) => {
-        console.log(resp.data.data);
         setUsers(resp.data.data);
-        console.log("set users");
       })
       .catch((e) => console.log(e));
   };
@@ -101,7 +99,6 @@ export default function UserTable() {
   };
   const handleClickReviews = (event) => {
     let accountId = event.target.id;
-    console.log(event.target.id);
     navigate("/admin/browseReviews/" + accountId);
   };
 

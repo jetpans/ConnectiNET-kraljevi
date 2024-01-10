@@ -90,6 +90,7 @@ export default function LoginPage(props) {
         navigate("/events");
       } else {
         localStorage.removeItem("jwt");
+        logout();
       }
     }
   }, []);
@@ -97,7 +98,10 @@ export default function LoginPage(props) {
   useEffect(() => {
     if(user !== null) {
       const accessToken = localStorage.getItem("jwt");
-      dc.GetData(API_URL + "/api/getInformation", accessToken)
+      if(accessToken === null) {
+        logout();
+      } else {
+        dc.GetData(API_URL + "/api/getInformation", accessToken)
         .then((response) => {
           updateUser({
             username: user.username,
@@ -109,6 +113,7 @@ export default function LoginPage(props) {
         }).then((resp) => {
           navigate("/events");
         }).catch((response) => { console.log(response) });
+      }
     }
   }, [user]);
 

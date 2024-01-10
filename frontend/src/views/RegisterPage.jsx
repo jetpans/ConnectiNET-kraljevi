@@ -33,6 +33,7 @@ export default function RegisterPage() {
   const { openSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
+  const dc = new dataController();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -46,8 +47,6 @@ export default function RegisterPage() {
       countryCode: data.get("country"),
       roleId: data.get("role") === "Organizer" ? 1 : 0,
     };
-
-    const dc = new dataController();
 
     if (
       data.get("role") === "Visitor" &&
@@ -100,9 +99,32 @@ export default function RegisterPage() {
         navigate("/events");
       } else {
         localStorage.removeItem("jwt");
+        logout();
       }
     }
   }, []);
+
+  useEffect(() => {
+    if(user !== null) {
+      const accessToken = localStorage.getItem("jwt");
+      if(accessToken === null) {
+        logout();
+      } else {
+        dc.GetData(API_URL + "/api/getInformation", accessToken)
+        .then((response) => {
+          updateUser({
+            username: user.username,
+            roleId: user.roleId,
+            countryCode: user.countryCode,
+            email: user.email,
+            profileImage: response.data.data.profileImage,
+          });
+        }).then((resp) => {
+          navigate("/events");
+        }).catch((response) => { console.log(response) });
+      }
+    }
+  }, [user]);
 
   return (
     <>

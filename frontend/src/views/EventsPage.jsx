@@ -56,11 +56,10 @@ export default function EventsPage(props) {
   }
 
   const { theme, toggleTheme } = useTheme();
-  const mainTheme = theme;
 
   return (
     <ProtectedComponent roles={[0, 1, -1]}>
-      <Paper sx={{ bgcolor: mainTheme.palette.background.default }}>
+      <Paper sx={{ bgcolor: theme.palette.background.default }}>
         <CssBaseline />
         <MainHeader for="Events"></MainHeader>
         <>
@@ -72,19 +71,19 @@ export default function EventsPage(props) {
               onChange={handleTabChange}
               TabIndicatorProps={{
                 style: {
-                  backgroundColor: mainTheme.palette.primary.main
+                  backgroundColor: theme.palette.primary.main
                 }
               }}
               textColor="inherit"
             >
               <Tab
                 label="Top Picks"
-                sx={{ color: mainTheme.palette.text.main }}
+                sx={{ color: theme.palette.text.main }}
               />
-              <Tab label="New" sx={{ color: mainTheme.palette.text.main }} />
+              <Tab label="New" sx={{ color: theme.palette.text.main }} />
               <Tab
                 label="Near You"
-                sx={{ color: mainTheme.palette.text.main }}
+                sx={{ color: theme.palette.text.main }}
               />
             </Tabs>
 
@@ -103,7 +102,7 @@ export default function EventsPage(props) {
                 ) : (
                   <Box
                     sx={{
-                      bgcolor: mainTheme.palette.secondary.light,
+                      bgcolor: theme.palette.secondary.light,
                       height: "1000px",
                     }}
                     component="footer"

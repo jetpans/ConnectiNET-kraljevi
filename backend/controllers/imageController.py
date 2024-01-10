@@ -1,6 +1,6 @@
 import logging
 from flask import Flask,jsonify,request,render_template, session, send_file
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import random

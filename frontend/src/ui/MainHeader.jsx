@@ -32,9 +32,10 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useTheme } from "../context/ThemeContext";
 import { useDialog } from "../context/DialogContext";
 import AddCardIcon from "@mui/icons-material/AddCard";
-
+import GroupsIcon from '@mui/icons-material/Groups';
 import { useSnackbar } from "../context/SnackbarContext";
 import UserUploadedAvatar from "./UserUploadedAvatar";
+import PriceChangeIcon from '@mui/icons-material/PriceChange';
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -48,7 +49,7 @@ export default function MainHeader(props) {
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
     : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */, "Browse Users", "Change Subscription Price"]
     : ["Events"]); 
 
   const [profileImage, setProfileImage] = useState("");
@@ -64,7 +65,7 @@ export default function MainHeader(props) {
       user === null ? ["Events"] :
       user.roleId === 0 ? ["Events", "Account"] 
     : user.roleId === 1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Events", "Account", "Browse Users", "Change Subscription Price"]
     : ["Events"]); 
   }, [user])
 
@@ -83,6 +84,18 @@ export default function MainHeader(props) {
 
       case "ConnectiNET Premium":
         navigate("/premium");
+        break;
+
+      case "Profile":
+        navigate("/organizer/" + user.id);
+        break;
+
+      case "Browse Users":
+        navigate("/admin/browseUsers");
+        break;
+
+      case "Change Subscription Price":
+        navigate("/admin/subscription");
         break;
     }
   }
@@ -218,8 +231,12 @@ export default function MainHeader(props) {
                       <AccountCircleIcon />
                     ) : text === "My Events" ? (
                       <EditCalendarIcon />
+                    ) : text === "Browse Users" ? (
+                      <GroupsIcon />
+                    ) : text === "Change Subscription Price" ? (
+                      <PriceChangeIcon />
                     ) : null}
-                  </ListItemIcon>
+                  </ListItemIcon> 
                   <ListItemText primary={text} />
                 </ListItemButton>
               </ListItem>

@@ -434,6 +434,18 @@ export default function AccountPage() {
                           fullWidth
                           name="email"
                           autoComplete="email"
+                          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                            color: theme.palette.text.main, // Set text color of the TextField input
+                          } }}
+                          SelectProps={{
+                            MenuProps: {
+                              PaperProps: {
+                                style: {
+                                  backgroundColor: theme.palette.background.default,
+                                },
+                              },
+                            },
+                          }}  
                         />
                       ) : (
                         <TableCell sx={{color: theme.palette.text.main}}>{userData.eMail}</TableCell>
@@ -456,18 +468,31 @@ export default function AccountPage() {
                           defaultValue={countryCode}
                           placeholder={countryCode}
                           select
+                          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                            color: theme.palette.text.main, // Set text color of the TextField input
+                          } }}
+                          SelectProps={{
+                            MenuProps: {
+                              PaperProps: {
+                                style: {
+                                  backgroundColor: theme.palette.background.default,
+                                },
+                              },
+                            },
+                          }}  
                         >
                           {countries != null ? (
                             countries.map((country) => (
                               <MenuItem
                                 key={country.countryCode}
                                 value={country.countryCode}
+                                sx={{ color: theme.palette.text.main }}
                               >
                                 {country.name}
                               </MenuItem>
                             ))
                           ) : (
-                            <MenuItem value={""}>Loading...</MenuItem>
+                            <MenuItem sx={{ color: theme.palette.text.main }} value={""}>Loading...</MenuItem>
                           )}
                         </TextField>
                       ) : (
@@ -492,6 +517,18 @@ export default function AccountPage() {
                               required
                               id="organizerName"
                               autoFocus
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}  
                             />
                           ) : (
                             <TableCell sx={{color: theme.palette.text.main}}>{userData.organiserName}</TableCell>
@@ -512,6 +549,18 @@ export default function AccountPage() {
                               }
                               placeholder={hidden}
                               select
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             >
                               <MenuItem value={true}>True</MenuItem>
                               <MenuItem value={false}>False</MenuItem>
@@ -538,6 +587,18 @@ export default function AccountPage() {
                               fullWidth
                               id="firstName"
                               autoFocus
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             />
                           ) : (
                             <TableCell sx={{color: theme.palette.text.main}}>{userData.firstName}</TableCell>
@@ -557,6 +618,18 @@ export default function AccountPage() {
                               id="lastName"
                               name="lastName"
                               autoComplete="family-name"
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             />
                           ) : (
                             <TableCell sx={{color: theme.palette.text.main}}>{userData.lastName}</TableCell>
@@ -577,6 +650,18 @@ export default function AccountPage() {
                               type={"password"}
                               id="password"
                               autoComplete="new-password"
+                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
+                                color: theme.palette.text.main, // Set text color of the TextField input
+                              } }}
+                              SelectProps={{
+                                MenuProps: {
+                                  PaperProps: {
+                                    style: {
+                                      backgroundColor: theme.palette.background.default,
+                                    },
+                                  },
+                                },
+                              }}
                             />
                           ) : (
                             <TableCell sx={{color: theme.palette.text.main}}>*********</TableCell>

@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
 
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest, EventType, Country, NotificationCountry, NotificationEventType
+
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, EventType, Country, NotificationCountry, NotificationEventType
 
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
@@ -27,6 +28,7 @@ class UserController(Controller):
 
         self.app.add_url_rule("/api/changeInformation", view_func=self.changeInformation, methods=["POST"])
         self.app.add_url_rule("/api/getInformation", view_func=self.getMoreInfo, methods=["GET"])
+        self.app.add_url_rule("/api/getSubscriptionPrice", view_func=self.getSubscriptionPrice, methods=["GET"])
 
         self.app.add_url_rule("/api/getSubscriberInfo", view_func=self.getSubscriberInfo, methods=["GET"])
         self.app.add_url_rule("/api/subscribe", view_func=self.subscribe, methods=["POST"])
@@ -368,3 +370,8 @@ class UserController(Controller):
             return {"success":False, "message": "Can't delete account."}
         return {"success":True, "message": "Successfuly deleted account."}
 
+    @visitor_required()
+    def getSubscriptionPrice(self):
+        price = int(self.db.session.query(Data).filter(Data.entryName=="subscriptionPrice").first().value)
+        
+        return {"success":True, "data":{"value": price}}

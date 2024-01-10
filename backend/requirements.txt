@@ -4,6 +4,7 @@ flask_bcrypt
 python-dotenv
 gunicorn
 flask_jwt_extended
-python-dateutil
+datetime
+dateutils
 flask_mail
 mailjet_rest

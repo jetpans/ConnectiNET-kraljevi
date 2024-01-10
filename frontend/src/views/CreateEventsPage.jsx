@@ -64,9 +64,10 @@ export default function CreateEventsPage() {
             category: data.get("eventType"),
             dateTime: data.get("fromDate"),
             duration: data.get("duration"), // TODO: figure out duration
-            durationUnit: data.get("durationUnit"),
+            //durationUnit: data.get("durationUnit"),
             price: data.get("price")
         };
+        console.log(newEventData);
         // TODO: add missing fields
 
         // TODO: (sanitize?) and send data to backend
@@ -148,13 +149,6 @@ export default function CreateEventsPage() {
                                                 required
                                             >
                                                 <MenuItem value="none" disabled>Select a Type</MenuItem>
-                                                {/* <MenuItem value="music">Music</MenuItem>
-                                                <MenuItem value="sports">Sports</MenuItem>
-                                                <MenuItem value="food">Food</MenuItem>
-                                                <MenuItem value="technology">Technology</MenuItem>
-                                                <MenuItem value="business">Culture</MenuItem>
-                                                <MenuItem value="other">Education</MenuItem>
-                                                <MenuItem value="other">Other</MenuItem> */}
                                                 {categories && categories.map((category) => (
                                                     <MenuItem 
                                                         key={category.typeId} 
@@ -176,7 +170,7 @@ export default function CreateEventsPage() {
                                             }}
                                         />
                                     </Grid>
-                                    {/* <Grid item xs={12}> //  figure out if we need to add this
+                                    <Grid item xs={12}>
                                         <TextField
                                             required
                                             fullWidth
@@ -187,8 +181,8 @@ export default function CreateEventsPage() {
                                                 shrink: true,
                                             }}
                                         />
-                                    </Grid> */}
-                                    <Grid item xs={6}>
+                                    </Grid>
+                                    {/* <Grid item xs={6}>
                                         <TextField
                                             required
                                             fullWidth
@@ -210,7 +204,7 @@ export default function CreateEventsPage() {
                                                 <MenuItem value="minutes">Minutes</MenuItem>
                                                 <MenuItem value="hours">Hours</MenuItem>                                                </Select>
                                         </FormControl>
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={12}>
                                         <InputLabel>Pricing</InputLabel>
                                         <FormControl>

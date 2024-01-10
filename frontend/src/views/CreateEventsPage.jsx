@@ -1,6 +1,7 @@
 import React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
@@ -13,7 +14,11 @@ export default function CreateEventsPage() {
     const [paid, setPaid] = useState(false); // paid option selected in radio button
     const [countries, setCountries] = useState(null);
     const [categories, setCategories] = useState(null);
+    const [price, setPrice] = useState(0);
+    const [priceErrorState, setPriceErrorState] = useState(false); 
+    const [priceHelperText, setPriceHelperText] = useState(""); // TODO: implement helper text for price field
 
+    const navigate = useNavigate();
     const accessToken = localStorage.getItem("jwt");
     const API_URL = process.env.REACT_APP_API_URL;
     const dc = new dataController();
@@ -34,21 +39,21 @@ export default function CreateEventsPage() {
           });
     }
 
-    // TODO: wrap in useEffect thingy?
-    if (!countries) {
+    useEffect(() => {
+        const accessToken = localStorage.getItem("jwt");
+        if (accessToken == null) {
+        navigate("/login");
+        }
         fetchCountries();
-    }
-    if (!categories) {
         fetchCategories();
-    }
+    }, []);
 
     function handleRadioChange(event) {
         if (event.target.value === "paid") {
             setPaid(true);
-            //console.log("paid");
         } else {
             setPaid(false);
-            //console.log("free");
+            setPrice(0);
         }
     }
 
@@ -60,7 +65,7 @@ export default function CreateEventsPage() {
             description: data.get("description"),
             city: data.get("city"),
             location: data.get("location"),
-            countryCode: data.get("country"), // check if this is correct
+            countryCode: data.get("country"),
             category: data.get("eventType"),
             dateTime: data.get("fromDate"),
             duration: data.get("toDate"), // TODO: figure out duration
@@ -68,8 +73,6 @@ export default function CreateEventsPage() {
             price: data.get("price") || 0 // set price to 0 if it is null
         };
         console.log(newEventData);
-        
-        // TODO: add missing fields
 
         // TODO: (sanitize?) and send data to backend
     }
@@ -215,14 +218,29 @@ export default function CreateEventsPage() {
                                                     fullWidth
                                                     label="Entry fee"
                                                     name="price"
-                                                    defaultValue={0}
+                                                    helperText={priceHelperText}
+                                                    value={price}
                                                     disabled={!paid}
                                                     required={paid}
+                                                    error={priceErrorState}
                                                     InputProps={{
                                                         endAdornment: <InputAdornment position="end">€</InputAdornment>,
                                                     }}
-                                                        type="number"
-                                                        margin="normal"
+                                                    type="number"
+                                                    margin="normal"
+                                                    onChange={(event) => {
+                                                        if (event.target.value < 0) {
+                                                            event.target.value = 0;
+                                                        }
+                                                        setPrice(event.target.value);
+                                                        if (paid && event.target.value == 0) {
+                                                            setPriceErrorState(true);
+                                                            setPriceHelperText("Entry fee cannot be 0");
+                                                        } else {
+                                                            setPriceErrorState(false);
+                                                            setPriceHelperText("");
+                                                        }
+                                                    }}
                                                 />
                                             </RadioGroup>
                                         </FormControl>

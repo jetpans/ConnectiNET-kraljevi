@@ -6,7 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
 import { ProtectedComponent } from "../utils/ProtectedComponent";
-import { Card, CardContent, Container, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, Typography } from "@mui/material";
+import { Card, CardContent, Container, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid } from "@mui/material";
 import { Radio, RadioGroup, FormControlLabel, InputAdornment } from "@mui/material";
 import dataController from "../utils/DataController";
 
@@ -51,9 +51,13 @@ export default function CreateEventsPage() {
     function handleRadioChange(event) {
         if (event.target.value === "paid") {
             setPaid(true);
+            setPriceErrorState(true);
+            setPriceHelperText("Entry fee cannot be 0");
         } else {
             setPaid(false);
             setPrice(0);
+            setPriceErrorState(false);
+            setPriceHelperText("");
         }
     }
 
@@ -91,6 +95,10 @@ export default function CreateEventsPage() {
                             <Grid container spacing={2} component="form" onSubmit={handleSubmit}>
                                 <Grid item xs={12}>
                                     <TextField
+                                        inputProps={{
+                                            pattern: ".{1,200}",
+                                            title: "Must be under 200 characters long",
+                                        }}
                                         required
                                         fullWidth
                                         label="Event Name"
@@ -99,6 +107,10 @@ export default function CreateEventsPage() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        inputProps={{
+                                            pattern: ".{20,1000}",
+                                            title: "Must be between 20 and 1000 characters long",
+                                        }}
                                         required
                                         fullWidth
                                         label="Description"
@@ -109,6 +121,10 @@ export default function CreateEventsPage() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        inputProps={{
+                                            pattern: ".{1,50}",
+                                            title: "Must be under 50 characters long",
+                                        }}
                                         required
                                         fullWidth
                                         label="City"
@@ -117,6 +133,10 @@ export default function CreateEventsPage() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        inputProps={{
+                                            pattern: ".{1,100}",
+                                            title: "Must be under 100 characters long",
+                                        }}
                                         required
                                         fullWidth
                                         label="Address"
@@ -130,10 +150,8 @@ export default function CreateEventsPage() {
                                             labelId="country-select-label"
                                             label="Country"
                                             name="country"
-                                            defaultValue="none"
                                             required
                                         >
-                                            <MenuItem value="none" disabled>Select a country</MenuItem>
                                             {countries && countries.map((country) => (
                                                 <MenuItem key={country.countryCode} value={country.countryCode}>{country.name}</MenuItem>
                                             ))}
@@ -147,7 +165,6 @@ export default function CreateEventsPage() {
                                             labelId="event-type-select-label"
                                             label="Event Type"
                                             name="eventType"
-                                            defaultValue="none"
                                             required
                                         >
                                             <MenuItem value="none" disabled>Select a Type</MenuItem>

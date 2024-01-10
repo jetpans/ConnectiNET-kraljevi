@@ -20,7 +20,7 @@ export default function App() {
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/temp" element={<UploadImagePageTemp />} />
+        {/* <Route path="/temp" element={<UploadImagePageTemp />} /> */}
         <Route path="/create" element={<CreateEventsPage />} />  
 
         <Route path="/events" element={<EventsPage />} />

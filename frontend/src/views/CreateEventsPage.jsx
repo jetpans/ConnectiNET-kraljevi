@@ -52,11 +52,31 @@ export default function CreateEventsPage() {
         }
     }
 
+    function handleSubmit(event) {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const newEventData = {
+            title: data.get("eventName"),
+            description: data.get("description"),
+            city: data.get("city"),
+            location: data.get("location"),
+            countryCode: data.get("country"), // check if this is correct
+            category: data.get("eventType"),
+            dateTime: data.get("fromDate"),
+            duration: data.get("duration"), // TODO: figure out duration
+            durationUnit: data.get("durationUnit"),
+            price: data.get("price")
+        };
+        // TODO: add missing fields
+
+        // TODO: (sanitize?) and send data to backend
+    }
+
     return (
         <div>
             <ProtectedComponent>
                 <CssBaseline />
-                <MainHeader for="Create Event"/>
+                <MainHeader for="Create a new Event!"/>
                 <Container maxWidth="sm">
                     {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                         Create Event
@@ -88,7 +108,7 @@ export default function CreateEventsPage() {
                                             required
                                             fullWidth
                                             label="City"
-                                            name="location"
+                                            name="city"
 
                                         />
                                     </Grid>
@@ -97,7 +117,7 @@ export default function CreateEventsPage() {
                                             required
                                             fullWidth
                                             label="Address"
-                                            name="address"
+                                            name="location"
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -126,14 +146,14 @@ export default function CreateEventsPage() {
                                         /> */}
                                    </Grid>
                                     <Grid item xs={12}>
-                                        <InputLabel>Category</InputLabel>
+                                        <InputLabel>Event Type</InputLabel>
                                         <FormControl fullWidth >
                                             <Select
-                                                name="category"
+                                                name="eventType"
                                                 defaultValue="none"
                                                 required
                                             >
-                                                <MenuItem value="none" disabled>Select a category</MenuItem>
+                                                <MenuItem value="none" disabled>Select a Type</MenuItem>
                                                 {/* <MenuItem value="music">Music</MenuItem>
                                                 <MenuItem value="sports">Sports</MenuItem>
                                                 <MenuItem value="food">Food</MenuItem>
@@ -162,53 +182,64 @@ export default function CreateEventsPage() {
                                             }}
                                         />
                                     </Grid>
-                                        <Grid item xs={6}>
-                                            <TextField
+                                    {/* <Grid item xs={12}> //  figure out if we need to add this
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            label="To Date"
+                                            name="toDate"
+                                            type="datetime-local"
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
+                                    </Grid> */}
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            label="Duration"
+                                            name="duration"
+                                            type="number"
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                name="durationUnit"
+                                                defaultValue="minutes"
                                                 required
-                                                fullWidth
-                                                label="Duration"
-                                                name="duration"
-                                                type="number"
-                                                InputLabelProps={{
-                                                    shrink: true,
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    name="durationUnit"
-                                                    defaultValue="minutes"
-                                                    required
-                                                >
-                                                    <MenuItem value="minutes">Minutes</MenuItem>
-                                                    <MenuItem value="hours">Hours</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <InputLabel>Pricing</InputLabel>
-                                            <FormControl>
-                                                <FormControl component="fieldset">
-                                                    <RadioGroup name="price" defaultValue="free" onChange={handleRadioChange}>
-                                                        <FormControlLabel value="free" control={<Radio />} label="Free" />
-                                                        <FormControlLabel value="paid" control={<Radio />} label="Paid" /> 
-                                                        <TextField
-                                                            fullWidth
-                                                            label="Entry fee"
-                                                            name="priceField"
-                                                            defaultValue={0}
-                                                            disabled={!paid}
-                                                            required={paid}
-                                                            InputProps={{
-                                                                endAdornment: <InputAdornment position="end">€</InputAdornment>,
-                                                            }}
+                                            >
+                                                <MenuItem value="minutes">Minutes</MenuItem>
+                                                <MenuItem value="hours">Hours</MenuItem>                                                </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <InputLabel>Pricing</InputLabel>
+                                        <FormControl>
+                                            <FormControl component="fieldset">
+                                                <RadioGroup name="priceOptions" defaultValue="free" onChange={handleRadioChange}>
+                                                    <FormControlLabel value="free" control={<Radio />} label="Free" />
+                                                    <FormControlLabel value="paid" control={<Radio />} label="Paid" /> 
+                                                    <TextField
+                                                        fullWidth
+                                                        label="Entry fee"
+                                                        name="price"
+                                                        defaultValue={0}
+                                                        disabled={!paid}
+                                                        required={paid}
+                                                        InputProps={{
+                                                            endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                                                        }}
                                                             type="number"
-                                                        />
-                                                    </RadioGroup>
-                                                </FormControl>
+                                                    />
+                                                </RadioGroup>
                                             </FormControl>
-                                        </Grid>
+                                        </FormControl>
+                                    </Grid>
                                     {/* {<Grid item xs={12}>    // image upload placeholder
                                         <input
                                             accept="image/*"

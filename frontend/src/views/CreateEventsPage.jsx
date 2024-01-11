@@ -49,7 +49,7 @@ export default function CreateEventsPage() {
     const [price, setPrice] = useState(0);
     const [priceErrorState, setPriceErrorState] = useState(false); 
     const [priceHelperText, setPriceHelperText] = useState(""); // TODO: implement helper text for price field
-    const [imageDialogOpened, setImageDialogOpened] = useState(true);
+    const [imageDialogOpened, setImageDialogOpened] = useState(false);
 
     const { openSnackbar } = useSnackbar();
     const navigate = useNavigate();

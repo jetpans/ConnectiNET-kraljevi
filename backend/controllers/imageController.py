@@ -13,7 +13,8 @@ import firebase_admin
 from firebase_admin import credentials, storage
 import requests
 from io import BytesIO
-
+from sqlalchemy import and_
+import uuid
 
 class ImageController(Controller):
     def __init__(self, app, db,jwt, bucket):
@@ -23,7 +24,11 @@ class ImageController(Controller):
         self.app.add_url_rule("/api/upload", view_func=self.upload_image, methods=["POST"])
         self.app.add_url_rule("/api/image/<image_name>", view_func = self.fetch_image, methods= ["GET"])
         self.app.add_url_rule("/api/usernameTempUpload", view_func=self.usernameTempUpload, methods=["POST"])
-    
+        self.app.add_url_rule("/api/uploadEventImage/<eventId>", view_func=self.uploadEventImage, methods=["POST"])
+        self.app.add_url_rule("/api/getEventMedia/<eventId>", view_func=self.getEventMedia, methods=["GET"])
+        self.app.add_url_rule("/api/uploadEventMedia/<eventId>", view_func=self.addEventMedia, methods=["POST"])
+        self.app.add_url_rule("/api/deleteEventMedia/<mediaId>", view_func=self.deleteEventMedia, methods=["POST"])
+
     # @visitor_required()
     def upload_image(self):
 
@@ -92,4 +97,89 @@ class ImageController(Controller):
             self.db.session.commit()
             return jsonify({'success': True, 'message': 'Image uploaded and saved successfully'})
         
-        return jsonify({'success': False, 'error': 'No image data received'})     
+        return jsonify({'success': False, 'error': 'No image data received'})  
+    
+    @jwt_required()
+    def uploadEventImage(self, eventId):
+        myEvent = self.db.session.query(Event).join(Account, and_(Account.accountId == Event.accountId, Account.username == get_jwt_identity()))\
+            .filter(Event.eventId == eventId).first()
+        
+        if myEvent == None:
+            return {"success":False, 'error':"User is not owner of this event."}
+        if 'image' not in request.files:
+            return {'success': False, 'error': 'No image part in the request'}
+        
+        file = request.files['image']        
+        if file:
+            
+            new_filename = str(eventId)+"_display_.png"  # Set your desired new filename here
+            
+            blob = self.bucket.blob(new_filename)
+            blob.upload_from_file(file)
+            blob.make_public()
+            public_url = blob.public_url
+            
+            myEvent.displayImageSource = public_url
+            self.db.session.commit()
+            return jsonify({'success': True, 'message': 'Image uploaded and saved successfully'})
+        
+        return jsonify({'success': False, 'error': 'No image data received'})
+
+    @jwt_required()
+    def addEventMedia(self, eventId):
+        myEvent = self.db.session.query(Event).join(Account, and_(Account.accountId == Event.accountId, Account.username == get_jwt_identity()))\
+            .filter(Event.eventId == eventId).first()
+        
+        if myEvent == None:
+            return {"success":False, 'error':"User is not owner of this event."}
+        if 'image' not in request.files:
+            return {'success': False, 'error': 'No image part in the request.'}
+        
+        file = request.files['image']        
+        if file:
+            
+            new_filename = str(uuid.uuid4())+".png"  # Set your desired new filename here
+            
+            blob = self.bucket.blob(new_filename)
+            blob.upload_from_file(file)
+            blob.make_public()
+            public_url = blob.public_url
+            
+            newMedia = EventMedia("image", public_url, eventId)
+            self.db.session.add(newMedia)
+            
+            self.db.session.commit()
+            return jsonify({'success': True, 'message': 'Image uploaded and saved successfully'})
+        
+        return jsonify({'success': False, 'error': 'No image data received'})
+    @jwt_required()
+    def getEventMedia(self, eventId):
+        try:
+            myMedia = self.db.session.query(EventMedia).filter(EventMedia.eventId == eventId).all()
+            result = list(map(lambda entry: entry.__dict__, myMedia))
+            for entry in result:
+                del entry['_sa_instance_state']
+        except:
+            return {"success": False, "message": "Something went wrong."}
+        return {"success":True, "data":result}
+    
+    
+    
+    @jwt_required()
+    def deleteEventMedia(self, mediaId):
+        myEvent, media = self.db.session.query(Event,EventMedia).join(Account, and_(Account.accountId == Event.accountId, Account.username == get_jwt_identity()))\
+            .join(EventMedia, and_(EventMedia.mediaId == mediaId, EventMedia.eventId == Event.eventId)).first()
+        
+        if myEvent == None:
+            return {"success":False, 'error':"User is not owner of this event."}
+
+        
+        if media == None:
+            return {"success":False, 'error':"Media doesn't exist"}
+        
+
+        blob_path = media.mediaSource
+        blob = storage.bucket().blob(blob_path)
+        blob.delete()
+        self.db.session.delete(media)
+        return {"success":True, 'error':"Deleted event media successfuly."}

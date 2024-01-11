@@ -3,16 +3,18 @@ import dataController from "../utils/DataController";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import { Button, InputLabel, Chip } from "@mui/material";
+import { Button, InputLabel, Chip, Typography } from "@mui/material";
 import { useSnackbar } from "../context/SnackbarContext";
 import { useTheme } from "../context/ThemeContext";
+
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function ImageUploadButton(props) {
   const API_URL = process.env.REACT_APP_API_URL;
   const accessToken = localStorage.getItem("jwt");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const { openSnackbar } = useSnackbar();
 
   const dc = new dataController();
@@ -32,7 +34,7 @@ export default function ImageUploadButton(props) {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = () => {
     if (!selectedImage) {
       console.error("Please select an image before uploading.");
       openSnackbar("error", "Please select an image before uploading.");
@@ -41,21 +43,22 @@ export default function ImageUploadButton(props) {
 
     const formData = new FormData();
     formData.append("image", selectedImage);
+    setIsLoading(true);
+    dc.PostFile(API_URL + props.route, formData, accessToken)
+      .then((resp) => {
+        // console.log("THIS:", resp.data);
 
-    try {
-      await dc
-        .PostFile(API_URL + props.route, formData, accessToken)
-        .then((resp) => {
-          // console.log("THIS:", resp.data);
-          if (resp.data.success === true) {
-            openSnackbar("success", "Image uploaded successfully.");
-          } else {
-            openSnackbar("error", "Error uploading image.");
-          }
-        });
-    } catch (e) {
-      openSnackbar("error", e);
-    }
+        if (resp.data.success === true) {
+          openSnackbar("success", "Image uploaded successfully.");
+        } else {
+          openSnackbar("error", "Error uploading image.");
+        }
+      })
+      .finally((e) => setIsLoading(false))
+      .catch((error) => {
+        openSnackbar("error", error.toString());
+        console.log(error);
+      });
   };
 
   const { theme } = useTheme();
@@ -98,7 +101,7 @@ export default function ImageUploadButton(props) {
         disabled={selectedImage === null}
         sx={{ color: theme.palette.text.main, marginTop: 2 }}
       >
-        Upload Image
+        Upload Image {isLoading ? <CircularProgress></CircularProgress> : <></>}
       </Button>
     </div>
   );

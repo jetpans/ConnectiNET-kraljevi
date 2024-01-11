@@ -33,7 +33,7 @@ export default function UserUploadedImage(props) {
     <div {...props}>
       {props.src && props.src !== null ? (
         <img
-          src={props.src + "?" + Math.random()}
+          src={props.src}
           alt="img"
           style={{
             width: "100%",

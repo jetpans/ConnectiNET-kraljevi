@@ -378,16 +378,15 @@ class UserController(Controller):
         # self.app.logger.warning(f"recieved {data}")
         accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
         # self.app.logger.warning(f"accountId {accountId}")
-        
-        # Calculate duration
-        #start_time = datetime.datetime.strptime(data["date"], "%d-%m-%YT%H:%M")
-        #end_time = datetime.datetime.strptime(data["duration"], "%d-%m-%YT%H:%M")
-        #duration = end_time - start_time
-        #data["duration"] = duration
-        # TODO: figure out duration format, for now it's just null
-
         result = self.testCreateEventForm(data)
-        data["duration"] = None
+
+        # Calculate duration
+        # TODO: change duration dataType in database
+        start_time = datetime.strptime(data["dateTime"], "%Y-%m-%dT%H:%M")
+        end_time = datetime.strptime(data["duration"], "%Y-%m-%dT%H:%M")
+        duration = end_time - start_time
+        data["duration"] = duration
+
         if result == "OK":
             # TODO: fix constructor
             newEvent = Event(data["dateTime"], 
@@ -402,7 +401,7 @@ class UserController(Controller):
                              accountId)
             self.db.session.add(newEvent)
             self.db.session.commit()
-            return {"success":True, "data": "Event created successfully."}
+            return {"success":True, "data": {"eventId": newEvent.eventId}}
         else:
             return result
         

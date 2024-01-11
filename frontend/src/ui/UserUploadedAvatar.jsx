@@ -32,11 +32,7 @@ export default function UserUploadedAvatar(props) {
   return (
     <div {...props}>
       {props && props.src != null ? (
-        <Avatar
-          alt="img"
-          src={props.src + "?" + Math.random()}
-          sx={{ width: 30, height: 30 }}
-        />
+        <Avatar alt="img" src={props.src} sx={{ width: 30, height: 30 }} />
       ) : (
         <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
           <AccountCircleIcon

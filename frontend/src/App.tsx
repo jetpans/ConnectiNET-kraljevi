@@ -8,6 +8,7 @@ import SubscribePage from "./views/SubscribePage";
 import AccountPage from "./views/AccountPage";
 import PublicProfilePage from "./views/PublicProfilePage";
 import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
+import EventDetail from "./views/EventDetail";
 import AdminBrowseUsers from "./views/AdminBrowseUsers";
 import AdminBrowseEvent from "./views/AdminBrowseEvent";
 import AdminBrowseReviews from "./views/AdminBrowseReviews";
@@ -33,6 +34,9 @@ export default function App() {
         <Route path="/admin/browseReviews/:accountId" element={<AdminBrowseReviews></AdminBrowseReviews>} />
                 
         <Route path="*" element={<h1>404</h1>} />
+        <Route path="/event" element={< EventDetail />} />
+
+        <Route path="/event/:eventId" element={< EventDetail />} />
       </Routes>
     </BrowserRouter>
   );

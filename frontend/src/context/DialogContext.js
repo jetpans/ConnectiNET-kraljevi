@@ -28,7 +28,7 @@ export const DialogProvider = ({ children }) => {
         <DialogContext.Provider value={{ dialogComponent, isDialogOpen, openDialog, closeDialog }}>
             {children}
             {isDialogOpen && dialogComponent && (
-                <div className="dialog-overlay">
+                <div className="dialog-overlay" sx={{ overflowY: 'scroll' }}>
                     {dialogComponent}
                 </div>
             )}

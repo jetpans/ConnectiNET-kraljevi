@@ -87,15 +87,17 @@ class Event(db.Model):
     organizer = db.relationship('Organizer', backref='events')
     country = db.relationship('Country', backref='events')
 
-    def __init__(self, dateTime, title, description, countryCode, city, location, time, displayImageSource, price, accountId):
+    def __init__(self, dateTime, title, description, countryCode, city, location, duration, displayImageSource, price, eventType, accountId):
         self.dateTime = dateTime
         self.title = title
         self.description = description
         self.countryCode = countryCode
         self.city = city
         self.location = location
+        self.duration = duration
         self.displayImageSource = displayImageSource
         self.price = price
+        self.eventType = eventType
         self.accountId = accountId 
 
 class Review(db.Model):

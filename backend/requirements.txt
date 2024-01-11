@@ -7,3 +7,6 @@ flask_jwt_extended
 python-dateutil
 flask_mail
 mailjet_rest
+firebase-admin
+google-cloud-storage
+firebase_config

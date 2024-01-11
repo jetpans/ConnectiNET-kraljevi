@@ -19,12 +19,12 @@ import {
   Container,
   Grid,
   Menu,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -45,11 +45,28 @@ export default function MainHeader(props) {
   const navigate = useNavigate();
 
   const [tabs, setTabs] = useState(
-      user === null ? ["Events"] :
-      user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "Create New Event", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", "Create New Event",/** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : ["Events"]); 
+    user === null
+      ? ["Events"]
+      : user.roleId === 0
+      ? ["Events", "Account"]
+      : user.roleId === 1
+      ? [
+          "Profile",
+          "Events",
+          "Create New Event",
+          /** "My Events", */ "Account",
+          "ConnectiNET Premium" /**, "Temp" */,
+        ]
+      : user.roleId === -1
+      ? [
+          "Profile",
+          "Events",
+          "Create New Event",
+          /** "My Events", */ "Account",
+          "ConnectiNET Premium" /**, "Temp" */,
+        ]
+      : ["Events"]
+  );
 
   const [profileImage, setProfileImage] = useState("");
 
@@ -61,12 +78,29 @@ export default function MainHeader(props) {
 
   useEffect(() => {
     setTabs(
-      user === null ? ["Events"] :
-      user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "Create New Event",/** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", "Create New Event",/** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : ["Events"]); 
-  }, [user])
+      user === null
+        ? ["Events"]
+        : user.roleId === 0
+        ? ["Events", "Account"]
+        : user.roleId === 1
+        ? [
+            "Profile",
+            "Events",
+            "Create New Event",
+            /** "My Events", */ "Account",
+            "ConnectiNET Premium" /**, "Temp" */,
+          ]
+        : user.roleId === -1
+        ? [
+            "Profile",
+            "Events",
+            "Create New Event",
+            /** "My Events", */ "Account",
+            "ConnectiNET Premium" /**, "Temp" */,
+          ]
+        : ["Events"]
+    );
+  }, [user]);
 
   const dc = new dataController();
 
@@ -116,13 +150,13 @@ export default function MainHeader(props) {
   }, []);
 
   const { theme, toggleTheme } = useTheme();
-  
+
   const handleOpenMenu = () => {
     setAnchorEl(document.getElementById("profile-image"));
-  }
+  };
 
   useEffect(() => {
-    if(user && user !== null && user.profileImage) {
+    if (user && user !== null && user.profileImage) {
       setProfileImage(user.profileImage);
     }
   }, [user]);
@@ -141,13 +175,11 @@ export default function MainHeader(props) {
 
           <div>
             <Button onClick={toggleTheme} id="change-color-button">
-              <Brightness4Icon sx={{ color: '#FFF' }} />
+              <Brightness4Icon sx={{ color: "#FFF" }} />
             </Button>
             <Button onClick={handleOpenMenu} id="profile-image">
               {profileImage && profileImage !== "" ? (
-                <UserUploadedAvatar
-                  src={"/" + profileImage}
-                ></UserUploadedAvatar>
+                <UserUploadedAvatar src={profileImage}></UserUploadedAvatar>
               ) : null}
             </Button>
             {/* <Avatar alt="User Profile Picture" src={"/" + user.profileImage ? user.profileImage : ""} /> */}
@@ -160,16 +192,26 @@ export default function MainHeader(props) {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
               MenuListProps={{
-                'aria-labelledby': 'basic-button'
+                "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem onClick={() => {navigate('/account')}}>
-                <Typography marginRight={2}>Account</ Typography>
-                <ManageAccountsIcon marginBottom={1} htmlColor={theme.palette.secondary.dark} />
+              <MenuItem
+                onClick={() => {
+                  navigate("/account");
+                }}
+              >
+                <Typography marginRight={2}>Account</Typography>
+                <ManageAccountsIcon
+                  marginBottom={1}
+                  htmlColor={theme.palette.secondary.dark}
+                />
               </MenuItem>
               <MenuItem onClick={handleLogout}>
-                <Typography marginRight={3}>Log Out</ Typography>
-                <LogoutIcon marginBottom={1} htmlColor={theme.palette.secondary.dark} />
+                <Typography marginRight={3}>Log Out</Typography>
+                <LogoutIcon
+                  marginBottom={1}
+                  htmlColor={theme.palette.secondary.dark}
+                />
               </MenuItem>
             </Menu>
 
@@ -180,16 +222,18 @@ export default function MainHeader(props) {
         </Toolbar>
       </AppBar>
 
-      <Drawer open={drawerOpen} PaperProps={{
+      <Drawer
+        open={drawerOpen}
+        PaperProps={{
           sx: {
             backgroundColor: theme.palette.background.default,
-            color: theme.palette.text.main
-          }
+            color: theme.palette.text.main,
+          },
         }}
       >
-        <Button onClick={toggleDrawer} >
-            <TableRowsIcon sx={{ color: theme.palette.text.light }} />
-          </Button>
+        <Button onClick={toggleDrawer}>
+          <TableRowsIcon sx={{ color: theme.palette.text.light }} />
+        </Button>
         <Typography variant="h5" sx={{ textAlign: "center", mt: 2, mb: 2 }}>
           ConnectiNET
         </Typography>
@@ -208,14 +252,16 @@ export default function MainHeader(props) {
                   value={text}
                   onClick={(e) => handleTabChange(e)}
                 >
-                <ListItemIcon sx={{
-                  backgroundColor: theme.palette.background.default,
-                  color: theme.palette.text.light
-                }}>
+                  <ListItemIcon
+                    sx={{
+                      backgroundColor: theme.palette.background.default,
+                      color: theme.palette.text.light,
+                    }}
+                  >
                     {text === "Events" ? (
                       <EventIcon />
                     ) : text === "Account" ? (
-                      <ManageAccountsIcon/>
+                      <ManageAccountsIcon />
                     ) : text === "ConnectiNET Premium" ? (
                       <WorkspacePremiumIcon />
                     ) : text === "Profile" ? (

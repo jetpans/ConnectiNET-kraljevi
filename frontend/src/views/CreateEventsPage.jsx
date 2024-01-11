@@ -2,13 +2,45 @@ import React from "react";
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../context/SnackbarContext";
 import CssBaseline from "@mui/material/CssBaseline";
 import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
 import { ProtectedComponent } from "../utils/ProtectedComponent";
 import { Card, CardContent, Container, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid } from "@mui/material";
 import { Radio, RadioGroup, FormControlLabel, InputAdornment } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import dataController from "../utils/DataController";
+import ImageUploadButton from "../ui/ImageUploadButton";
+
+function ImageUploadDialog({ imageDialogOpened, setImageDialogOpened }) {
+
+    function handleCloseDialog() {
+        setImageDialogOpened(false);
+    }
+
+    return (
+        <Dialog open={imageDialogOpened} 
+                onClose={() => setImageDialogOpened(false)}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: (event) => {
+                        event.preventDefault();
+                        handleCloseDialog();
+                    }
+                }}
+        >
+            <DialogTitle>Upload Event Picture</DialogTitle>
+            <DialogContent>
+                <DialogContentText>This image will be displayed on the event card.</DialogContentText>
+                <ImageUploadButton />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseDialog}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
 
 export default function CreateEventsPage() {
     const [paid, setPaid] = useState(false); // paid option selected in radio button
@@ -17,7 +49,9 @@ export default function CreateEventsPage() {
     const [price, setPrice] = useState(0);
     const [priceErrorState, setPriceErrorState] = useState(false); 
     const [priceHelperText, setPriceHelperText] = useState(""); // TODO: implement helper text for price field
+    const [imageDialogOpened, setImageDialogOpened] = useState(true);
 
+    const { openSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const accessToken = localStorage.getItem("jwt");
     const API_URL = process.env.REACT_APP_API_URL;
@@ -40,10 +74,6 @@ export default function CreateEventsPage() {
     }
 
     useEffect(() => {
-        const accessToken = localStorage.getItem("jwt");
-        if (accessToken == null) {
-        navigate("/login");
-        }
         fetchCountries();
         fetchCategories();
     }, []);
@@ -70,7 +100,7 @@ export default function CreateEventsPage() {
             city: data.get("city"),
             location: data.get("location"),
             countryCode: data.get("country"),
-            category: data.get("eventType"),
+            eventType: data.get("eventType"),
             dateTime: data.get("fromDate"),
             duration: data.get("toDate"), // TODO: figure out duration
             //durationUnit: data.get("durationUnit"),
@@ -78,7 +108,19 @@ export default function CreateEventsPage() {
         };
         console.log(newEventData);
 
-        // TODO: (sanitize?) and send data to backend
+        dc.PostData(API_URL + "/api/createEvent", newEventData, accessToken)
+            .then((resp) => {
+                if (resp.success === true && resp.data.success === true) {
+                    openSnackbar("success", "Event created successfully!");
+                    // TODO: open upload image dialog
+                } else {
+                    openSnackbar("error", "Error creating event: " + resp.data.data);
+                }
+            })
+            .catch((resp) => {
+                console.log(resp);
+                openSnackbar("error", "Error creating event");
+            });
     }
 
     return (
@@ -122,7 +164,7 @@ export default function CreateEventsPage() {
                                 <Grid item xs={12}>
                                     <TextField
                                         inputProps={{
-                                            pattern: "[A-Za-z]{1,50}",
+                                            pattern: "[A-Za-z ]{1,50}",
                                             title: "Letters only (max 50 characters)",
                                         }}
                                         required
@@ -146,12 +188,14 @@ export default function CreateEventsPage() {
                                 <Grid item xs={12}>
                                     <FormControl fullWidth >
                                         <InputLabel id="country-select-label">Country</InputLabel>
+                                        {/* TODO: fix changing from uncontrolled input to controlled input */}
                                         <Select
                                             labelId="country-select-label"
                                             label="Country"
                                             name="country"
                                             required
                                         >
+                                            <MenuItem value="none" disabled>Select a Country</MenuItem>
                                             {countries && countries.map((country) => (
                                                 <MenuItem key={country.countryCode} value={country.countryCode}>{country.name}</MenuItem>
                                             ))}
@@ -295,6 +339,7 @@ export default function CreateEventsPage() {
                         </CardContent>
                     </Card>
                 </Container>
+                <ImageUploadDialog imageDialogOpened={imageDialogOpened} setImageDialogOpened={setImageDialogOpened}/>
                 <MainFooter />
             </ProtectedComponent>
         </div>

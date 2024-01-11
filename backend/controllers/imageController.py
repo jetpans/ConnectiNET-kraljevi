@@ -86,7 +86,7 @@ class ImageController(Controller):
         if file:
             myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
             
-            new_filename = get_jwt_identity()+".png"  # Set your desired new filename here
+            new_filename = str(uuid.uuid4())+".png"  # Set your desired new filename here
             
             blob = self.bucket.blob(new_filename)
             blob.upload_from_file(file)
@@ -112,7 +112,7 @@ class ImageController(Controller):
         file = request.files['image']        
         if file:
             
-            new_filename = str(eventId)+"_display_.png"  # Set your desired new filename here
+            new_filename = str(uuid.uuid4())+".png"  # Set your desired new filename here
             
             blob = self.bucket.blob(new_filename)
             blob.upload_from_file(file)

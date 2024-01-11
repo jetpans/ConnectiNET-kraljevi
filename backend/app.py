@@ -37,7 +37,7 @@ app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megaby
 cred = credentials.Certificate("./firebase_key.json")
 print(cred.project_id)
 firebase_app = firebase_admin.initialize_app(cred, {
-    'storageBucket': 'imgstore-d9211.appspot.com'
+    'storageBucket': 'imgstoremarko.appspot.com'
 })
 bucket = storage.bucket()
 

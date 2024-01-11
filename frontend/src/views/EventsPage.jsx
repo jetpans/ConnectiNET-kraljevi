@@ -9,7 +9,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { green, grey, indigo } from "@mui/material/colors";
-import { Divider, Paper } from "@mui/material";
+import { Menu, MenuItem, Paper, Typography } from "@mui/material";
 import EventCard from "../ui/EventCard";
 import dataController from "../utils/DataController";
 
@@ -19,9 +19,6 @@ import MainHeader from "../ui/MainHeader";
 import MainFooter from "../ui/MainFooter";
 
 import { Dropdown } from '@mui/base/Dropdown';
-import { Menu } from '@mui/base/Menu';
-import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
-import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
 import { styled } from '@mui/system';
 import Slider from '@mui/material/Slider';
 import Button from '@mui/material/Button';
@@ -38,10 +35,12 @@ export default function EventsPage(props) {
 
   const [cards, setCards] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
-  const [cardSize, setCardSize] = useState(12);
-  const navigate = useNavigate();
   const [cards_help, setCards_help] = useState(null);
   const [length, setLenght] = useState(null);
+
+  const [anchorElType, setAnchorElType] = useState(null);
+  const [anchorElTime, setAnchorElTime] = useState(null);
+  const [anchorElPrice, setAnchorElPrice] = useState(null);
 
   //const [sort, setSort] = useState(1);
 
@@ -50,7 +49,7 @@ export default function EventsPage(props) {
   const { openSnackbar } = useSnackbar();
 
   const dc = new dataController();
-  const numOfEventsPerPage = 2;
+  const numOfEventsPerPage = 10;
 
   useEffect(() => {
     fetchData();
@@ -76,6 +75,31 @@ export default function EventsPage(props) {
   function handleTabChange(event, newValue) {
     setCurrentTab(newValue);
   }
+
+  const Listbox = styled('ul')(
+    ({ theme }) => `
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    box-sizing: border-box;
+    padding: 6px;
+    margin: 12px 0;
+    min-width: 200px;
+    border-radius: 12px;
+    overflow: auto;
+    outline: 0px;
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    box-shadow: 0px 4px 6px ${
+      theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
+    };
+    z-index: 1;
+    `,
+  );
+  
+  const paginationStyle = {
+    fontSize: '1.5rem', // Povećajte veličinu fonta
+  };
 
   const { theme, toggleTheme } = useTheme();
   
@@ -171,7 +195,7 @@ export default function EventsPage(props) {
 
   return (
     <ProtectedComponent roles={[0, 1, -1]}>
-      <Paper sx={{ bgcolor: theme.palette.background.default }}>
+      <Paper sx={{ bgcolor: theme.palette.background.default, minHeight: "100vh", }}>
         <CssBaseline />
         <MainHeader for="Events"></MainHeader>
         <>
@@ -189,81 +213,82 @@ export default function EventsPage(props) {
               textColor="inherit"
             >
               <Tab
-                label="Top Picks"
+                label="Popular"
                 sx={{ color: theme.palette.text.main }}
               />
               <Tab label="New" sx={{ color: theme.palette.text.main }} />
               <Tab
-                label="Near You"
+                label="Free"
                 sx={{ color: theme.palette.text.main }}
               />
             </Tabs>
 
             <div>
             <br></br>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <Dropdown>
-                  <MenuButton>Sort by</MenuButton>
-                  <Menu slots={{ listbox: Listbox }}>
-                    <MenuItem onClick={() => sortCards(1)}>Newest</MenuItem>
-                    <MenuItem onClick={() => sortCards(2)}>
-                      High price
-                    </MenuItem>
-                    <MenuItem onClick={() => sortCards(3)}>
-                      Low price
-                    </MenuItem>
-                    <MenuItem onClick={() => sortCards(4)}>Most Interest</MenuItem>
-                  </Menu>
-                </Dropdown> 
-              
-                <Dropdown>
-                  <MenuButton>Price</MenuButton>
-                  <Menu slots={{ listbox: Listbox }}>
-                    <MenuItem>
-                      <Slider
-                        value={[lowerPrice, upperPrice]}
-                        onChange={handleChange}
-                        min={0}
-                        max={40}
-                        valueLabelDisplay="auto"
-                        aria-labelledby="range-slider"
-                        sx={{ width: 200 }} 
-                        />
-                    </MenuItem>
-                  </Menu>
-                </Dropdown>
-              
-              <Dropdown>
-                <MenuButton>Time</MenuButton>
-                <Menu slots={{ listbox: Listbox }}>
-                  <FormControl component="fieldset">
-                    <RadioGroup
-                      aria-label="gender"
-                      name="gender"
-                      value={selectedValue}
-                      onChange={handleChange_time}
-                    >
-                      <FormControlLabel value="today" control={<Radio />} label="Today" />
-                      <FormControlLabel value="week" control={<Radio />} label="This week" />
-                      <FormControlLabel value="month" control={<Radio />} label="This month" />
-                    </RadioGroup>
-                  </FormControl>
-                </Menu>
-              </Dropdown>
-            </div>
-              <div><Button variant="contained" onClick={handleFilter}>
-                Filter
-              </Button>
-              
-              <Button variant="contained" onClick={clearFilter}>
-                Clear filter
-              </Button></div>
-            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Box>
+                  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                    <Button onClick={(event) => {setAnchorElType(event.currentTarget);}}>Type</Button>
+                    <Menu open={Boolean(anchorElType)} anchorEl={anchorElType} onClose={() => {setAnchorElType(null)}}>
+                      <MenuItem onClick={() => {}}>
+                        <Typography>Type 1</Typography>
+                      </MenuItem>
+                      <MenuItem onClick={() => {}}>
+                        <Typography>Type 2</Typography>
+                      </MenuItem>
+                      <MenuItem onClick={() => {}}>
+                        <Typography>Type 3</Typography>
+                      </MenuItem>
+                    </Menu>
 
+                    <Button onClick={(event) => {setAnchorElPrice(event.currentTarget);}}>Price</Button>
+                    <Menu open={Boolean(anchorElPrice)} anchorEl={anchorElPrice} onClose={() => {setAnchorElPrice(null)}}>
+                      <MenuItem>
+                        <Slider
+                          value={[lowerPrice, upperPrice]}
+                          onChange={handleChange}
+                          min={0}
+                          max={40}
+                          valueLabelDisplay="auto"
+                          aria-labelledby="range-slider"
+                          sx={{ width: 200 }} 
+                        />
+                      </MenuItem>
+                    </Menu>
+                    
+                    <Button onClick={(event) => {setAnchorElTime(event.currentTarget);}}>Time</Button>
+                    <Menu open={Boolean(anchorElTime)} anchorEl={anchorElTime} onClose={() => {setAnchorElTime(null)}}>
+                      <FormControl component="fieldset">
+                        <RadioGroup
+                          aria-label="gender"
+                          name="gender"
+                          value={selectedValue}
+                          onChange={handleChange_time}
+                        >
+                          <FormControlLabel value="today" control={<Radio />} label="Today" />
+                          <FormControlLabel value="week" control={<Radio />} label="This week" />
+                          <FormControlLabel value="month" control={<Radio />} label="This month" />
+                        </RadioGroup>
+                      </FormControl>
+                    </Menu>
+                  </div>
+
+                  <Box sx={{display: 'flex', position: 'center'}}>
+                    <Button variant="outlined" onClick={handleFilter} sx={{mr: 1}}>
+                      Apply Filter 
+                    </Button>
+                    <Button variant="outlined" onClick={clearFilter}>
+                      Clear filter
+                    </Button>
+                  </Box>
+                </Box> 
+            </div>
             
-              <br></br>
-              <br></br>
+            </div>
+            
+            <br></br>
+            <br></br>
             </div>
 
             {currentTab === 0 ? (
@@ -277,7 +302,7 @@ export default function EventsPage(props) {
               ) : (
                 <Box
                   sx={{
-                    bgcolor: mainTheme.palette.secondary.other,
+                    bgcolor: theme.palette.secondary.other,
                     height: "1000px",
                   }}
                   component="footer"
@@ -304,9 +329,9 @@ export default function EventsPage(props) {
               <Grid container spacing={4}>
                 {cards && cards !== null
                   ? cards
-                      .slice( (currentPage - 1) * 4, currentPage * 4)
+                      .slice((currentPage - 1) * 4, currentPage * 4)
                       .map((card) => (
-                        <Grid item key={card} xs={12} sm={6} md={12}>
+                        <Grid item key={card} xs={12} sm={6} md={6}>
                           <EventCard card={card} />
                         </Grid>
                       ))
@@ -317,9 +342,9 @@ export default function EventsPage(props) {
             {currentTab === 2 ? (
               <Grid container spacing={4}>
                 {cards && cards !== null
-                  ? cards
-                      .slice().map((card) => (
-                        <Grid item key={card} xs={12} sm={6} md={12}>
+                  ? cards.sort((a, b) => {return a.interest - b.interest})
+                      .slice((currentPage - 1) * 4, currentPage * 4).map((card) => (
+                        <Grid item key={card} xs={12} sm={6} md={6}>
                           <EventCard card={card} />
                         </Grid>
                       ))
@@ -328,16 +353,16 @@ export default function EventsPage(props) {
             ) : null}
             <br></br>
 
-            <Stack spacing={2} sx={centerStyle}>
+            <Stack spacing={2} /*sx={centerStyle}*/>
               <Pagination count={length} sx={paginationStyle} page={currentPage} onChange={handlePageChange}/>
-            </Stack>;
+            </Stack>
           </Container>
         </>
         
         {/* Footer */}
-        <MainFooter></MainFooter>
         {/* End footer */}
       </Paper>
+      <MainFooter></MainFooter>
     </ProtectedComponent>
   );
 

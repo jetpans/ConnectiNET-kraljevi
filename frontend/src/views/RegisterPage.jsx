@@ -19,7 +19,7 @@ import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { checkToken } from "../utils/ProtectedComponent";
 import { useSnackbar } from "../context/SnackbarContext";
 

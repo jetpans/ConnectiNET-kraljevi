@@ -25,7 +25,7 @@ import {
   numberInputClasses,
 } from "@mui/base/Unstable_NumberInput";
 
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import MainHeader from "../ui/MainHeader.jsx";
 import MainFooter from "../ui/MainFooter";
 import { dblClick } from "@testing-library/user-event/dist/click";

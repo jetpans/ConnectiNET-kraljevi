@@ -5,7 +5,7 @@ import { Avatar } from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useTheme } from "../context/ThemeContext";
 
-export default function UserUploadedImage(props) {
+export default function UserUploadedEventImage(props) {
   const [image, setImage] = useState(null);
   const dc = new dataController();
   const { theme } = useTheme();
@@ -29,17 +29,14 @@ export default function UserUploadedImage(props) {
   }, [props]);
 
   return (
-    <div {...props}>
+    <>
       {image && image !== null ? (
         <img
           src={image}
           alt="img"
-          style={{ width: "100%", height: "100%", maxHeight: 128, maxWidth: 128 }} // Adjust the styles as needed
+          style={{ width: "100%", height: "100%", marginTop: 0 }} 
         />
-      ) : props.notProfileImage && props.notProfileImage === true ? null :
-      <Avatar sx={{ color: theme.palette.background.default, bgcolor: theme.palette.primary.main, width: 128, height: 128 }}>
-        <AccountCircleIcon color={theme.palette.background.default} sx={{width: 128, height: 128}}/>
-      </Avatar>}
-    </div>
+      ) : null}
+    </>
   );
 }

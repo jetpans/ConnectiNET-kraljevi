@@ -36,6 +36,7 @@ export default function App() {
         <Route path="*" element={<h1>404</h1>} />
         <Route path="/event" element={< EventDetail />} />
 
+        <Route path="/event/:eventId" element={< EventDetail />} />
       </Routes>
     </BrowserRouter>
   );

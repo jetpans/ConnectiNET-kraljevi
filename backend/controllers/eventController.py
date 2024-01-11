@@ -1,3 +1,4 @@
+import logging
 from flask import Flask,jsonify,request,render_template, session
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, Country
 from dotenv import load_dotenv
@@ -46,17 +47,29 @@ class EventController(Controller):
 
     
     def getReviewsForEvent(self, eventId):
-        dbResp = self.db.session.query(Review).filter(Review.eventId == eventId).all() 
-        comments = [review.comment for review in dbResp]        
-        return {"success":True, "data": comments} 
+        dbResp = self.db.session.query(Review, Visitor.firstName, Visitor.lastName).join(Visitor, Review.accountId == Visitor.accountId).filter(Review.eventId == eventId).all()
+        result_dict = [u[0].__dict__ for u in dbResp]
+        firstNameList = [u[1] for u in dbResp]
+        lastNameList = [u[2] for u in dbResp]
+        toList = list(map( lambda review, firstName, lastName:
+            {
+                "id":review["reviewId"],
+                "time":str(review["dateTime"]),
+                "comment":review["comment"],
+                "accountId":review["accountId"],
+                "firstName":firstName,
+                "lastName":lastName,
+                "eventId":review["eventId"]
+            }, result_dict, firstNameList, lastNameList))
+        # comments = [review.comment for review in dbResp]
+        return toList
     
     @jwt_required()
     def getEvent(self, card_id):
 
         eventId = card_id
 
-        dbResp = self.db.session.query(Review).filter(Review.eventId == eventId).all() 
-        comments = [review.comment for review in dbResp] 
+        comments = self.getReviewsForEvent(eventId)
 
         MyEvent = self.db.session.query(Event).filter(Event.eventId == eventId).first()
 

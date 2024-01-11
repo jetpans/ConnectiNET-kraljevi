@@ -113,6 +113,7 @@ export default function CreateEventsPage() {
                 if (resp.success === true && resp.data.success === true) {
                     openSnackbar("success", "Event created successfully!");
                     // TODO: open upload image dialog
+                    setImageDialogOpened(true);
                 } else {
                     openSnackbar("error", "Error creating event: " + resp.data.data);
                 }

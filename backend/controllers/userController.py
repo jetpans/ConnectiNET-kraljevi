@@ -19,6 +19,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import and_
 from sqlalchemy import Time
+from datetime import datetime
 
 
 class UserController(Controller):
@@ -370,12 +371,13 @@ class UserController(Controller):
             return {"success":False, "message": "Can't delete account."}
         return {"success":True, "message": "Successfuly deleted account."}
 
-    @organiser_required()
+    #@organiser_required()
+    @jwt_required()
     def createEvent(self):
         data = request.get_json()
-        #self.app.logger.warning(f"recieved {data}")
+        # self.app.logger.warning(f"recieved {data}")
         accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
-        #self.app.logger.warning(f"accountId {accountId}")
+        # self.app.logger.warning(f"accountId {accountId}")
         
         # Calculate duration
         #start_time = datetime.datetime.strptime(data["date"], "%d-%m-%YT%H:%M")
@@ -383,9 +385,9 @@ class UserController(Controller):
         #duration = end_time - start_time
         #data["duration"] = duration
         # TODO: figure out duration format, for now it's just null
-        data["duration"] = None
-        
+
         result = self.testCreateEventForm(data)
+        data["duration"] = None
         if result == "OK":
             # TODO: fix constructor
             newEvent = Event(data["dateTime"], 
@@ -438,14 +440,17 @@ class UserController(Controller):
         # dateTime
         if "dateTime" not in form.keys():
             return {"success": False, "data": "Event date is missing."}
-        if form["dateTime"] < datetime.now():
+        if datetime.fromisoformat(form["dateTime"]) < datetime.now():
             return {"success": False, "data": "Event date is in the past."}
         # duration
         if "duration" not in form.keys():
             return {"success": False, "data": "Event duration is missing."}
+        if datetime.fromisoformat(form["duration"]) < datetime.fromisoformat(form["dateTime"]):
+            return {"success": False, "data": "Event ends before it starts."}
         # price
         if "price" not in form.keys():
             return {"success": False, "data": "Event price is missing."}
         if form["price"] < 0:
             return {"success": False, "data": "Event price is negative."}
         return "OK"
+    

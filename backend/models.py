@@ -11,7 +11,7 @@ if env == 'production':
     app.config.from_object(ProductionConfig)
 else:
     app.config.from_object(DevelopmentConfig)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://snnmskyd:3RwBnQ_v0mfD24Jlbzy2xWFpw_wCGcUm@surus.db.elephantsql.com/snnmskyd"
+app.config["SQLALCHEMY_DATABASE_URI"] = ""
 db = SQLAlchemy(app)
 
 class Country(db.Model):
@@ -201,7 +201,7 @@ class EventMedia(db.Model):
 class Interest(db.Model):
     __tablename__ = 'interests'  # Lowercase and plural table name
 
-    degreeOfInterest = db.Column(db.String(10), nullable=False)
+    degreeOfInterest = db.Column(db.Integer, nullable=False)
     accountId = db.Column(db.Integer, db.ForeignKey('visitors.accountId'), primary_key=True, nullable=False)
     eventId = db.Column(db.Integer, db.ForeignKey('events.eventId'), primary_key=True, nullable=False)
 

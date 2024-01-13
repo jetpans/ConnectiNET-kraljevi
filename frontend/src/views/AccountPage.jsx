@@ -51,7 +51,7 @@ export default function AccountPage() {
     useDialog();
 
   const confirmDeleteAccountDialog = (
-    <Paper sx={{bgcolor: theme.palette.background.table}}>
+    <Paper sx={{ bgcolor: theme.palette.background.table }}>
       <div className="dialog-content">
         <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
           <Grid item xs={12} sm={6} md={6}>
@@ -95,7 +95,7 @@ export default function AccountPage() {
   );
 
   const confirmChangeInformation = (
-    <Paper sx={{bgcolor: theme.palette.background.table}}>
+    <Paper sx={{ bgcolor: theme.palette.background.table }}>
       <div className="dialog-content">
         <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
           <Grid item xs={12} sm={6} md={6}>
@@ -345,66 +345,403 @@ export default function AccountPage() {
             flexDirection: "row",
             justifyContent: "center",
             flexWrap: "wrap",
-            gap: "2rem"
+            gap: "2rem",
           }}
         >
-          <Box sx={{
-            bgcolor: mainTheme.palette.background.default,
-            padding: "1rem 1rem",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            gap: "2rem"
-          }}>
-          <Table
-            aria-label="user-data-table"
-            component={Paper}
-            sx={{ bgcolor: mainTheme.palette.background.table, maxWidth: "40rem", flex: "1 1 auto" }}
+          <Box
+            sx={{
+              bgcolor: mainTheme.palette.background.default,
+              padding: "1rem 1rem",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              gap: "2rem",
+            }}
           >
-            <TableBody>
-              <TableCell>
-                <Table
-                  style={{ tableLayout: "fixed" }}
-                  component="form"
-                  onSubmit={handleSubmitChange}
-                  id="edit-form"
-                >
-                  <TableBody>
-                    <TableRow>
-                      <TableCell
-                        colSpan={1}
-                        sx={{
-                          display: "flex"
-                        }}
-                      >
-                        <Typography component="h1" variant="h5" color={theme.palette.text.main}>
-                          Account information
-                        </Typography>
-
-                        <Button
-                          onClick={() => {
-                            setEditMode(!editMode);
+            <Table
+              aria-label="user-data-table"
+              component={Paper}
+              sx={{
+                bgcolor: mainTheme.palette.background.table,
+                maxWidth: "40rem",
+                flex: "1 1 auto",
+              }}
+            >
+              <TableBody>
+                <TableCell>
+                  <Table
+                    style={{ tableLayout: "fixed" }}
+                    component="form"
+                    onSubmit={handleSubmitChange}
+                    id="edit-form"
+                  >
+                    <TableBody>
+                      <TableRow>
+                        <TableCell
+                          colSpan={1}
+                          sx={{
+                            display: "flex",
                           }}
                         >
-                          <EditIcon style={{ margin: "0 10px" }}></EditIcon>
-                        </Button>
-                      </TableCell>
-                      {userData.roleId == 0 ? (
-                        <TableCell colSpan={1}>
-                          <Button
-                            sx={{ bgcolor: "red" }}
-                            variant="countained"
-                            onClick={handleOpenDeleteAccountDialog}
+                          <Typography
+                            component="h1"
+                            variant="h5"
+                            color={theme.palette.text.main}
                           >
-                            <Typography color="white">
-                              Delete account
-                            </Typography>{" "}
+                            Account information
+                          </Typography>
+
+                          <Button
+                            onClick={() => {
+                              setEditMode(!editMode);
+                            }}
+                          >
+                            <EditIcon style={{ margin: "0 10px" }}></EditIcon>
                           </Button>
                         </TableCell>
+                        {userData.roleId == 0 ? (
+                          <TableCell colSpan={1}>
+                            <Button
+                              sx={{ bgcolor: "red" }}
+                              variant="countained"
+                              onClick={handleOpenDeleteAccountDialog}
+                            >
+                              <Typography color="white">
+                                Delete account
+                              </Typography>{" "}
+                            </Button>
+                          </TableCell>
+                        ) : (
+                          <TableCell></TableCell>
+                        )}
+                      </TableRow>
+
+                      <TableRow>
+                        <TableCell sx={{ color: theme.palette.text.main }}>
+                          Username
+                        </TableCell>
+                        <TableCell sx={{ color: theme.palette.text.main }}>
+                          {userData.username}
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell sx={{ color: theme.palette.text.main }}>
+                          Role ID
+                        </TableCell>
+                        <TableCell sx={{ color: theme.palette.text.main }}>
+                          {userData.roleId == -1
+                            ? "Administrator"
+                            : userData.roleId == 1
+                            ? "Organizer"
+                            : "Visitor"}
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell sx={{ color: theme.palette.text.main }}>
+                          Email
+                        </TableCell>
+                        {editMode ? (
+                          <TextField
+                            inputProps={{
+                              type: "email",
+                            }}
+                            required
+                            defaultValue={userData.eMail}
+                            id="email"
+                            fullWidth
+                            name="email"
+                            autoComplete="email"
+                          />
+                        ) : (
+                          <TableCell sx={{ color: theme.palette.text.main }}>
+                            {userData.eMail}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell sx={{ color: theme.palette.text.main }}>
+                          Country Code
+                        </TableCell>
+                        {editMode ? (
+                          <TextField
+                            required
+                            labelId="country-label"
+                            name="country"
+                            id="country"
+                            inputProps={{ value: countryCode }}
+                            fullWidth
+                            value={countryCode}
+                            onChange={(event) =>
+                              setCountryCode(event.target.value)
+                            }
+                            defaultValue={countryCode}
+                            placeholder={countryCode}
+                            select
+                          >
+                            {countries != null ? (
+                              countries.map((country) => (
+                                <MenuItem
+                                  key={country.countryCode}
+                                  value={country.countryCode}
+                                >
+                                  {country.name}
+                                </MenuItem>
+                              ))
+                            ) : (
+                              <MenuItem value={""}>Loading...</MenuItem>
+                            )}
+                          </TextField>
+                        ) : (
+                          <TableCell sx={{ color: theme.palette.text.main }}>
+                            {userData.countryCode}
+                          </TableCell>
+                        )}
+                      </TableRow>
+
+                      {userData.roleId == 1 ? (
+                        <>
+                          <TableRow>
+                            <TableCell sx={{ color: theme.palette.text.main }}>
+                              Organizer Name
+                            </TableCell>
+                            {editMode ? (
+                              <TextField
+                                inputProps={{
+                                  pattern: "[A-Za-z]+",
+                                  title: "Must contain only letters.",
+                                }}
+                                defaultValue={userData.organiserName}
+                                fullWidth
+                                autoComplete="organizer-name"
+                                name="organizerName"
+                                required
+                                id="organizerName"
+                                autoFocus
+                              />
+                            ) : (
+                              <TableCell
+                                sx={{ color: theme.palette.text.main }}
+                              >
+                                {userData.organiserName}
+                              </TableCell>
+                            )}
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ color: theme.palette.text.main }}>
+                              Hidden profile
+                            </TableCell>
+                            {editMode ? (
+                              <TextField
+                                required
+                                name="hidden"
+                                id="hidden"
+                                inputProps={{ value: hidden }}
+                                fullWidth
+                                value={hidden}
+                                onChange={(event) =>
+                                  setHidden(event.target.value)
+                                }
+                                placeholder={hidden}
+                                select
+                              >
+                                <MenuItem value={true}>True</MenuItem>
+                                <MenuItem value={false}>False</MenuItem>
+                              </TextField>
+                            ) : (
+                              <TableCell
+                                sx={{ color: theme.palette.text.main }}
+                              >
+                                {userData.hidden}
+                              </TableCell>
+                            )}
+                          </TableRow>
+                        </>
                       ) : (
-                        <TableCell></TableCell>
+                        <>
+                          <TableRow>
+                            <TableCell sx={{ color: theme.palette.text.main }}>
+                              First Name
+                            </TableCell>
+                            {editMode ? (
+                              <TextField
+                                inputProps={{
+                                  pattern: "[A-Za-z]+",
+                                  title: "Must contain only letters.",
+                                }}
+                                autoComplete="first-name"
+                                defaultValue={userData.firstName}
+                                name="firstName"
+                                required
+                                fullWidth
+                                id="firstName"
+                                autoFocus
+                              />
+                            ) : (
+                              <TableCell
+                                sx={{ color: theme.palette.text.main }}
+                              >
+                                {userData.firstName}
+                              </TableCell>
+                            )}
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ color: theme.palette.text.main }}>
+                              LastName
+                            </TableCell>
+                            {editMode ? (
+                              <TextField
+                                inputProps={{
+                                  pattern: "[A-Za-z]+",
+                                  title: "Must contain only letters.",
+                                }}
+                                defaultValue={userData.lastName}
+                                required
+                                fullWidth
+                                id="lastName"
+                                name="lastName"
+                                autoComplete="family-name"
+                              />
+                            ) : (
+                              <TableCell
+                                sx={{ color: theme.palette.text.main }}
+                              >
+                                {userData.lastName}
+                              </TableCell>
+                            )}
+                          </TableRow>
+
+                          <TableRow>
+                            <TableCell sx={{ color: theme.palette.text.main }}>
+                              Password
+                            </TableCell>
+                            {editMode ? (
+                              <TextField
+                                inputProps={{
+                                  pattern:
+                                    "[a-zA-Z0-9]*[a-z]+[0-9]+[a-zA-Z0-9]*",
+                                  title:
+                                    "Must contain at least one lowercase letter, digit and be at least 8 characters long.",
+                                }}
+                                fullWidth
+                                name="password"
+                                type={"password"}
+                                id="password"
+                                autoComplete="new-password"
+                              />
+                            ) : (
+                              <TableCell
+                                sx={{ color: theme.palette.text.main }}
+                              >
+                                *********
+                              </TableCell>
+                            )}
+                          </TableRow>
+                        </>
                       )}
+                      <TableRow>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            bgcolor: "green",
+                            margin: "1rem",
+                            opacity: editMode ? 1 : 0,
+                          }}
+                          onClick={handleOpenChangeInformationDialog}
+                        >
+                          Save changes
+                        </Button>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableCell>
+              </TableBody>
+            </Table>
+
+            {userData.roleId == 0 ? (
+              <Paper
+                sx={{
+                  flex: "1 1 auto",
+                  padding: "1rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-around",
+                  maxWidth: "40rem",
+                  bgcolor: mainTheme.palette.background.table,
+                }}
+              >
+                <Table style={{ tableLayout: "fixed" }}>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={2}>
+                        <Typography
+                          component="h1"
+                          variant="h5"
+                          color={theme.palette.text.main}
+                        >
+                          Your notification preferences
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <Typography
+                          component="h5"
+                          variant="h6"
+                          color={theme.palette.text.main}
+                        >
+                          Country preferences
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          component="h5"
+                          variant="h6"
+                          color={theme.palette.text.main}
+                        >
+                          Event type preferences
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <Table style={{ tableLayout: "fixed" }}>
+                          <TableBody>
+                            {notification.countries.map((country) => (
+                              <TableRow>
+                                <TableCell>{country}</TableCell>
+                                <TableCell>
+                                  <Button
+                                    key={country}
+                                    onClick={(e) => handleDeleteCountry(e)}
+                                  >
+                                    <DeleteIcon id={country}></DeleteIcon>
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableCell>
+                      <TableCell>
+                        <Table style={{ tableLayout: "fixed" }}>
+                          <TableBody>
+                            {notification.eventTypes.map((type) => (
+                              <TableRow>
+                                <TableCell>{type}</TableCell>
+                                <TableCell>
+                                  <Button
+                                    key={type}
+                                    onClick={(e) => handleDeleteEventType(e)}
+                                  >
+                                    <DeleteIcon id={type}></DeleteIcon>
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableCell>
                     </TableRow>
 
                     <TableRow>
@@ -452,21 +789,20 @@ export default function AccountPage() {
                       )}
                     </TableRow>
                     <TableRow>
+
                       <TableCell sx={{color: theme.palette.text.main}}>Country Code</TableCell>
+
                       {editMode ? (
                         <TextField
                           required
-                          labelId="country-label"
-                          name="country"
-                          id="country"
-                          inputProps={{ value: countryCode }}
+                          name="notif-country"
+                          id="notif-country"
+                          inputProps={{ value: notificationCountryCode }}
                           fullWidth
-                          value={countryCode}
+                          label="Choose new country"
                           onChange={(event) =>
-                            setCountryCode(event.target.value)
+                            setNotificationCountryCode(event.target.value)
                           }
-                          defaultValue={countryCode}
-                          placeholder={countryCode}
                           select
                           sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
                             color: theme.palette.text.main, // Set text color of the TextField input
@@ -482,22 +818,59 @@ export default function AccountPage() {
                           }}  
                         >
                           {countries != null ? (
-                            countries.map((country) => (
-                              <MenuItem
-                                key={country.countryCode}
-                                value={country.countryCode}
-                                sx={{ color: theme.palette.text.main }}
-                              >
-                                {country.name}
-                              </MenuItem>
-                            ))
+                            countries.map((country) =>
+                              !notification.countries.includes(country.name) ? (
+                                <MenuItem
+                                  key={country.countryCode}
+                                  value={country.countryCode}
+                                >
+                                  {country.name}
+                                </MenuItem>
+                              ) : null
+                            )
+                            // countries.map((country) => (
+                            //   <MenuItem
+                            //     key={country.countryCode}
+                            //     value={country.countryCode}
+                            //     sx={{ color: theme.palette.text.main }}
+                            //   >
+                            //     {country.name}
+                            //   </MenuItem>
+                            // ))
                           ) : (
                             <MenuItem sx={{ color: theme.palette.text.main }} value={""}>Loading...</MenuItem>
                           )}
+                        </TextField>) : null}
+                      
+                      <TableCell>
+                        <TextField
+                          required
+                          name="notif-eventType"
+                          id="notif-eventType"
+                          label="Choose new event type"
+                          inputProps={{ value: notificationEventType }}
+                          fullWidth
+                          onChange={(event) =>
+                            setNotificationEventType(event.target.value)
+                          }
+                          select
+                        >
+                          {eventTypes != null ? (
+                            eventTypes.map((type) =>
+                              !notification.eventTypes.includes(
+                                type.typeName
+                              ) ? (
+                                <MenuItem key={type.typeId} value={type.typeId}>
+                                  {type.typeName}
+                                </MenuItem>
+                              ) : null
+                            )
+                          ) : (
+                            <MenuItem value={""}>Loading...</MenuItem>
+                          )}
                         </TextField>
-                      ) : (
-                        <TableCell sx={{color: theme.palette.text.main}}>{userData.countryCode}</TableCell>
-                      )}
+                      </TableCell>
+                    
                     </TableRow>
 
                     {userData.roleId == 1 ? (
@@ -670,209 +1043,68 @@ export default function AccountPage() {
                       </>
                     )}
                     <TableRow>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          bgcolor: "green",
-                          margin: "1rem",
-                          opacity: editMode ? 1 : 0,
-                        }}
-                        onClick={handleOpenChangeInformationDialog}
-                      >
-                        Save changes
-                      </Button>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          sx={{ width: "80%" }}
+                          onClick={() => handleAddCountry()}
+                        >
+                          Add country
+                        </Button>
+                      </TableCell>{" "}
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          sx={{ width: "80%" }}
+                          onClick={() => handleAddEventType()}
+                        >
+                          Add event
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
-              </TableCell>
-            </TableBody>
-          </Table>
+              </Paper>
+            ) : null}
 
-          {userData.roleId == 0 ? (
             <Paper
               sx={{
                 flex: "1 1 auto",
+                maxWidth: "20rem",
                 padding: "1rem",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-around",
-                maxWidth: "40rem",
-                bgcolor: mainTheme.palette.background.table
+                bgcolor: mainTheme.palette.background.table,
               }}
             >
-              <Table style={{ tableLayout: "fixed" }}>
-                <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={2}>
-                      <Typography component="h1" variant="h5" color={theme.palette.text.main}>
-                        Your notification preferences
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Typography component="h5" variant="h6" color={theme.palette.text.main}>
-                        Country preferences
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography component="h5" variant="h6" color={theme.palette.text.main}>
-                        Event type preferences
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Table style={{ tableLayout: "fixed" }}>
-                        <TableBody>
-                          {notification.countries.map((country) => (
-                            <TableRow>
-                              <TableCell>{country}</TableCell>
-                              <TableCell>
-                                <Button
-                                  key={country}
-                                  onClick={(e) => handleDeleteCountry(e)}
-                                >
-                                  <DeleteIcon id={country}></DeleteIcon>
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableCell>
-                    <TableCell>
-                      <Table style={{ tableLayout: "fixed" }}>
-                        <TableBody>
-                          {notification.eventTypes.map((type) => (
-                            <TableRow>
-                              <TableCell>{type}</TableCell>
-                              <TableCell>
-                                <Button
-                                  key={type}
-                                  onClick={(e) => handleDeleteEventType(e)}
-                                >
-                                  <DeleteIcon id={type}></DeleteIcon>
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell>
-                      <TextField
-                        required
-                        name="notif-country"
-                        id="notif-country"
-                        inputProps={{ value: notificationCountryCode }}
-                        fullWidth
-                        label="Choose new country"
-                        onChange={(event) =>
-                          setNotificationCountryCode(event.target.value)
-                        }
-                        select
-                      >
-                        {countries != null ? (
-                          countries.map((country) =>
-                            !notification.countries.includes(country.name) ? (
-                              <MenuItem
-                                key={country.countryCode}
-                                value={country.countryCode}
-                              >
-                                {country.name}
-                              </MenuItem>
-                            ) : null
-                          )
-                        ) : (
-                          <MenuItem value={""}>Loading...</MenuItem>
-                        )}
-                      </TextField>
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        required
-                        name="notif-eventType"
-                        id="notif-eventType"
-                        label="Choose new event type"
-                        inputProps={{ value: notificationEventType }}
-                        fullWidth
-                        onChange={(event) =>
-                          setNotificationEventType(event.target.value)
-                        }
-                        select
-                      >
-                        {eventTypes != null ? (
-                          eventTypes.map((type) =>
-                            !notification.eventTypes.includes(type.typeName) ? (
-                              <MenuItem key={type.typeId} value={type.typeId}>
-                                {type.typeName}
-                              </MenuItem>
-                            ) : null
-                          )
-                        ) : (
-                          <MenuItem value={""}>Loading...</MenuItem>
-                        )}
-                      </TextField>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        sx={{ width: "80%" }}
-                        onClick={() => handleAddCountry()}
-                      >
-                        Add country
-                      </Button>
-                    </TableCell>{" "}
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        sx={{ width: "80%" }}
-                        onClick={() => handleAddEventType()}
-                      >
-                        Add event
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              {" "}
+              <div>
+                <Typography
+                  component="h4"
+                  variant="h5"
+                  color={theme.palette.text.main}
+                >
+                  Current profile image:
+                </Typography>
+                <Box mt={5} sx={{ display: "flex", justifyContent: "center" }}>
+                  <UserUploadedImage
+                    src={userData.profileImage}
+                  ></UserUploadedImage>
+                </Box>
+              </div>
+              <div>
+                <Typography
+                  component="h4"
+                  variant="h5"
+                  color={theme.palette.text.main}
+                  mb={4}
+                >
+                  Upload new profile image:
+                </Typography>
+                <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
+              </div>
             </Paper>
-          ) : null}
-
-          <Paper
-            sx={{
-              flex: "1 1 auto",
-              maxWidth: "20rem",
-              padding: "1rem",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-around",
-              bgcolor: mainTheme.palette.background.table
-            }}
-          >
-            {" "}
-            <div>
-              <Typography component="h4" variant="h5" color={theme.palette.text.main}>
-                Current profile image:
-              </Typography>
-              <Box mt={5} sx={{ display: "flex", justifyContent: "center" }}>
-                <UserUploadedImage
-                  src={"/" + userData.profileImage}
-                ></UserUploadedImage>
-              </Box>
-            </div>
-            <div>
-              <Typography component="h4" variant="h5" color={theme.palette.text.main} mb={4}>
-                Upload new profile image:
-              </Typography>
-              <ImageUploadButton route="/api/usernameTempUpload"></ImageUploadButton>
-            </div>
-          </Paper>
           </Box>
         </TableContainer>
 

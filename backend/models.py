@@ -81,21 +81,23 @@ class Event(db.Model):
     displayImageSource = db.Column(db.String(150))
     price = db.Column(db.Float)
     eventType = db.Column(db.Integer, nullable = False)
-    duration = db.Column(db.Time, nullable = True)
+    duration = db.Column(db.Interval, nullable = True)
     accountId = db.Column(db.Integer, db.ForeignKey('organizers.accountId'))
 
     organizer = db.relationship('Organizer', backref='events')
     country = db.relationship('Country', backref='events')
 
-    def __init__(self, dateTime, title, description, countryCode, city, location, time, displayImageSource, price, accountId):
+    def __init__(self, dateTime, title, description, countryCode, city, location, duration, displayImageSource, price, eventType, accountId):
         self.dateTime = dateTime
         self.title = title
         self.description = description
         self.countryCode = countryCode
         self.city = city
         self.location = location
+        self.duration = duration
         self.displayImageSource = displayImageSource
         self.price = price
+        self.eventType = eventType
         self.accountId = accountId 
 
 class Review(db.Model):
@@ -184,17 +186,16 @@ class EventType(db.Model):
 class EventMedia(db.Model):
     __tablename__ = 'event_media'  # Lowercase and plural table name
 
-    mediaId = db.Column(db.Integer, primary_key=True)
+    mediaId = db.Column(db.Integer, autoincrement = True, primary_key=True)
     mediaType = db.Column(db.String(10), nullable=False)
     mediaSource = db.Column(db.String(150), nullable=False)
     eventId = db.Column(db.Integer, db.ForeignKey('events.eventId'), nullable=False)
 
     event = db.relationship('Event', backref='event_media')
 
-    def __init__(self, mediaType, mediaSource, mediaId, eventId):
+    def __init__(self, mediaType, mediaSource, eventId):
         self.mediaType = mediaType
         self.mediaSource = mediaSource
-        self.mediaId = mediaId
         self.eventId = eventId
 
 class Interest(db.Model):

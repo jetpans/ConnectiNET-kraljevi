@@ -19,6 +19,8 @@ import random
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import and_
+from sqlalchemy import Time
+from datetime import datetime
 
 
 class UserController(Controller):
@@ -42,7 +44,8 @@ class UserController(Controller):
         self.app.add_url_rule("/api/deleteNotificationCountry", view_func = self.deleteNotificationCountry, methods = ["POST"])
         self.app.add_url_rule("/api/deleteNotificationEventType", view_func = self.deleteNotificationEventType, methods = ["POST"])
         self.app.add_url_rule("/api/deleteAccount", view_func = self.deleteAccount, methods = ["POST"])
-
+        
+        self.app.add_url_rule("/api/createEvent", view_func = self.createEvent, methods =["POST"])
 
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
@@ -148,7 +151,6 @@ class UserController(Controller):
     @organiser_required()
     def getSubscriberInfo(self):
         data = self.db.session.query(Subscription.startDate, Subscription.expireDate).join(Account, Account.accountId == Subscription.accountId).filter(Account.username == get_jwt_identity()).order_by(Subscription.startDate).first()
-        print(data)
         start_date, expire_date = data
 
         today = datetime.now().date()
@@ -370,6 +372,88 @@ class UserController(Controller):
             return {"success":False, "message": "Can't delete account."}
         return {"success":True, "message": "Successfuly deleted account."}
 
+    #@organiser_required()
+    @jwt_required()
+    def createEvent(self):
+        data = request.get_json()
+        # self.app.logger.warning(f"recieved {data}")
+        accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
+        # self.app.logger.warning(f"accountId {accountId}")
+        result = self.testCreateEventForm(data)
+
+        # Calculate duration
+        # TODO: change duration dataType in database
+        start_time = datetime.strptime(data["dateTime"], "%Y-%m-%dT%H:%M")
+        end_time = datetime.strptime(data["duration"], "%Y-%m-%dT%H:%M")
+        duration = end_time - start_time
+        data["duration"] = duration
+
+        if result == "OK":
+            # TODO: fix constructor
+            newEvent = Event(data["dateTime"], 
+                             data["title"], 
+                             data["description"], 
+                             data["countryCode"], 
+                             data["city"], data["location"], 
+                             data["duration"], 
+                             "", # displayImageSource - added in popup dialog later
+                             data["price"], 
+                             data["eventType"], 
+                             accountId)
+            self.db.session.add(newEvent)
+            self.db.session.commit()
+            return {"success":True, "data": {"eventId": newEvent.eventId}}
+        else:
+            return result
+        
+    def testCreateEventForm(self, form):
+        # title
+        if "title" not in form.keys() or len(form["title"]) < 1:
+            return {"success": False, "data": "Event name is too short."}
+        if len(form["title"]) > 50:
+            return {"success": False, "data": "Event name is too long."}
+        # description
+        if "description" not in form.keys() or len(form["description"]) < 3:
+            return {"success": False, "data": "Event description is too short."}
+        if len(form["description"]) > 1000:
+            return {"success": False, "data": "Event description is too long."}
+        # city
+        if "city" not in form.keys() or len(form["city"]) < 1:
+            return {"success": False, "data": "City name is too short."}
+        if len(form["city"]) > 50:
+            return {"success": False, "data": "City name is too long."}
+        # location
+        if "location" not in form.keys() or len(form["location"]) < 1:
+            return {"success": False, "data": "Event location is too short."}
+        if len(form["location"]) > 100:
+            return {"success": False, "data": "Event location is too long."}
+        # countryCode
+        if "countryCode" not in form.keys():
+            return {"success": False, "data": "Event country code is missing."}
+        if form["countryCode"] not in list(map(lambda x: x[0], self.db.session.query(Country.countryCode).all())):
+            return {"success": False, "data": "Invalid country code."}
+        # eventType
+        if "eventType" not in form.keys():
+            return {"success": False, "data": "Event type is missing."}
+        if int(form["eventType"]) not in list(map(lambda x: x[0], self.db.session.query(EventType.typeId).all())):
+            return {"success": False, "data": f"Invalid event type. ({form['eventType']})"}
+        # dateTime
+        if "dateTime" not in form.keys():
+            return {"success": False, "data": "Event date is missing."}
+        if datetime.fromisoformat(form["dateTime"]) < datetime.now():
+            return {"success": False, "data": "Event date is in the past."}
+        # duration
+        if "duration" not in form.keys():
+            return {"success": False, "data": "Event duration is missing."}
+        if datetime.fromisoformat(form["duration"]) < datetime.fromisoformat(form["dateTime"]):
+            return {"success": False, "data": "Event ends before it starts."}
+        # price
+        if "price" not in form.keys():
+            return {"success": False, "data": "Event price is missing."}
+        if int(form["price"]) < 0:
+            return {"success": False, "data": "Event price is negative."}
+        return "OK"
+    
     @visitor_required()
     def getSubscriptionPrice(self):
         price = int(self.db.session.query(Data).filter(Data.entryName=="subscriptionPrice").first().value)

@@ -17,6 +17,11 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
 from flask_mail import Mail
 from mailjet_rest import Client
 
+import firebase_admin
+from firebase_admin import credentials, storage
+
+
+
 
 app = Flask(__name__)
 
@@ -29,6 +34,14 @@ app.config["MAIL_API_KEY"] = os.environ.get('MAIL_API_KEY')
 app.config["MAIL_SECRET"] = os.environ.get("MAIL_SECRET")
  
 app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
+
+cred = credentials.Certificate("./firebase_key.json")
+print(cred.project_id)
+firebase_app = firebase_admin.initialize_app(cred, {
+    'storageBucket': 'imgstoremarko.appspot.com'
+})
+bucket = storage.bucket()
+
 
 
 if env == 'production':
@@ -90,6 +103,6 @@ def refresh_expiring_jwts(response):
 
 authController = AuthController(app, db, bcrypt, jwt, mail)
 eventController = EventController(app, db, jwt)
-imageController = ImageController(app,db,jwt)
+imageController = ImageController(app,db,jwt,bucket)
 userController = UserController(app,db,bcrypt,jwt)
 adminController = AdminController(app,db,jwt)

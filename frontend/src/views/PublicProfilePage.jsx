@@ -112,12 +112,14 @@ export default function OrganizerProfile() {
                           width: "100%",
                         }}
                       >
-                        <UserUploadedImage
+                        <img
                           src={organizerInfo.profileImage}
                           style={{
                             maxWidth: "150px",
                             maxHeight: "200px",
+                            height: "200px",
                             minWidth: "150px",
+                            objectFit: "cover",
                           }}
                           className="profile-image"
                         />

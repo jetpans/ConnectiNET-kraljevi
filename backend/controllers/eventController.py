@@ -38,7 +38,7 @@ class EventController(Controller):
                 "accountId":event["accountId"],
                 "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
                 "price":event["price"],
-                "interest": sum(1 for interest in self.db.session.query(Interest).filter(Interest.eventId == event["eventId"]).all() if interest.degreeOfInterest == "interested")
+                "interest": sum(1 for interest in self.db.session.query(Interest).filter(Interest.eventId == event["eventId"]).all() if (interest.degreeOfInterest == 1 or interest.degreeOfInterest == 0))
 
 
             }, result_dict))
@@ -74,9 +74,9 @@ class EventController(Controller):
         MyEvent = self.db.session.query(Event).filter(Event.eventId == eventId).first()
 
         interests_with_event_id = self.db.session.query(Interest).filter(Interest.eventId == eventId).all()
-        interested_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "interested")
-        maybe_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "maybe")
-        nointerest_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "nointerest")
+        interested_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == 1)
+        maybe_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == 0)
+        nointerest_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == -1)
 
 
         event = {

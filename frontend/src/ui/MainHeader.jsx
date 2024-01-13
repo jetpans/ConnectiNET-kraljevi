@@ -32,9 +32,11 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import { useTheme } from "../context/ThemeContext";
 import { useDialog } from "../context/DialogContext";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
-
+import AddCardIcon from "@mui/icons-material/AddCard";
+import GroupsIcon from '@mui/icons-material/Groups';
 import { useSnackbar } from "../context/SnackbarContext";
 import UserUploadedAvatar from "./UserUploadedAvatar";
+import PriceChangeIcon from '@mui/icons-material/PriceChange';
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -45,28 +47,11 @@ export default function MainHeader(props) {
   const navigate = useNavigate();
 
   const [tabs, setTabs] = useState(
-    user === null
-      ? ["Events"]
-      : user.roleId === 0
-      ? ["Events", "Account"]
-      : user.roleId === 1
-      ? [
-          "Profile",
-          "Events",
-          "Create New Event",
-          /** "My Events", */ "Account",
-          "ConnectiNET Premium" /**, "Temp" */,
-        ]
-      : user.roleId === -1
-      ? [
-          "Profile",
-          "Events",
-          "Create New Event",
-          /** "My Events", */ "Account",
-          "ConnectiNET Premium" /**, "Temp" */,
-        ]
-      : ["Events"]
-  );
+      user === null ? ["Events"] :
+      user.roleId === 0 ? ["Events", "Account"] 
+    : user.roleId === 1 ? ["Profile", "Events", "Create New Event", "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */, "Browse Users", "Change Subscription Price"]
+    : ["Events"]); 
 
   const [profileImage, setProfileImage] = useState("");
 
@@ -78,29 +63,12 @@ export default function MainHeader(props) {
 
   useEffect(() => {
     setTabs(
-      user === null
-        ? ["Events"]
-        : user.roleId === 0
-        ? ["Events", "Account"]
-        : user.roleId === 1
-        ? [
-            "Profile",
-            "Events",
-            "Create New Event",
-            /** "My Events", */ "Account",
-            "ConnectiNET Premium" /**, "Temp" */,
-          ]
-        : user.roleId === -1
-        ? [
-            "Profile",
-            "Events",
-            "Create New Event",
-            /** "My Events", */ "Account",
-            "ConnectiNET Premium" /**, "Temp" */,
-          ]
-        : ["Events"]
-    );
-  }, [user]);
+      user === null ? ["Events"] :
+      user.roleId === 0 ? ["Events", "Account"] 
+    : user.roleId === 1 ? ["Profile", "Events", "Create New Event", "Account", "ConnectiNET Premium"/**, "Temp" */]
+    : user.roleId === -1 ? ["Events", "Account", "Browse Users", "Change Subscription Price"]
+    : ["Events"]); 
+  }, [user])
 
   const dc = new dataController();
 
@@ -121,6 +89,17 @@ export default function MainHeader(props) {
 
       case "Create New Event":
         navigate("/create");
+
+      case "Profile":
+        navigate("/organizer/" + user.id);
+        break;
+
+      case "Browse Users":
+        navigate("/admin/browseUsers");
+        break;
+
+      case "Change Subscription Price":
+        navigate("/admin/subscription");
         break;
     }
   }
@@ -270,8 +249,12 @@ export default function MainHeader(props) {
                       <EditCalendarIcon />
                     ) : text === "Create New Event" ? (
                       <BookmarkAddIcon />
+                    ) : text === "Browse Users" ? (
+                      <GroupsIcon />
+                    ) : text === "Change Subscription Price" ? (
+                      <PriceChangeIcon />
                     ) : null}
-                  </ListItemIcon>
+                  </ListItemIcon> 
                   <ListItemText primary={text} />
                 </ListItemButton>
               </ListItem>

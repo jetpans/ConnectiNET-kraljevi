@@ -42,21 +42,25 @@ export default function UserUploadedImage(props) {
             maxWidth: 128,
           }} // Adjust the styles as needed
         />
-      ) : (
-        <Avatar
-          sx={{
-            color: theme.palette.background.default,
-            bgcolor: theme.palette.primary.main,
-            width: 128,
-            height: 128,
-          }}
-        >
-          <AccountCircleIcon
-            color={theme.palette.background.default}
-            sx={{ width: 128, height: 128 }}
-          />
-        </Avatar>
-      )}
+      // ) : (
+      //   <Avatar
+      //     sx={{
+      //       color: theme.palette.background.default,
+      //       bgcolor: theme.palette.primary.main,
+      //       width: 128,
+      //       height: 128,
+      //     }}
+      //   >
+      //     <AccountCircleIcon
+      //       color={theme.palette.background.default}
+      //       sx={{ width: 128, height: 128 }}
+      //     />
+      //   </Avatar>
+      // )}
+      ) : props.notProfileImage && props.notProfileImage === true ? null :
+      <Avatar sx={{ color: theme.palette.background.default, bgcolor: theme.palette.primary.main, width: 128, height: 128 }}>
+        <AccountCircleIcon color={theme.palette.background.default} sx={{width: 128, height: 128}}/>
+      </Avatar>}
     </div>
   );
 }

@@ -9,7 +9,8 @@ from controllers.authController import AuthController
 from controllers.eventController import EventController
 from controllers.imageController import ImageController
 from controllers.userController import UserController
-from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, EventMedia, Interest
+from controllers.adminController import AdminController
+from models import Account, Visitor, Organizer,Event, Review, Payment, Subscription, Data, EventMedia, Interest
 from config import DevelopmentConfig, ProductionConfig
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
@@ -84,7 +85,9 @@ def refresh_expiring_jwts(response):
         now = datetime.now(timezone.utc)
         target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
         if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
+            #access_token = create_access_token(identity=myUser.username, additional_claims={"roleId":myUser.roleId}, expires_delta=timedelta(hours=1))       
+
+            access_token = create_access_token(identity=get_jwt_identity(), additional_claims={"roleId":get_jwt()["roleId"]},expires_delta=timedelta(hours=1))
             data = response.get_json()
             if type(data) is dict:
                 data["access_token"] = access_token 
@@ -102,3 +105,4 @@ authController = AuthController(app, db, bcrypt, jwt, mail)
 eventController = EventController(app, db, jwt)
 imageController = ImageController(app,db,jwt,bucket)
 userController = UserController(app,db,bcrypt,jwt)
+adminController = AdminController(app,db,jwt)

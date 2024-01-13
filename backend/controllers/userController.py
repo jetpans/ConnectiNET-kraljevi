@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from controllers.controller import Controller
 import logging
 
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, EventMedia, Interest, EventType, Country, NotificationCountry, NotificationEventType
+
+from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, EventType, Country, NotificationCountry, NotificationEventType
 
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
@@ -29,6 +30,7 @@ class UserController(Controller):
 
         self.app.add_url_rule("/api/changeInformation", view_func=self.changeInformation, methods=["POST"])
         self.app.add_url_rule("/api/getInformation", view_func=self.getMoreInfo, methods=["GET"])
+        self.app.add_url_rule("/api/getSubscriptionPrice", view_func=self.getSubscriptionPrice, methods=["GET"])
 
         self.app.add_url_rule("/api/getSubscriberInfo", view_func=self.getSubscriberInfo, methods=["GET"])
         self.app.add_url_rule("/api/subscribe", view_func=self.subscribe, methods=["POST"])
@@ -86,7 +88,7 @@ class UserController(Controller):
     def getMoreInfo(self):
         claims = get_jwt()
         r  = {}
-        if claims["roleId"] == 0:
+        if claims["roleId"] in [0, -1]:
             r = self.db.session.query(Account,Visitor.firstName, Visitor.lastName).join(Visitor, Account.accountId == Visitor.accountId).filter(Account.username == get_jwt_identity()).first()
             dict = r[0].__dict__
             dict["firstName"] = r[1]
@@ -452,3 +454,8 @@ class UserController(Controller):
             return {"success": False, "data": "Event price is negative."}
         return "OK"
     
+    @visitor_required()
+    def getSubscriptionPrice(self):
+        price = int(self.db.session.query(Data).filter(Data.entryName=="subscriptionPrice").first().value)
+        
+        return {"success":True, "data":{"value": price}}

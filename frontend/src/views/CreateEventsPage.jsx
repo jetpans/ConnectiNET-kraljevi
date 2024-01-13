@@ -39,6 +39,7 @@ import dataController from "../utils/DataController";
 import ImageUploadButton from "../ui/ImageUploadButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useUser } from "../context/UserContext";
+import { useTheme } from "../context/ThemeContext";
 
 function EventMediaDialog(props) {
   return (
@@ -239,16 +240,28 @@ export default function CreateEventsPage() {
       });
   }
 
+  const { theme } = useTheme();
+
   return (
     <div>
-      <ProtectedComponent>
+      <ProtectedComponent roles={[1, -1]}>
         <CssBaseline />
         <MainHeader for="Create a new Event!" />
-        <Container maxWidth="sm">
+        <Paper
+          sx={{
+            bgcolor: theme.palette.background.default,
+            minHeight: "100vh",
+            display: "flex",
+            flexWrap: "wrap",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+        <Container sx={{marginTop: 6, marginBottom: 6}}> 
           {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                         Create Event
                     </Typography> */}
-          <Card elevation={4}>
+          <Card elevation={4} sx={{width: '60vw', display: 'flex', position: 'center', bgcolor: theme.palette.background.table}}>
             <CardContent>
               <Grid
                 container
@@ -266,6 +279,12 @@ export default function CreateEventsPage() {
                     fullWidth
                     label="Event Name"
                     name="eventName"
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
+                    }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -280,6 +299,12 @@ export default function CreateEventsPage() {
                     name="description"
                     multiline
                     rows={4}
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
+                    }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -292,6 +317,12 @@ export default function CreateEventsPage() {
                     fullWidth
                     label="City"
                     name="city"
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
+                    }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -304,17 +335,24 @@ export default function CreateEventsPage() {
                     fullWidth
                     label="Address"
                     name="location"
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
+                    }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="country-select-label">Country</InputLabel>
+                  <FormControl fullWidth >
+                    <InputLabel id="country-select-label" sx={{color: theme.palette.text.light}}>Country</InputLabel>
                     {/* TODO: fix changing from uncontrolled input to controlled input */}
                     <Select
                       labelId="country-select-label"
                       label="Country"
                       name="country"
                       required
+                      sx={{color: theme.palette.text.light}}
                     >
                       <MenuItem value="none" disabled>
                         Select a Country
@@ -333,7 +371,7 @@ export default function CreateEventsPage() {
                 </Grid>
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel id="event-type-select-label">
+                    <InputLabel id="event-type-select-label" sx={{color: theme.palette.text.light}}>
                       Event Type
                     </InputLabel>
                     <Select
@@ -371,6 +409,10 @@ export default function CreateEventsPage() {
                     type="datetime-local"
                     InputLabelProps={{
                       shrink: true,
+                      style: { color: theme.palette.text.light },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
                     }}
                   />
                 </Grid>
@@ -388,6 +430,10 @@ export default function CreateEventsPage() {
                     type="datetime-local"
                     InputLabelProps={{
                       shrink: true,
+                      style: { color: theme.palette.text.light },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
                     }}
                   />
                 </Grid>
@@ -415,13 +461,14 @@ export default function CreateEventsPage() {
                                     </FormControl>
                                 </Grid> */}
                 <Grid item xs={12}>
-                  <InputLabel>Pricing</InputLabel>
+                  <InputLabel sx={{color: theme.palette.text.light}}>Pricing</InputLabel>
                   <FormControl>
                     <FormControl component="fieldset">
                       <RadioGroup
                         name="priceOptions"
                         defaultValue="free"
                         onChange={handleRadioChange}
+                        sx={{color: theme.palette.text.light}}
                       >
                         <FormControlLabel
                           value="free"
@@ -447,6 +494,7 @@ export default function CreateEventsPage() {
                             endAdornment: (
                               <InputAdornment position="end">€</InputAdornment>
                             ),
+                            style: { color: theme.palette.text.main },
                           }}
                           type="number"
                           margin="normal"
@@ -462,6 +510,9 @@ export default function CreateEventsPage() {
                               setPriceErrorState(false);
                               setPriceHelperText("");
                             }
+                          }}
+                          InputLabelProps={{
+                            style: { color: theme.palette.text.light },
                           }}
                         />
                       </RadioGroup>
@@ -504,6 +555,7 @@ export default function CreateEventsPage() {
           refreshMyEventMedia={refreshMyEventMedia}
           deleteEventMedia={deleteEventMedia}
         />
+      </Paper>
         <MainFooter />
       </ProtectedComponent>
     </div>

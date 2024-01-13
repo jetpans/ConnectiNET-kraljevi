@@ -229,7 +229,7 @@ export default function EventsPage(props) {
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <Box>
                   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                    <Button onClick={(event) => {setAnchorElType(event.currentTarget);}}>Type</Button>
+                    <Button onClick={(event) => {setAnchorElType(event.currentTarget);}} sx={{color: theme.palette.primary.main}}>Type</Button>
                     <Menu open={Boolean(anchorElType)} anchorEl={anchorElType} onClose={() => {setAnchorElType(null)}}>
                       <MenuItem onClick={() => {}}>
                         <Typography>Type 1</Typography>
@@ -242,7 +242,7 @@ export default function EventsPage(props) {
                       </MenuItem>
                     </Menu>
 
-                    <Button onClick={(event) => {setAnchorElPrice(event.currentTarget);}}>Price</Button>
+                    <Button onClick={(event) => {setAnchorElPrice(event.currentTarget);}} sx={{color: theme.palette.primary.main}}>Price</Button>
                     <Menu open={Boolean(anchorElPrice)} anchorEl={anchorElPrice} onClose={() => {setAnchorElPrice(null)}}>
                       <MenuItem>
                         <Slider
@@ -257,7 +257,7 @@ export default function EventsPage(props) {
                       </MenuItem>
                     </Menu>
                     
-                    <Button onClick={(event) => {setAnchorElTime(event.currentTarget);}}>Time</Button>
+                    <Button onClick={(event) => {setAnchorElTime(event.currentTarget);}} sx={{color: theme.palette.primary.main}}>Time</Button>
                     <Menu open={Boolean(anchorElTime)} anchorEl={anchorElTime} onClose={() => {setAnchorElTime(null)}}>
                       <FormControl component="fieldset">
                         <RadioGroup
@@ -275,10 +275,10 @@ export default function EventsPage(props) {
                   </div>
 
                   <Box sx={{display: 'flex', position: 'center'}}>
-                    <Button variant="outlined" onClick={handleFilter} sx={{mr: 1}}>
+                    <Button variant="outlined" onClick={handleFilter} sx={{mr: 1, color: theme.palette.primary.main}}>
                       Apply Filter 
                     </Button>
-                    <Button variant="outlined" onClick={clearFilter}>
+                    <Button variant="outlined" onClick={clearFilter} sx={{color: theme.palette.primary.main}}>
                       Clear filter
                     </Button>
                   </Box>

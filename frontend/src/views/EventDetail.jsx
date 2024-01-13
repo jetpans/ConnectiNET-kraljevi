@@ -77,7 +77,19 @@ export default function EventDetail(props) {
             }
             }).catch((e) => {console.log(e)});
         }
-    };
+    }
+
+    const handlePickInterest = async () => {
+        if(props && props.event) {
+            const accessToken = localStorage.getItem("jwt");
+            dc.PostData(API_URL + "/getEvent/" + props.event.id, accessToken).then((resp) => {
+            // console.log("THIS:", resp.data);
+            if (resp.data.success === true) {
+                props.closeDialog();
+            }
+            }).catch((e) => {console.log(e)});
+        }
+    }
 
     useEffect(() => {
         fetchData();
@@ -106,6 +118,7 @@ export default function EventDetail(props) {
                         overflowY: 'scroll',
                         marginBottom: 0,
                     }}
+                    image={cards.image ? cards.image : <div />}
                 >
                     <Box sx={{marginBottom: 0}}>
                         <div style={{
@@ -132,9 +145,20 @@ export default function EventDetail(props) {
                         {/* <Link to={"/organizer/" + cards.accountId} /> */}
                     </Button>
                     <Divider sx={{bgcolor: theme.palette.text.main}} />
-                    <Typography variant="body1" color={theme.palette.text.main}>
-                        {"Interested:" + cards.interested + " | Maybe:" + cards.maybe + " | Not interested:" + cards.nointerest}
+                    <Typography variant="body1" color={theme.palette.text.main} ml={1}>
+                        {"Coming: " + cards.interested + " | Interested: " + cards.maybe + " | Not coming: " + cards.nointerest}
                     </Typography>
+                    <Box ml={0}>
+                        <Button size="small" ml={1} mr={1}>
+                            <Typography onClick={() => {handlePickInterest(1)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm coming</Typography>
+                        </Button>
+                        <Button size="small" ml={1} mr={1}>
+                            <Typography onClick={() => {handlePickInterest(0)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm interested</Typography>
+                        </Button>
+                        <Button size="small" ml={1} mr={1}>
+                            <Typography onClick={() => {handlePickInterest(-1)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm not coming</Typography>
+                        </Button>
+                    </Box>
                     <Typography variant="h6" sx={{marginBottom: 3, marginTop: 3, display: 'flex', justifyContent: 'right'}} color={theme.palette.text.main}>
                         {"Description: "}
                     </Typography>

@@ -38,6 +38,7 @@ import {
 import dataController from "../utils/DataController";
 import ImageUploadButton from "../ui/ImageUploadButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useUser } from "../context/UserContext";
 
 function EventMediaDialog(props) {
   return (
@@ -97,6 +98,7 @@ export default function CreateEventsPage() {
   const [myEventId, setMyEventId] = useState(null);
   const [eventMedia, setEventMedia] = useState([]);
   const [isMediaOpen, setIsMediaOpen] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   const { openSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -106,6 +108,8 @@ export default function CreateEventsPage() {
 
   const { dialogComponent, isDialogOpen, openDialog, closeDialog } =
     useDialog();
+
+  const { user } = useUser();
 
   const handleOpenImageUploadDialog = (eventId) => {
     const EventImageUploadDialog = (
@@ -178,6 +182,19 @@ export default function CreateEventsPage() {
     fetchCategories();
   }, []);
 
+
+  useEffect(() => {
+    if(user && user !== null && user.roleId && user.roleId !== null && user.roleId === 1) {
+      dc.GetData(
+        API_URL + "/api/getSubscriberInfo",
+        localStorage.getItem("jwt")
+      ).then((resp) => {
+        console.log(resp);
+        setIsSubscribed(resp.data.data.isSubscribed);
+      });
+    }
+  }, [user]);
+
   function handleRadioChange(event) {
     if (event.target.value === "paid") {
       setPaid(true);
@@ -206,12 +223,10 @@ export default function CreateEventsPage() {
       //durationUnit: data.get("durationUnit"),
       price: data.get("price") || 0, // set price to 0 if it is null
     };
-    console.log(newEventData);
 
     dc.PostData(API_URL + "/api/createEvent", newEventData, accessToken)
       .then((resp) => {
         if (resp.success === true && resp.data.success === true) {
-          console.log("My event id: " + resp.data.data.eventId);
           setMyEventId(resp.data.data.eventId);
           openSnackbar("success", "Event created successfully!");
           handleOpenImageUploadDialog(resp.data.data.eventId);
@@ -220,7 +235,6 @@ export default function CreateEventsPage() {
         }
       })
       .catch((resp) => {
-        console.log(resp);
         openSnackbar("error", "Error creating event");
       });
   }
@@ -418,6 +432,7 @@ export default function CreateEventsPage() {
                           value="paid"
                           control={<Radio />}
                           label="Paid"
+                          disabled={isSubscribed ? false : true}
                         />
                         <TextField
                           fullWidth

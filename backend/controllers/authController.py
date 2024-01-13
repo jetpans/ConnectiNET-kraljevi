@@ -91,6 +91,7 @@ class AuthController(Controller):
                 
                 access_token = create_access_token(identity=myUser.username, additional_claims={"roleId":myUser.roleId}, expires_delta=timedelta(hours=1))       
                 user = {
+                    "id": myUser.accountId,
                     "username": myUser.username,
                     "email": myUser.eMail,
                     "roleId": myUser.roleId,

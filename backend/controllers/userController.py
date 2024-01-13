@@ -149,7 +149,6 @@ class UserController(Controller):
     @organiser_required()
     def getSubscriberInfo(self):
         data = self.db.session.query(Subscription.startDate, Subscription.expireDate).join(Account, Account.accountId == Subscription.accountId).filter(Account.username == get_jwt_identity()).order_by(Subscription.startDate).first()
-        print(data)
         start_date, expire_date = data
 
         today = datetime.now().date()
@@ -449,7 +448,7 @@ class UserController(Controller):
         # price
         if "price" not in form.keys():
             return {"success": False, "data": "Event price is missing."}
-        if form["price"] < 0:
+        if int(form["price"]) < 0:
             return {"success": False, "data": "Event price is negative."}
         return "OK"
     

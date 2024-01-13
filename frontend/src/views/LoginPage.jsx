@@ -104,6 +104,7 @@ export default function LoginPage(props) {
         dc.GetData(API_URL + "/api/getInformation", accessToken)
         .then((response) => {
           updateUser({
+            id: user.id,
             username: user.username,
             roleId: user.roleId,
             countryCode: user.countryCode,

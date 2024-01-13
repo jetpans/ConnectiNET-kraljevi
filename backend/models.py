@@ -11,7 +11,7 @@ if env == 'production':
     app.config.from_object(ProductionConfig)
 else:
     app.config.from_object(DevelopmentConfig)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://snnmskyd:3RwBnQ_v0mfD24Jlbzy2xWFpw_wCGcUm@surus.db.elephantsql.com/snnmskyd"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_CONNECT_URL_PROD")
 db = SQLAlchemy(app)
 
 class Country(db.Model):

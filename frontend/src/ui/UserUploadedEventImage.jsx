@@ -2,7 +2,7 @@ import { dblClick } from "@testing-library/user-event/dist/click";
 import React, { useEffect, useState } from "react";
 import dataController from "../utils/DataController";
 import { Avatar } from "@mui/material";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useTheme } from "../context/ThemeContext";
 
 export default function UserUploadedEventImage(props) {
@@ -17,7 +17,7 @@ export default function UserUploadedEventImage(props) {
         return resp.blob();
       })
       .then((blob) => {
-        if(blob.type === 'application/json') {
+        if (blob.type === "application/json") {
           setImage(null);
         } else {
           setImage(URL.createObjectURL(blob));
@@ -30,13 +30,15 @@ export default function UserUploadedEventImage(props) {
 
   return (
     <>
-      {image && image !== null ? (
+      {props.src && props.src !== null ? (
         <img
-          src={image}
+          src={props.src}
           alt="img"
-          style={{ width: "100%", height: "100%", marginTop: 0 }} 
+          style={{ width: "100%", height: "100%", marginTop: 0 }}
         />
-      ) : null}
+      ) : (
+        <></>
+      )}
     </>
   );
 }

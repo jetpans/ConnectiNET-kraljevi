@@ -89,6 +89,7 @@ export default function MainHeader(props) {
 
       case "Create New Event":
         navigate("/create");
+        break;
 
       case "Profile":
         navigate("/organizer/" + user.id);

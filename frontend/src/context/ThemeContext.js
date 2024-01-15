@@ -11,7 +11,7 @@ const lightTheme = createTheme({
         mode: 'light',
         primary: {
             main: indigo[400],
-            dark: indigo[600],
+            dark: indigo[500],
             light: indigo[200]
         },
         secondary: {
@@ -40,7 +40,7 @@ const darkTheme = createTheme({
         mode: 'dark',
         primary: { 
             main: indigo[400],
-            dark: indigo[600],
+            dark: indigo[500],
             light: indigo[200]
         },
         secondary: {

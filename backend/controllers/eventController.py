@@ -1,3 +1,4 @@
+from datetime import date
 import logging
 from flask import Flask,jsonify,request,render_template, session
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, Country
@@ -17,6 +18,8 @@ class EventController(Controller):
         self.app.add_url_rule("/getEvents", view_func=self.getEvents, methods=["GET"])
         self.app.add_url_rule("/getEvent/<int:card_id>", view_func=self.getEvent, methods=["GET"])
         self.app.add_url_rule("/getOrganizerPublicProfile/<int:organizerId>", view_func=self.getOrganizerPublicProfile, methods=["GET"])
+        self.app.add_url_rule("/setInterest/<int:eventId>", view_func=self.setInterest, methods=["POST"])
+        self.app.add_url_rule("/createComment/<int:eventId>", view_func=self.createComment, methods=["POST"])
 
     
     # @visitor_required()
@@ -38,7 +41,7 @@ class EventController(Controller):
                 "accountId":event["accountId"],
                 "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
                 "price":event["price"],
-                "interest": sum(1 for interest in self.db.session.query(Interest).filter(Interest.eventId == event["eventId"]).all() if interest.degreeOfInterest == "interested")
+                "interest": sum(1 for interest in self.db.session.query(Interest).filter(Interest.eventId == event["eventId"]).all() if (interest.degreeOfInterest == 1 or interest.degreeOfInterest == 0))
 
 
             }, result_dict))
@@ -74,10 +77,16 @@ class EventController(Controller):
         MyEvent = self.db.session.query(Event).filter(Event.eventId == eventId).first()
 
         interests_with_event_id = self.db.session.query(Interest).filter(Interest.eventId == eventId).all()
-        interested_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "interested")
-        maybe_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "maybe")
-        nointerest_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "nointerest")
-
+        interested_count = 0
+        maybe_count = 0
+        nointerest_count = 0
+        for interest in interests_with_event_id:
+            if int(interest.degreeOfInterest) == 1:
+                interested_count += 1
+            elif int(interest.degreeOfInterest) == 0:
+                maybe_count += 1
+            elif int(interest.degreeOfInterest) == -1:
+                nointerest_count += 1
 
         event = {
             "id": MyEvent.eventId,
@@ -98,9 +107,6 @@ class EventController(Controller):
             "image_org": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().profileImage 
             
         }
-
-       
-
         
         return {"success":True, "data": event, "comments": comments}
     
@@ -133,3 +139,50 @@ class EventController(Controller):
             return jsonify({"success": True, "organizerInfo": profile, "organizerEvents": toList})
         else:
             return jsonify({"success": False, "message": "Organizer not found"})
+
+    @jwt_required()
+    def setInterest(self, eventId):
+        try:
+            formData = request.get_json()
+            logging.warning(formData)
+            
+            data = self.db.session.query(Interest).join(Account, Account.accountId == Interest.accountId).join(Event, Event.eventId == Interest.eventId).filter(Account.username == get_jwt_identity()).filter(Event.eventId == eventId).first()
+            
+            myUser = self.db.session.query(Account).filter_by(username=get_jwt_identity()).first()
+            
+            logging.warning(myUser)
+            logging.warning(data)
+            
+            if data:
+                data.degreeOfInterest = formData["interest"]
+            else:
+                new_interest = Interest(formData["interest"], myUser.accountId, eventId)
+                self.db.session.add(new_interest)
+            
+            self.db.session.commit()
+            
+            return jsonify({"success": True, "message": "Interest set successfully"})
+        except Exception as e:
+            logging.warning(e)
+            return jsonify({"success": False, "message": "Error setting Interest"})
+        
+    @jwt_required()
+    def createComment(self, eventId):
+        try:
+            formData = request.get_json()
+            logging.warning(formData)
+            
+            # data = self.db.session.query(Interest).join(Account, Account.accountId == Interest.accountId).join(Event, Event.eventId == Interest.eventId).filter(Account.username == get_jwt_identity()).filter(Event.eventId == eventId).first()
+            
+            myUser = self.db.session.query(Account).filter_by(username=get_jwt_identity()).first()
+                        
+            new_comment = Review(date.today(), formData["comment"], myUser.accountId, eventId)
+            self.db.session.add(new_comment)
+            
+            self.db.session.commit()
+            
+            return jsonify({"success": True, "message": "Comment created successfully"})
+        except Exception as e:
+            logging.warning(e)
+            return jsonify({"success": False, "message": "Error creating Comment"})
+        

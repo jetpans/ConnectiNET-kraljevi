@@ -9,6 +9,7 @@ import AccountPage from "./views/AccountPage";
 import PublicProfilePage from "./views/PublicProfilePage";
 import AdminSubscriptionPage from "./views/AdminSubscriptionPage";
 import CreateEventsPage from "./views/CreateEventsPage";
+import EditEventPage from "./views/EditEventPage";
 import EventDetail from "./views/EventDetail";
 import AdminBrowseUsers from "./views/AdminBrowseUsers";
 import AdminBrowseEvent from "./views/AdminBrowseEvent";
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
         {/* <Route path="/temp" element={<UploadImagePageTemp />} /> */}
         <Route path="/create" element={<CreateEventsPage />} />  
+        <Route path="/edit/:eventId" element={<EditEventPage />} />
 
         <Route path="/events" element={<EventsPage />} />
         <Route path="/account" element={<AccountPage />} />

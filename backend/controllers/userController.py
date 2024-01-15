@@ -46,6 +46,7 @@ class UserController(Controller):
         self.app.add_url_rule("/api/deleteAccount", view_func = self.deleteAccount, methods = ["POST"])
         
         self.app.add_url_rule("/api/createEvent", view_func = self.createEvent, methods =["POST"])
+        self.app.add_url_rule("/api/editEvent/<int:eventId>", view_func = self.editEvent, methods =["PUT"])
 
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
@@ -376,13 +377,9 @@ class UserController(Controller):
     @jwt_required()
     def createEvent(self):
         data = request.get_json()
-        # self.app.logger.warning(f"recieved {data}")
         accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
-        # self.app.logger.warning(f"accountId {accountId}")
         result = self.testCreateEventForm(data)
 
-        # Calculate duration
-        # TODO: change duration dataType in database
         start_time = datetime.strptime(data["dateTime"], "%Y-%m-%dT%H:%M")
         end_time = datetime.strptime(data["duration"], "%Y-%m-%dT%H:%M")
         duration = end_time - start_time
@@ -459,3 +456,48 @@ class UserController(Controller):
         price = int(self.db.session.query(Data).filter(Data.entryName=="subscriptionPrice").first().value)
         
         return {"success":True, "data":{"value": price}}
+
+    @organiser_required()
+    def editEvent(self, eventId):
+        all_data = request.get_json()
+        data = all_data["data"]
+        id = all_data["id"]
+        event_to_update = self.db.session.query(Event).filter(Event.eventId == id).first()
+        accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
+        result = self.testEditEventForm(data)
+
+        start_time = datetime.strptime(data["dateTime"], "%Y-%m-%dT%H:%M")
+        end_time = datetime.strptime(data["duration"], "%Y-%m-%dT%H:%M")
+        duration = end_time - start_time
+                
+        if result == "OK":
+            try:
+                event_to_update.dateTime = data["dateTime"]
+                event_to_update.title = data["title"]
+                event_to_update.description = data["description"]
+                event_to_update.countryCode = data["countryCode"]
+                event_to_update.city = data["city"]
+                event_to_update.location = data["location"]
+                event_to_update.duration = duration
+                event_to_update.price = data["price"]
+                event_to_update.eventType = data["eventType"]
+                # event_to_update = Event(data["dateTime"], 
+                #                  data["title"], 
+                #                  data["description"], 
+                #                  data["countryCode"], 
+                #                  data["city"], data["location"], 
+                #                  data["duration"], 
+                #                  "", # displayImageSource - added in popup dialog later
+                #                  data["price"], 
+                #                  data["eventType"], 
+                #                  accountId)
+
+                self.db.session.commit()
+                return {"success":True, "data": {"eventId": eventId}}
+            except Exception as e:
+                logging.warning(e)
+        else:
+            return {"success":False, "message": result["data"]}
+        
+    def testEditEventForm(self, form):
+        return self.testCreateEventForm(form)

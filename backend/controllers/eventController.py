@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import logging
 from flask import Flask,jsonify,request,render_template, session
 from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, Country
@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from controllers.controller import Controller
 import random
 from util import *
+from datetime import datetime, date
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 
@@ -41,9 +42,8 @@ class EventController(Controller):
                 "accountId":event["accountId"],
                 "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
                 "price":event["price"],
+                "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == event["accountId"] else False,
                 "interest": sum(1 for interest in self.db.session.query(Interest).filter(Interest.eventId == event["eventId"]).all() if (interest.degreeOfInterest == 1 or interest.degreeOfInterest == 0))
-
-
             }, result_dict))
         return {"success":True, "data": toList}
         
@@ -87,6 +87,11 @@ class EventController(Controller):
                 maybe_count += 1
             elif int(interest.degreeOfInterest) == -1:
                 nointerest_count += 1
+        
+        if(MyEvent.dateTime is not None and MyEvent.duration is not None):
+            end_time = MyEvent.dateTime + MyEvent.duration
+        else:
+            end_time = datetime(year=9999, month=1, day=15, hour=8, minute=0, second=0)
 
         event = {
             "id": MyEvent.eventId,
@@ -97,19 +102,24 @@ class EventController(Controller):
             "price":MyEvent.price,
             "city":MyEvent.city,
             "location":MyEvent.location,
-            "time":str(MyEvent.dateTime),
             "priority":str(int(random.random()*50)),
             "accountId":MyEvent.accountId,
             "interested": interested_count,
             "maybe": maybe_count,
             "nointerest": nointerest_count,
             "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == MyEvent.accountId).first().organizerName, 
-            "image_org": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().profileImage 
-            
+            "image_org": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().profileImage,
+            "countryCode": MyEvent.countryCode,
+            "eventType": MyEvent.eventType,
+            "end_time": str(end_time),
+            "username": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().username,
+            "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == MyEvent.accountId else False
+
         }
         
         return {"success":True, "data": event, "comments": comments}
     
+    @jwt_required()
     def getOrganizerPublicProfile(self, organizerId):
         organizer = self.db.session.query(Organizer).filter_by(accountId=organizerId).first()
         if organizer:
@@ -133,7 +143,8 @@ class EventController(Controller):
                     "image":event["displayImageSource"],
                     "description":event["description"],
                     "time":str(event["dateTime"]),
-                    "priority":str(int(random.random()*50))
+                    "priority":str(int(random.random()*50)),
+                    "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == event["accountId"] else False
                 }, result_dict))
 
             return jsonify({"success": True, "organizerInfo": profile, "organizerEvents": toList})
@@ -144,14 +155,10 @@ class EventController(Controller):
     def setInterest(self, eventId):
         try:
             formData = request.get_json()
-            logging.warning(formData)
             
             data = self.db.session.query(Interest).join(Account, Account.accountId == Interest.accountId).join(Event, Event.eventId == Interest.eventId).filter(Account.username == get_jwt_identity()).filter(Event.eventId == eventId).first()
             
             myUser = self.db.session.query(Account).filter_by(username=get_jwt_identity()).first()
-            
-            logging.warning(myUser)
-            logging.warning(data)
             
             if data:
                 data.degreeOfInterest = formData["interest"]
@@ -169,9 +176,7 @@ class EventController(Controller):
     @jwt_required()
     def createComment(self, eventId):
         try:
-            formData = request.get_json()
-            logging.warning(formData)
-            
+            formData = request.get_json()            
             # data = self.db.session.query(Interest).join(Account, Account.accountId == Interest.accountId).join(Event, Event.eventId == Interest.eventId).filter(Account.username == get_jwt_identity()).filter(Event.eventId == eventId).first()
             
             myUser = self.db.session.query(Account).filter_by(username=get_jwt_identity()).first()

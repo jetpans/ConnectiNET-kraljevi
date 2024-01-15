@@ -37,7 +37,12 @@ export default function EventCard(props) {
         }}
       />
     );
+
     // navigate("/event", {state: {event: card}});
+  }
+  
+  function editEvent() {
+    navigate("/edit/" + card.id);
   }
 
   return (
@@ -99,6 +104,20 @@ export default function EventCard(props) {
             See More
           </Typography>
         </Button>
+        {card.my_event ? (
+          <>
+          <Button size="small">
+            <Typography
+              onClick={editEvent}
+              variant="body1"
+              color={theme.palette.primary.main}
+              style={{ textTransform: "none" }}
+            >
+              Edit
+            </Typography>
+          </Button>
+          </>
+        ) : null}
       </CardActions>
     </Card>
   );

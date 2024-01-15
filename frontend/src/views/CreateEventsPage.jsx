@@ -267,199 +267,178 @@ export default function CreateEventsPage() {
             {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                         Create Event
                     </Typography> */}
-            <Card
-              elevation={4}
-              sx={{
-                width: "60vw",
-                display: "flex",
-                position: "center",
-                bgcolor: theme.palette.background.table,
-              }}
-            >
-              <CardContent>
-                <Grid
-                  container
-                  spacing={2}
-                  component="form"
-                  onSubmit={handleSubmit}
-                >
-                  <Grid item xs={12}>
-                    <TextField
-                      inputProps={{
-                        pattern: ".{1,200}",
-                        title: "Must be under 200 characters long",
-                      }}
+          <Card elevation={4} sx={{width: '60vw', display: 'flex', position: 'center', bgcolor: theme.palette.background.table}}>
+            <CardContent>
+              <Grid
+                container
+                spacing={2}
+                component="form"
+                onSubmit={handleSubmit}
+              >
+                <Grid item xs={12}>
+                  <TextField
+                    inputProps={{
+                      pattern: ".{1,200}",
+                      title: "Must be under 200 characters long",
+                      style: { color: theme.palette.text.main }
+                    }}
+                    required
+                    fullWidth
+                    label="Event Name"
+                    name="eventName"
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    inputProps={{
+                      maxLength: 2000,
+                      title: "Must be under 2000 characters long",
+                      style: { color: theme.palette.text.main }
+                    }}
+                    required
+                    fullWidth
+                    label="Description"
+                    name="description"
+                    multiline
+                    rows={4}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    inputProps={{
+                      pattern: "[A-Za-z ]{1,50}",
+                      title: "Letters only (max 50 characters)",
+                      style: { color: theme.palette.text.main }
+                    }}
+                    required
+                    fullWidth
+                    label="City"
+                    name="city"
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    inputProps={{
+                      pattern: ".{1,100}",
+                      title: "Must be under 100 characters long",
+                    }}
+                    required
+                    fullWidth
+                    label="Address"
+                    name="location"
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
+                    }}
+                    InputLabelProps={{
+                      style: { color: theme.palette.text.light },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth >
+                    <InputLabel id="country-select-label" sx={{color: theme.palette.text.light}}>Country</InputLabel>
+                    {/* TODO: fix changing from uncontrolled input to controlled input */}
+                    <Select
+                      labelId="country-select-label"
+                      label="Country"
+                      name="country"
                       required
-                      fullWidth
-                      label="Event Name"
-                      name="eventName"
-                      InputProps={{
-                        style: { color: theme.palette.text.main },
-                      }}
-                      InputLabelProps={{
-                        style: { color: theme.palette.text.light },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      inputProps={{
-                        maxLength: 2000,
-                        title: "Must be under 2000 characters long",
-                      }}
+                      sx={{color: theme.palette.text.light}}
+                    >
+                      <MenuItem value="none" disabled>
+                        Select a Country
+                      </MenuItem>
+                      {countries &&
+                        countries.map((country) => (
+                          <MenuItem
+                            key={country.countryCode}
+                            value={country.countryCode}
+                          >
+                            {country.name}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="event-type-select-label" sx={{color: theme.palette.text.light}}>
+                      Event Type
+                    </InputLabel>
+                    <Select
+                      labelId="event-type-select-label"
+                      label="Event Type"
+                      name="eventType"
                       required
-                      fullWidth
-                      label="Description"
-                      name="description"
-                      multiline
-                      rows={4}
-                      InputProps={{
-                        style: { color: theme.palette.text.main },
-                      }}
-                      InputLabelProps={{
-                        style: { color: theme.palette.text.light },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      inputProps={{
-                        pattern: "[A-Za-z ]{1,50}",
-                        title: "Letters only (max 50 characters)",
-                      }}
-                      required
-                      fullWidth
-                      label="City"
-                      name="city"
-                      InputProps={{
-                        style: { color: theme.palette.text.main },
-                      }}
-                      InputLabelProps={{
-                        style: { color: theme.palette.text.light },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      inputProps={{
-                        pattern: ".{1,100}",
-                        title: "Must be under 100 characters long",
-                      }}
-                      required
-                      fullWidth
-                      label="Address"
-                      name="location"
-                      InputProps={{
-                        style: { color: theme.palette.text.main },
-                      }}
-                      InputLabelProps={{
-                        style: { color: theme.palette.text.light },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel
-                        id="country-select-label"
-                        sx={{ color: theme.palette.text.light }}
-                      >
-                        Country
-                      </InputLabel>
-                      {/* TODO: fix changing from uncontrolled input to controlled input */}
-                      <Select
-                        labelId="country-select-label"
-                        label="Country"
-                        name="country"
-                        required
-                        sx={{ color: theme.palette.text.light }}
-                      >
-                        <MenuItem value="none" disabled>
-                          Select a Country
-                        </MenuItem>
-                        {countries &&
-                          countries.map((country) => (
-                            <MenuItem
-                              key={country.countryCode}
-                              value={country.countryCode}
-                            >
-                              {country.name}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel
-                        id="event-type-select-label"
-                        sx={{ color: theme.palette.text.light }}
-                      >
-                        Event Type
-                      </InputLabel>
-                      <Select
-                        labelId="event-type-select-label"
-                        label="Event Type"
-                        name="eventType"
-                        required
-                      >
-                        <MenuItem value="none" disabled>
-                          Select a Type
-                        </MenuItem>
-                        {categories &&
-                          categories.map((category) => (
-                            <MenuItem
-                              key={category.typeId}
-                              value={category.typeId}
-                            >
-                              {category.typeName}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      inputProps={{
-                        min: "2024-01-01T00:00", // min date is 2024
-                        max: "2101-12-31T23:59", // max date is 2101
-                        title: "Must be a valid date",
-                      }}
-                      required
-                      fullWidth
-                      label="From Date"
-                      name="fromDate"
-                      type="datetime-local"
-                      InputLabelProps={{
-                        shrink: true,
-                        style: { color: theme.palette.text.light },
-                      }}
-                      InputProps={{
-                        style: { color: theme.palette.text.main },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      inputProps={{
-                        min: "2024-01-01T00:00", // min date is 2024
-                        max: "2101-12-31T23:59", // max date is 2101
-                        title: "Must be a valid date",
-                      }}
-                      required
-                      fullWidth
-                      label="To Date"
-                      name="toDate"
-                      type="datetime-local"
-                      InputLabelProps={{
-                        shrink: true,
-                        style: { color: theme.palette.text.light },
-                      }}
-                      InputProps={{
-                        style: { color: theme.palette.text.main },
-                      }}
-                    />
-                  </Grid>
-                  {/* <Grid item xs={6}>
+                      sx={{color: theme.palette.text.light}}
+                    >
+                      <MenuItem value="none" disabled>
+                        Select a Type
+                      </MenuItem>
+                      {categories &&
+                        categories.map((category) => (
+                          <MenuItem
+                            key={category.typeId}
+                            value={category.typeId}
+                          >
+                            {category.typeName}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    inputProps={{
+                      min: "2024-01-01T00:00", // min date is 2024
+                      max: "2101-12-31T23:59", // max date is 2101
+                      title: "Must be a valid date",
+                    }}
+                    required
+                    fullWidth
+                    label="From Date"
+                    name="fromDate"
+                    type="datetime-local"
+                    InputLabelProps={{
+                      shrink: true,
+                      style: { color: theme.palette.text.light },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    inputProps={{
+                      min: "2024-01-01T00:00", // min date is 2024
+                      max: "2101-12-31T23:59", // max date is 2101
+                      title: "Must be a valid date",
+                    }}
+                    required
+                    fullWidth
+                    label="To Date"
+                    name="toDate"
+                    type="datetime-local"
+                    InputLabelProps={{
+                      shrink: true,
+                      style: { color: theme.palette.text.light },
+                    }}
+                    InputProps={{
+                      style: { color: theme.palette.text.main },
+                    }}
+                  />
+                </Grid>
+                {/* <Grid item xs={6}>
                                     <TextField
                                         required
                                         fullWidth

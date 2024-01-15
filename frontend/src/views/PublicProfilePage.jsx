@@ -110,6 +110,7 @@ export default function OrganizerProfile() {
                           alignItems: "center",
                           height: "100%",
                           width: "100%",
+                          pl: 2,
                         }}
                       >
                         <img

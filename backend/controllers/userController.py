@@ -46,6 +46,7 @@ class UserController(Controller):
         self.app.add_url_rule("/api/deleteAccount", view_func = self.deleteAccount, methods = ["POST"])
         
         self.app.add_url_rule("/api/createEvent", view_func = self.createEvent, methods =["POST"])
+        self.app.add_url_rule("/api/editEvent/<int:eventId>", view_func = self.editEvent, methods =["POST"])
 
         self.email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         self.password_regex = "^(?=.*?[a-z])(?=.*?[0-9]).{8,}$"
@@ -459,3 +460,41 @@ class UserController(Controller):
         price = int(self.db.session.query(Data).filter(Data.entryName=="subscriptionPrice").first().value)
         
         return {"success":True, "data":{"value": price}}
+
+    @organiser_required()
+    def editEvent(self, eventId):
+        data = request.get_json()
+        # self.app.logger.warning(f"recieved {data}")
+        event_to_update = self.db.session.query(Event).filter(Event.eventId == eventId).first()
+        # self.app.logger.warning(f"accountId {accountId}")
+        accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
+        result = self.testEditEventForm(data)
+
+        # Calculate duration
+        # TODO: change duration dataType in database
+        start_time = datetime.strptime(data["dateTime"], "%Y-%m-%dT%H:%M")
+        end_time = datetime.strptime(data["duration"], "%Y-%m-%dT%H:%M")
+        duration = end_time - start_time
+        data["duration"] = duration
+
+        if result == "OK":
+            # TODO: fix constructor
+            event_to_update = Event(data["dateTime"], 
+                             data["title"], 
+                             data["description"], 
+                             data["countryCode"], 
+                             data["city"], data["location"], 
+                             data["duration"], 
+                             "", # displayImageSource - added in popup dialog later
+                             data["price"], 
+                             data["eventType"], 
+                             accountId)
+            self.app.logger.warning(f"recieved {event_to_update}")
+
+            self.db.session.commit()
+            return {"success":True, "data": {"eventId": eventId}}
+        else:
+            return {"success":False, "message": ""}
+        
+    def testEditEventForm(self, form):
+        return self.testCreateEventForm(form)

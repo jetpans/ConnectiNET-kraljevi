@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from controllers.controller import Controller
 import random
 from util import *
+from datetime import datetime, date
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
 
@@ -78,6 +79,7 @@ class EventController(Controller):
         maybe_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "maybe")
         nointerest_count = sum(1 for interest in interests_with_event_id if interest.degreeOfInterest == "nointerest")
 
+        end_time = MyEvent.dateTime + MyEvent.duration
 
         event = {
             "id": MyEvent.eventId,
@@ -88,15 +90,16 @@ class EventController(Controller):
             "price":MyEvent.price,
             "city":MyEvent.city,
             "location":MyEvent.location,
-            "time":str(MyEvent.dateTime),
             "priority":str(int(random.random()*50)),
             "accountId":MyEvent.accountId,
             "interested": interested_count,
             "maybe": maybe_count,
             "nointerest": nointerest_count,
             "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == MyEvent.accountId).first().organizerName, 
-            "image_org": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().profileImage 
-            
+            "image_org": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().profileImage,
+            "countryCode": MyEvent.countryCode,
+            "eventType": MyEvent.eventType,
+            "end_time": str(end_time)
         }
 
        

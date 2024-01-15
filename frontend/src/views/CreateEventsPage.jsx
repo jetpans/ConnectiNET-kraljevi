@@ -63,11 +63,12 @@ function EventMediaDialog(props) {
             {props.eventMedia.map((entry) => (
               <div>
                 <Button
-                  sx={{ position: "absolute" }}
+                  sx={{ position: "relative" }}
                   key={entry.mediaId}
+                  id={entry.mediaId}
                   onClick={(e) => props.deleteEventMedia(e)}
                 >
-                  <DeleteIcon id={entry.mediaId}></DeleteIcon>
+                  <DeleteIcon></DeleteIcon>
                 </Button>
                 <img style={{ maxHeight: "10rem" }} src={entry.mediaSource} />
               </div>
@@ -152,7 +153,7 @@ export default function CreateEventsPage() {
   };
 
   const deleteEventMedia = (event) => {
-    let mediaId = event.target.id;
+    const mediaId = event.currentTarget.id;
     dc.PostData(API_URL + "/api/deleteEventMedia/" + mediaId, "", accessToken)
       .then((resp) => {
         if (resp.data && resp.data.success === true) {
@@ -183,9 +184,14 @@ export default function CreateEventsPage() {
     fetchCategories();
   }, []);
 
-
   useEffect(() => {
-    if(user && user !== null && user.roleId && user.roleId !== null && user.roleId === 1) {
+    if (
+      user &&
+      user !== null &&
+      user.roleId &&
+      user.roleId !== null &&
+      user.roleId === 1
+    ) {
       dc.GetData(
         API_URL + "/api/getSubscriberInfo",
         localStorage.getItem("jwt")
@@ -257,8 +263,8 @@ export default function CreateEventsPage() {
             justifyContent: "center",
           }}
         >
-        <Container sx={{marginTop: 6, marginBottom: 6}}> 
-          {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
+          <Container sx={{ marginTop: 6, marginBottom: 6 }}>
+            {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                         Create Event
                     </Typography> */}
           <Card elevation={4} sx={{width: '60vw', display: 'flex', position: 'center', bgcolor: theme.palette.background.table}}>
@@ -455,66 +461,70 @@ export default function CreateEventsPage() {
                                             <MenuItem value="hours">Hours</MenuItem>                                                </Select>
                                     </FormControl>
                                 </Grid> */}
-                <Grid item xs={12}>
-                  <InputLabel sx={{color: theme.palette.text.light}}>Pricing</InputLabel>
-                  <FormControl>
-                    <FormControl component="fieldset">
-                      <RadioGroup
-                        name="priceOptions"
-                        defaultValue="free"
-                        onChange={handleRadioChange}
-                        sx={{color: theme.palette.text.light}}
-                      >
-                        <FormControlLabel
-                          value="free"
-                          control={<Radio />}
-                          label="Free"
-                        />
-                        <FormControlLabel
-                          value="paid"
-                          control={<Radio />}
-                          label="Paid"
-                          disabled={isSubscribed ? false : true}
-                        />
-                        <TextField
-                          fullWidth
-                          label="Entry fee"
-                          name="price"
-                          helperText={priceHelperText}
-                          value={price}
-                          disabled={!paid}
-                          required={paid}
-                          error={priceErrorState}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">€</InputAdornment>
-                            ),
-                            style: { color: theme.palette.text.main },
-                          }}
-                          type="number"
-                          margin="normal"
-                          onChange={(event) => {
-                            if (event.target.value < 0) {
-                              event.target.value = 0;
-                            }
-                            setPrice(event.target.value);
-                            if (paid && event.target.value == 0) {
-                              setPriceErrorState(true);
-                              setPriceHelperText("Entry fee cannot be 0");
-                            } else {
-                              setPriceErrorState(false);
-                              setPriceHelperText("");
-                            }
-                          }}
-                          InputLabelProps={{
-                            style: { color: theme.palette.text.light },
-                          }}
-                        />
-                      </RadioGroup>
+                  <Grid item xs={12}>
+                    <InputLabel sx={{ color: theme.palette.text.light }}>
+                      Pricing
+                    </InputLabel>
+                    <FormControl>
+                      <FormControl component="fieldset">
+                        <RadioGroup
+                          name="priceOptions"
+                          defaultValue="free"
+                          onChange={handleRadioChange}
+                          sx={{ color: theme.palette.text.light }}
+                        >
+                          <FormControlLabel
+                            value="free"
+                            control={<Radio />}
+                            label="Free"
+                          />
+                          <FormControlLabel
+                            value="paid"
+                            control={<Radio />}
+                            label="Paid"
+                            disabled={isSubscribed ? false : true}
+                          />
+                          <TextField
+                            fullWidth
+                            label="Entry fee"
+                            name="price"
+                            helperText={priceHelperText}
+                            value={price}
+                            disabled={!paid}
+                            required={paid}
+                            error={priceErrorState}
+                            InputProps={{
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  €
+                                </InputAdornment>
+                              ),
+                              style: { color: theme.palette.text.main },
+                            }}
+                            type="number"
+                            margin="normal"
+                            onChange={(event) => {
+                              if (event.target.value < 0) {
+                                event.target.value = 0;
+                              }
+                              setPrice(event.target.value);
+                              if (paid && event.target.value == 0) {
+                                setPriceErrorState(true);
+                                setPriceHelperText("Entry fee cannot be 0");
+                              } else {
+                                setPriceErrorState(false);
+                                setPriceHelperText("");
+                              }
+                            }}
+                            InputLabelProps={{
+                              style: { color: theme.palette.text.light },
+                            }}
+                          />
+                        </RadioGroup>
+                      </FormControl>
                     </FormControl>
-                  </FormControl>
-                </Grid>
-                {/* {<Grid item xs={12}>    // image upload placeholder
+                  </Grid>
+                  {/* {<Grid item xs={12}>    // image upload placeholder
                                     <input
                                         accept="image/*"
                                         id="event-image-upload"
@@ -527,30 +537,30 @@ export default function CreateEventsPage() {
                                         </Button>
                                     </label>
                                 </Grid>} */}
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                  >
-                    Create Event
-                  </Button>
+                  <Grid item xs={12}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                    >
+                      Create Event
+                    </Button>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Container>
+              </CardContent>
+            </Card>
+          </Container>
 
-        <EventMediaDialog
-          myEventId={myEventId}
-          eventMedia={eventMedia}
-          isOpen={isMediaOpen}
-          handleClose={() => setIsMediaOpen(false)}
-          refreshMyEventMedia={refreshMyEventMedia}
-          deleteEventMedia={deleteEventMedia}
-        />
-      </Paper>
+          <EventMediaDialog
+            myEventId={myEventId}
+            eventMedia={eventMedia}
+            isOpen={isMediaOpen}
+            handleClose={() => setIsMediaOpen(false)}
+            refreshMyEventMedia={refreshMyEventMedia}
+            deleteEventMedia={deleteEventMedia}
+          />
+        </Paper>
         <MainFooter />
       </ProtectedComponent>
     </div>

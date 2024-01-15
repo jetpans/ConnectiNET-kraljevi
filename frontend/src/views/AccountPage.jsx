@@ -556,6 +556,32 @@ export default function AccountPage() {
                               </TableCell>
                             )}
                           </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ color: theme.palette.text.main }}>
+                              Password
+                            </TableCell>
+                            {editMode ? (
+                              <TextField
+                                inputProps={{
+                                  pattern:
+                                    "[a-zA-Z0-9]*[a-z]+[0-9]+[a-zA-Z0-9]*",
+                                  title:
+                                    "Must contain at least one lowercase letter, digit and be at least 8 characters long.",
+                                }}
+                                fullWidth
+                                name="password"
+                                type={"password"}
+                                id="password"
+                                autoComplete="new-password"
+                              />
+                            ) : (
+                              <TableCell
+                                sx={{ color: theme.palette.text.main }}
+                              >
+                                *********
+                              </TableCell>
+                            )}
+                          </TableRow>
                         </>
                       ) : (
                         <>
@@ -745,54 +771,7 @@ export default function AccountPage() {
                     </TableRow>
 
                     <TableRow>
-                      <TableCell sx={{color: theme.palette.text.main}}>Username</TableCell>
-                      <TableCell sx={{color: theme.palette.text.main}}>{userData.username}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell sx={{color: theme.palette.text.main}}>Role ID</TableCell>
-                      <TableCell sx={{color: theme.palette.text.main}}>
-                        {userData.roleId == -1
-                          ? "Administrator"
-                          : userData.roleId == 1
-                          ? "Organizer"
-                          : "Visitor"}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell sx={{color: theme.palette.text.main}}>Email</TableCell>
-                      {editMode ? (
-                        <TextField
-                          inputProps={{
-                            type: "email",
-                          }}
-                          required
-                          defaultValue={userData.eMail}
-                          id="email"
-                          fullWidth
-                          name="email"
-                          autoComplete="email"
-                          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
-                            color: theme.palette.text.main, // Set text color of the TextField input
-                          } }}
-                          SelectProps={{
-                            MenuProps: {
-                              PaperProps: {
-                                style: {
-                                  backgroundColor: theme.palette.background.default,
-                                },
-                              },
-                            },
-                          }}  
-                        />
-                      ) : (
-                        <TableCell sx={{color: theme.palette.text.main}}>{userData.eMail}</TableCell>
-                      )}
-                    </TableRow>
-                    <TableRow>
-
-                      <TableCell sx={{color: theme.palette.text.main}}>Country Code</TableCell>
-
-                      {editMode ? (
+                      <TableCell>
                         <TextField
                           required
                           name="notif-country"
@@ -804,18 +783,24 @@ export default function AccountPage() {
                             setNotificationCountryCode(event.target.value)
                           }
                           select
-                          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
-                            color: theme.palette.text.main, // Set text color of the TextField input
-                          } }}
+                          sx={{
+                            marginRight: "2rem",
+                            bgcolor: theme.palette.background.defaut,
+                            input: { color: theme.palette.text.main },
+                            "& .MuiInputBase-root": {
+                              color: theme.palette.text.main, // Set text color of the TextField input
+                            },
+                          }}
                           SelectProps={{
                             MenuProps: {
                               PaperProps: {
                                 style: {
-                                  backgroundColor: theme.palette.background.default,
+                                  backgroundColor:
+                                    theme.palette.background.default,
                                 },
                               },
                             },
-                          }}  
+                          }}
                         >
                           {countries != null ? (
                             countries.map((country) =>
@@ -828,20 +813,12 @@ export default function AccountPage() {
                                 </MenuItem>
                               ) : null
                             )
-                            // countries.map((country) => (
-                            //   <MenuItem
-                            //     key={country.countryCode}
-                            //     value={country.countryCode}
-                            //     sx={{ color: theme.palette.text.main }}
-                            //   >
-                            //     {country.name}
-                            //   </MenuItem>
-                            // ))
                           ) : (
-                            <MenuItem sx={{ color: theme.palette.text.main }} value={""}>Loading...</MenuItem>
+                            <></>
                           )}
-                        </TextField>) : null}
-                      
+                        </TextField>
+                      </TableCell>
+
                       <TableCell>
                         <TextField
                           required
@@ -870,178 +847,8 @@ export default function AccountPage() {
                           )}
                         </TextField>
                       </TableCell>
-                    
                     </TableRow>
 
-                    {userData.roleId == 1 ? (
-                      <>
-                        <TableRow>
-                          <TableCell sx={{color: theme.palette.text.main}}>Organizer Name</TableCell>
-                          {editMode ? (
-                            <TextField
-                              inputProps={{
-                                pattern: "[A-Za-z]+",
-                                title: "Must contain only letters.",
-                              }}
-                              defaultValue={userData.organiserName}
-                              fullWidth
-                              autoComplete="organizer-name"
-                              name="organizerName"
-                              required
-                              id="organizerName"
-                              autoFocus
-                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
-                                color: theme.palette.text.main, // Set text color of the TextField input
-                              } }}
-                              SelectProps={{
-                                MenuProps: {
-                                  PaperProps: {
-                                    style: {
-                                      backgroundColor: theme.palette.background.default,
-                                    },
-                                  },
-                                },
-                              }}  
-                            />
-                          ) : (
-                            <TableCell sx={{color: theme.palette.text.main}}>{userData.organiserName}</TableCell>
-                          )}
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{color: theme.palette.text.main}}>Hidden profile</TableCell>
-                          {editMode ? (
-                            <TextField
-                              required
-                              name="hidden"
-                              id="hidden"
-                              inputProps={{ value: hidden }}
-                              fullWidth
-                              value={hidden}
-                              onChange={(event) =>
-                                setHidden(event.target.value)
-                              }
-                              placeholder={hidden}
-                              select
-                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
-                                color: theme.palette.text.main, // Set text color of the TextField input
-                              } }}
-                              SelectProps={{
-                                MenuProps: {
-                                  PaperProps: {
-                                    style: {
-                                      backgroundColor: theme.palette.background.default,
-                                    },
-                                  },
-                                },
-                              }}
-                            >
-                              <MenuItem value={true}>True</MenuItem>
-                              <MenuItem value={false}>False</MenuItem>
-                            </TextField>
-                          ) : (
-                            <TableCell sx={{color: theme.palette.text.main}}>{userData.hidden}</TableCell>
-                          )}
-                        </TableRow>
-                      </>
-                    ) : (
-                      <>
-                        <TableRow>
-                          <TableCell sx={{color: theme.palette.text.main}}>First Name</TableCell>
-                          {editMode ? (
-                            <TextField
-                              inputProps={{
-                                pattern: "[A-Za-z]+",
-                                title: "Must contain only letters.",
-                              }}
-                              autoComplete="first-name"
-                              defaultValue={userData.firstName}
-                              name="firstName"
-                              required
-                              fullWidth
-                              id="firstName"
-                              autoFocus
-                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
-                                color: theme.palette.text.main, // Set text color of the TextField input
-                              } }}
-                              SelectProps={{
-                                MenuProps: {
-                                  PaperProps: {
-                                    style: {
-                                      backgroundColor: theme.palette.background.default,
-                                    },
-                                  },
-                                },
-                              }}
-                            />
-                          ) : (
-                            <TableCell sx={{color: theme.palette.text.main}}>{userData.firstName}</TableCell>
-                          )}
-                        </TableRow>
-                        <TableRow>
-                          <TableCell sx={{color: theme.palette.text.main}}>LastName</TableCell>
-                          {editMode ? (
-                            <TextField
-                              inputProps={{
-                                pattern: "[A-Za-z]+",
-                                title: "Must contain only letters.",
-                              }}
-                              defaultValue={userData.lastName}
-                              required
-                              fullWidth
-                              id="lastName"
-                              name="lastName"
-                              autoComplete="family-name"
-                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
-                                color: theme.palette.text.main, // Set text color of the TextField input
-                              } }}
-                              SelectProps={{
-                                MenuProps: {
-                                  PaperProps: {
-                                    style: {
-                                      backgroundColor: theme.palette.background.default,
-                                    },
-                                  },
-                                },
-                              }}
-                            />
-                          ) : (
-                            <TableCell sx={{color: theme.palette.text.main}}>{userData.lastName}</TableCell>
-                          )}
-                        </TableRow>
-
-                        <TableRow>
-                          <TableCell sx={{color: theme.palette.text.main}}>Password</TableCell>
-                          {editMode ? (
-                            <TextField
-                              inputProps={{
-                                pattern: "[a-zA-Z0-9]*[a-z]+[0-9]+[a-zA-Z0-9]*",
-                                title:
-                                  "Must contain at least one lowercase letter, digit and be at least 8 characters long.",
-                              }}
-                              fullWidth
-                              name="password"
-                              type={"password"}
-                              id="password"
-                              autoComplete="new-password"
-                              sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.main }, '& .MuiInputBase-root': {
-                                color: theme.palette.text.main, // Set text color of the TextField input
-                              } }}
-                              SelectProps={{
-                                MenuProps: {
-                                  PaperProps: {
-                                    style: {
-                                      backgroundColor: theme.palette.background.default,
-                                    },
-                                  },
-                                },
-                              }}
-                            />
-                          ) : (
-                            <TableCell sx={{color: theme.palette.text.main}}>*********</TableCell>
-                          )}
-                        </TableRow>
-                      </>
-                    )}
                     <TableRow>
                       <TableCell>
                         <Button

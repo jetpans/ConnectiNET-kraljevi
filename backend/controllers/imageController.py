@@ -179,7 +179,9 @@ class ImageController(Controller):
         
 
         blob_path = media.mediaSource
+        blob_path = blob_path.split("/")[-1]
         blob = storage.bucket().blob(blob_path)
         blob.delete()
         self.db.session.delete(media)
+        self.db.session.commit()
         return {"success":True, 'error':"Deleted event media successfuly."}

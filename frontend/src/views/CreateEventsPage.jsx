@@ -62,11 +62,12 @@ function EventMediaDialog(props) {
             {props.eventMedia.map((entry) => (
               <div>
                 <Button
-                  sx={{ position: "absolute" }}
+                  sx={{ position: "relative" }}
                   key={entry.mediaId}
+                  id={entry.mediaId}
                   onClick={(e) => props.deleteEventMedia(e)}
                 >
-                  <DeleteIcon id={entry.mediaId}></DeleteIcon>
+                  <DeleteIcon></DeleteIcon>
                 </Button>
                 <img style={{ maxHeight: "10rem" }} src={entry.mediaSource} />
               </div>
@@ -151,7 +152,7 @@ export default function CreateEventsPage() {
   };
 
   const deleteEventMedia = (event) => {
-    let mediaId = event.target.id;
+    const mediaId = event.target.id;
     dc.PostData(API_URL + "/api/deleteEventMedia/" + mediaId, "", accessToken)
       .then((resp) => {
         if (resp.data && resp.data.success === true) {
@@ -182,9 +183,14 @@ export default function CreateEventsPage() {
     fetchCategories();
   }, []);
 
-
   useEffect(() => {
-    if(user && user !== null && user.roleId && user.roleId !== null && user.roleId === 1) {
+    if (
+      user &&
+      user !== null &&
+      user.roleId &&
+      user.roleId !== null &&
+      user.roleId === 1
+    ) {
       dc.GetData(
         API_URL + "/api/getSubscriberInfo",
         localStorage.getItem("jwt")

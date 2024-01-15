@@ -153,7 +153,7 @@ export default function CreateEventsPage() {
   };
 
   const deleteEventMedia = (event) => {
-    const mediaId = event.target.id;
+    const mediaId = event.currentTarget.id;
     dc.PostData(API_URL + "/api/deleteEventMedia/" + mediaId, "", accessToken)
       .then((resp) => {
         if (resp.data && resp.data.success === true) {
@@ -263,187 +263,203 @@ export default function CreateEventsPage() {
             justifyContent: "center",
           }}
         >
-        <Container sx={{marginTop: 6, marginBottom: 6}}> 
-          {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
+          <Container sx={{ marginTop: 6, marginBottom: 6 }}>
+            {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                         Create Event
                     </Typography> */}
-          <Card elevation={4} sx={{width: '60vw', display: 'flex', position: 'center', bgcolor: theme.palette.background.table}}>
-            <CardContent>
-              <Grid
-                container
-                spacing={2}
-                component="form"
-                onSubmit={handleSubmit}
-              >
-                <Grid item xs={12}>
-                  <TextField
-                    inputProps={{
-                      pattern: ".{1,200}",
-                      title: "Must be under 200 characters long",
-                    }}
-                    required
-                    fullWidth
-                    label="Event Name"
-                    name="eventName"
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
-                    InputLabelProps={{
-                      style: { color: theme.palette.text.light },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    inputProps={{
-                      maxLength: 2000,
-                      title: "Must be under 2000 characters long",
-                    }}
-                    required
-                    fullWidth
-                    label="Description"
-                    name="description"
-                    multiline
-                    rows={4}
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
-                    InputLabelProps={{
-                      style: { color: theme.palette.text.light },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    inputProps={{
-                      pattern: "[A-Za-z ]{1,50}",
-                      title: "Letters only (max 50 characters)",
-                    }}
-                    required
-                    fullWidth
-                    label="City"
-                    name="city"
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
-                    InputLabelProps={{
-                      style: { color: theme.palette.text.light },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    inputProps={{
-                      pattern: ".{1,100}",
-                      title: "Must be under 100 characters long",
-                    }}
-                    required
-                    fullWidth
-                    label="Address"
-                    name="location"
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
-                    InputLabelProps={{
-                      style: { color: theme.palette.text.light },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth >
-                    <InputLabel id="country-select-label" sx={{color: theme.palette.text.light}}>Country</InputLabel>
-                    {/* TODO: fix changing from uncontrolled input to controlled input */}
-                    <Select
-                      labelId="country-select-label"
-                      label="Country"
-                      name="country"
+            <Card
+              elevation={4}
+              sx={{
+                width: "60vw",
+                display: "flex",
+                position: "center",
+                bgcolor: theme.palette.background.table,
+              }}
+            >
+              <CardContent>
+                <Grid
+                  container
+                  spacing={2}
+                  component="form"
+                  onSubmit={handleSubmit}
+                >
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{
+                        pattern: ".{1,200}",
+                        title: "Must be under 200 characters long",
+                      }}
                       required
-                      sx={{color: theme.palette.text.light}}
-                    >
-                      <MenuItem value="none" disabled>
-                        Select a Country
-                      </MenuItem>
-                      {countries &&
-                        countries.map((country) => (
-                          <MenuItem
-                            key={country.countryCode}
-                            value={country.countryCode}
-                          >
-                            {country.name}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="event-type-select-label" sx={{color: theme.palette.text.light}}>
-                      Event Type
-                    </InputLabel>
-                    <Select
-                      labelId="event-type-select-label"
-                      label="Event Type"
-                      name="eventType"
+                      fullWidth
+                      label="Event Name"
+                      name="eventName"
+                      InputProps={{
+                        style: { color: theme.palette.text.main },
+                      }}
+                      InputLabelProps={{
+                        style: { color: theme.palette.text.light },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{
+                        maxLength: 2000,
+                        title: "Must be under 2000 characters long",
+                      }}
                       required
-                    >
-                      <MenuItem value="none" disabled>
-                        Select a Type
-                      </MenuItem>
-                      {categories &&
-                        categories.map((category) => (
-                          <MenuItem
-                            key={category.typeId}
-                            value={category.typeId}
-                          >
-                            {category.typeName}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    inputProps={{
-                      min: "2024-01-01T00:00", // min date is 2024
-                      max: "2101-12-31T23:59", // max date is 2101
-                      title: "Must be a valid date",
-                    }}
-                    required
-                    fullWidth
-                    label="From Date"
-                    name="fromDate"
-                    type="datetime-local"
-                    InputLabelProps={{
-                      shrink: true,
-                      style: { color: theme.palette.text.light },
-                    }}
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    inputProps={{
-                      min: "2024-01-01T00:00", // min date is 2024
-                      max: "2101-12-31T23:59", // max date is 2101
-                      title: "Must be a valid date",
-                    }}
-                    required
-                    fullWidth
-                    label="To Date"
-                    name="toDate"
-                    type="datetime-local"
-                    InputLabelProps={{
-                      shrink: true,
-                      style: { color: theme.palette.text.light },
-                    }}
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
-                  />
-                </Grid>
-                {/* <Grid item xs={6}>
+                      fullWidth
+                      label="Description"
+                      name="description"
+                      multiline
+                      rows={4}
+                      InputProps={{
+                        style: { color: theme.palette.text.main },
+                      }}
+                      InputLabelProps={{
+                        style: { color: theme.palette.text.light },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{
+                        pattern: "[A-Za-z ]{1,50}",
+                        title: "Letters only (max 50 characters)",
+                      }}
+                      required
+                      fullWidth
+                      label="City"
+                      name="city"
+                      InputProps={{
+                        style: { color: theme.palette.text.main },
+                      }}
+                      InputLabelProps={{
+                        style: { color: theme.palette.text.light },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{
+                        pattern: ".{1,100}",
+                        title: "Must be under 100 characters long",
+                      }}
+                      required
+                      fullWidth
+                      label="Address"
+                      name="location"
+                      InputProps={{
+                        style: { color: theme.palette.text.main },
+                      }}
+                      InputLabelProps={{
+                        style: { color: theme.palette.text.light },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        id="country-select-label"
+                        sx={{ color: theme.palette.text.light }}
+                      >
+                        Country
+                      </InputLabel>
+                      {/* TODO: fix changing from uncontrolled input to controlled input */}
+                      <Select
+                        labelId="country-select-label"
+                        label="Country"
+                        name="country"
+                        required
+                        sx={{ color: theme.palette.text.light }}
+                      >
+                        <MenuItem value="none" disabled>
+                          Select a Country
+                        </MenuItem>
+                        {countries &&
+                          countries.map((country) => (
+                            <MenuItem
+                              key={country.countryCode}
+                              value={country.countryCode}
+                            >
+                              {country.name}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        id="event-type-select-label"
+                        sx={{ color: theme.palette.text.light }}
+                      >
+                        Event Type
+                      </InputLabel>
+                      <Select
+                        labelId="event-type-select-label"
+                        label="Event Type"
+                        name="eventType"
+                        required
+                      >
+                        <MenuItem value="none" disabled>
+                          Select a Type
+                        </MenuItem>
+                        {categories &&
+                          categories.map((category) => (
+                            <MenuItem
+                              key={category.typeId}
+                              value={category.typeId}
+                            >
+                              {category.typeName}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{
+                        min: "2024-01-01T00:00", // min date is 2024
+                        max: "2101-12-31T23:59", // max date is 2101
+                        title: "Must be a valid date",
+                      }}
+                      required
+                      fullWidth
+                      label="From Date"
+                      name="fromDate"
+                      type="datetime-local"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { color: theme.palette.text.light },
+                      }}
+                      InputProps={{
+                        style: { color: theme.palette.text.main },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{
+                        min: "2024-01-01T00:00", // min date is 2024
+                        max: "2101-12-31T23:59", // max date is 2101
+                        title: "Must be a valid date",
+                      }}
+                      required
+                      fullWidth
+                      label="To Date"
+                      name="toDate"
+                      type="datetime-local"
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { color: theme.palette.text.light },
+                      }}
+                      InputProps={{
+                        style: { color: theme.palette.text.main },
+                      }}
+                    />
+                  </Grid>
+                  {/* <Grid item xs={6}>
                                     <TextField
                                         required
                                         fullWidth
@@ -466,66 +482,70 @@ export default function CreateEventsPage() {
                                             <MenuItem value="hours">Hours</MenuItem>                                                </Select>
                                     </FormControl>
                                 </Grid> */}
-                <Grid item xs={12}>
-                  <InputLabel sx={{color: theme.palette.text.light}}>Pricing</InputLabel>
-                  <FormControl>
-                    <FormControl component="fieldset">
-                      <RadioGroup
-                        name="priceOptions"
-                        defaultValue="free"
-                        onChange={handleRadioChange}
-                        sx={{color: theme.palette.text.light}}
-                      >
-                        <FormControlLabel
-                          value="free"
-                          control={<Radio />}
-                          label="Free"
-                        />
-                        <FormControlLabel
-                          value="paid"
-                          control={<Radio />}
-                          label="Paid"
-                          disabled={isSubscribed ? false : true}
-                        />
-                        <TextField
-                          fullWidth
-                          label="Entry fee"
-                          name="price"
-                          helperText={priceHelperText}
-                          value={price}
-                          disabled={!paid}
-                          required={paid}
-                          error={priceErrorState}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">€</InputAdornment>
-                            ),
-                            style: { color: theme.palette.text.main },
-                          }}
-                          type="number"
-                          margin="normal"
-                          onChange={(event) => {
-                            if (event.target.value < 0) {
-                              event.target.value = 0;
-                            }
-                            setPrice(event.target.value);
-                            if (paid && event.target.value == 0) {
-                              setPriceErrorState(true);
-                              setPriceHelperText("Entry fee cannot be 0");
-                            } else {
-                              setPriceErrorState(false);
-                              setPriceHelperText("");
-                            }
-                          }}
-                          InputLabelProps={{
-                            style: { color: theme.palette.text.light },
-                          }}
-                        />
-                      </RadioGroup>
+                  <Grid item xs={12}>
+                    <InputLabel sx={{ color: theme.palette.text.light }}>
+                      Pricing
+                    </InputLabel>
+                    <FormControl>
+                      <FormControl component="fieldset">
+                        <RadioGroup
+                          name="priceOptions"
+                          defaultValue="free"
+                          onChange={handleRadioChange}
+                          sx={{ color: theme.palette.text.light }}
+                        >
+                          <FormControlLabel
+                            value="free"
+                            control={<Radio />}
+                            label="Free"
+                          />
+                          <FormControlLabel
+                            value="paid"
+                            control={<Radio />}
+                            label="Paid"
+                            disabled={isSubscribed ? false : true}
+                          />
+                          <TextField
+                            fullWidth
+                            label="Entry fee"
+                            name="price"
+                            helperText={priceHelperText}
+                            value={price}
+                            disabled={!paid}
+                            required={paid}
+                            error={priceErrorState}
+                            InputProps={{
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  €
+                                </InputAdornment>
+                              ),
+                              style: { color: theme.palette.text.main },
+                            }}
+                            type="number"
+                            margin="normal"
+                            onChange={(event) => {
+                              if (event.target.value < 0) {
+                                event.target.value = 0;
+                              }
+                              setPrice(event.target.value);
+                              if (paid && event.target.value == 0) {
+                                setPriceErrorState(true);
+                                setPriceHelperText("Entry fee cannot be 0");
+                              } else {
+                                setPriceErrorState(false);
+                                setPriceHelperText("");
+                              }
+                            }}
+                            InputLabelProps={{
+                              style: { color: theme.palette.text.light },
+                            }}
+                          />
+                        </RadioGroup>
+                      </FormControl>
                     </FormControl>
-                  </FormControl>
-                </Grid>
-                {/* {<Grid item xs={12}>    // image upload placeholder
+                  </Grid>
+                  {/* {<Grid item xs={12}>    // image upload placeholder
                                     <input
                                         accept="image/*"
                                         id="event-image-upload"
@@ -538,30 +558,30 @@ export default function CreateEventsPage() {
                                         </Button>
                                     </label>
                                 </Grid>} */}
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                  >
-                    Create Event
-                  </Button>
+                  <Grid item xs={12}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                    >
+                      Create Event
+                    </Button>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Container>
+              </CardContent>
+            </Card>
+          </Container>
 
-        <EventMediaDialog
-          myEventId={myEventId}
-          eventMedia={eventMedia}
-          isOpen={isMediaOpen}
-          handleClose={() => setIsMediaOpen(false)}
-          refreshMyEventMedia={refreshMyEventMedia}
-          deleteEventMedia={deleteEventMedia}
-        />
-      </Paper>
+          <EventMediaDialog
+            myEventId={myEventId}
+            eventMedia={eventMedia}
+            isOpen={isMediaOpen}
+            handleClose={() => setIsMediaOpen(false)}
+            refreshMyEventMedia={refreshMyEventMedia}
+            deleteEventMedia={deleteEventMedia}
+          />
+        </Paper>
         <MainFooter />
       </ProtectedComponent>
     </div>

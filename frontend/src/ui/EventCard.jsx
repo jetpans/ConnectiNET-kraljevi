@@ -60,8 +60,10 @@ export default function EventCard(props) {
         /*console.log("Mouse enter")*/
       }}
     >
-      <CardMedia src={card.image} key={card.id} />
-      <img style={{ objectFit: "cover", height: "40%" }} src={card.image} />
+      <CardMedia 
+        key={card.id} 
+      />
+      <img style={{ objectFit: "cover", height: card.image ? "20vh" : 0 }} src={card.image} />
       <CardContent sx={{ flexGrow: 1 }} key={card.id}>
         {/* <img src={card.image}></img> */}
         <Typography

@@ -37,6 +37,8 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import { useSnackbar } from "../context/SnackbarContext";
 import UserUploadedAvatar from "./UserUploadedAvatar";
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -56,9 +58,13 @@ export default function MainHeader(props) {
   const [profileImage, setProfileImage] = useState("");
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElNotification, setAnchorElNotification] = useState(null);
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+  const handleMenuCloseNotification = () => {
+    setAnchorElNotification(null);
   };
 
   useEffect(() => {
@@ -134,6 +140,9 @@ export default function MainHeader(props) {
   const handleOpenMenu = () => {
     setAnchorEl(document.getElementById("profile-image"));
   };
+  const handleOpenMenuNotification = () => {
+    setAnchorElNotification(document.getElementById("notification-icon"));
+  };
 
   useEffect(() => {
     if (user && user !== null && user.profileImage) {
@@ -157,6 +166,27 @@ export default function MainHeader(props) {
             <Button onClick={toggleTheme} id="change-color-button">
               <Brightness4Icon sx={{ color: "#FFF" }} />
             </Button>
+            <Button onClick={handleOpenMenuNotification} id="notification-icon">
+              <NotificationsIcon sx={{ color: "#FFF" }} />
+            </Button>
+            <Menu
+              id="notifications-menu"
+              anchorEl={anchorElNotification}
+              open={Boolean(anchorElNotification)}
+              onClose={handleMenuCloseNotification}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuItem
+                onClick={() => {}}
+              >
+                <Typography marginRight={2}>Notification1</Typography>
+              </MenuItem>
+              <MenuItem onClick={() => {}}>
+                <Typography marginRight={1}>Notification2</Typography>
+              </MenuItem>
+            </Menu>
             <Button onClick={handleOpenMenu} id="profile-image">
               {profileImage && profileImage !== "" ? (
                 <UserUploadedAvatar src={profileImage}></UserUploadedAvatar>

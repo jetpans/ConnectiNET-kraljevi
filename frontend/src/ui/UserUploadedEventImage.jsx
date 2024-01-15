@@ -33,8 +33,8 @@ export default function UserUploadedEventImage(props) {
       {props.src && props.src !== null ? (
         <img
           src={props.src}
-          alt="img"
-          style={{ width: "100%", height: "100%", marginTop: 0 }}
+          alt=""
+          style={{ width: '80vw', height: '30vh', aspectRatio: '16/9', objectFit: 'cover', overflow: "hidden" }}
         />
       ) : (
         <></>

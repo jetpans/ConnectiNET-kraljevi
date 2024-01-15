@@ -203,6 +203,7 @@ export default function EditEventPage() {
       .then((resp) => {
         if (resp.data.success === true) {
           setOldEventData(resp.data.data);
+          console.log(userData);
         }
       })
       .catch((error) => {
@@ -288,7 +289,7 @@ export default function EditEventPage() {
             <ProtectedComponent>
                 <CssBaseline />
                 <MainHeader for="Edit Event" />
-                {(oldEventData && userData.roleId == 1 && userData.accountId==oldEventData.accountId) || userData.roleId == -1 ? (
+                {(oldEventData && oldEventData.my_event) || userData.roleId == -1 ? (
                     <>
                     <Container maxWidth="sm">
                         {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>

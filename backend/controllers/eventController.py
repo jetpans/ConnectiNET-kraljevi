@@ -39,7 +39,8 @@ class EventController(Controller):
                 "accountId":event["accountId"],
                 "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
                 "price":event["price"],
-                "interest": sum(1 for interest in self.db.session.query(Interest).filter(Interest.eventId == event["eventId"]).all() if interest.degreeOfInterest == "interested")
+                "interest": sum(1 for interest in self.db.session.query(Interest).filter(Interest.eventId == event["eventId"]).all() if interest.degreeOfInterest == "interested"),
+                "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == event["accountId"] else False
 
 
             }, result_dict))
@@ -99,7 +100,10 @@ class EventController(Controller):
             "image_org": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().profileImage,
             "countryCode": MyEvent.countryCode,
             "eventType": MyEvent.eventType,
-            "end_time": str(end_time)
+            "end_time": str(end_time),
+            "username": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().username,
+            "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == MyEvent.accountId else False
+
         }
 
        
@@ -107,6 +111,7 @@ class EventController(Controller):
         
         return {"success":True, "data": event, "comments": comments}
     
+    @jwt_required()
     def getOrganizerPublicProfile(self, organizerId):
         organizer = self.db.session.query(Organizer).filter_by(accountId=organizerId).first()
         if organizer:
@@ -130,7 +135,8 @@ class EventController(Controller):
                     "image":event["displayImageSource"],
                     "description":event["description"],
                     "time":str(event["dateTime"]),
-                    "priority":str(int(random.random()*50))
+                    "priority":str(int(random.random()*50)),
+                    "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == event["accountId"] else False
                 }, result_dict))
 
             return jsonify({"success": True, "organizerInfo": profile, "organizerEvents": toList})

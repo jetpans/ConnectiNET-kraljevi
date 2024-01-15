@@ -24,7 +24,6 @@ import { useSnackbar } from "../context/SnackbarContext";
 
 export default function RegisterPage() {
   const API_URL = process.env.REACT_APP_API_URL;
-  const dc = new dataController();
 
   const [formState, setFormState] = useState("Visitor");
   const [showPassword, setShowPassword] = useState(false);
@@ -80,20 +79,22 @@ export default function RegisterPage() {
           // "countryCode": loginData.countryCode,
           // "email": loginData.email
           // });
-          alert("Registration successful! Please log in.");
-          navigate("/login");
+          openSnackbar("success", "Registration successful! Please log in.");
+          setTimeout(() => {
+            navigate("/login");
+          }, 300);
         } else {
           // console.log('Error!');
           // console.log(resp.data);
           if (resp.data.data === "Username already in use.") {
-            alert("Registration unsuccessful. Username already exists.");
+            openSnackbar("warning", "Registration unsuccessful. Username already exists.");
             return;
           }
-          alert("Registration unsuccessful. " + resp.data.data);
+          openSnackbar("warning", "Registration unsuccessful. " + resp.data.data);
         }
       })
       .catch((resp) => {
-        alert("Registration unsuccessful. " + resp.data.data);
+        openSnackbar("warning", "Registration unsuccessful. " + resp.data.data);
       });
   };
 
@@ -343,7 +344,6 @@ export default function RegisterPage() {
                         autoComplete="country"
                         helperText="3-letter country code, ex: HRV, AUT..."
                       /> */}
-                      />
                     </Grid>
                   </Grid>
                   <Button

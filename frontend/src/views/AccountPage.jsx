@@ -739,6 +739,7 @@ export default function AccountPage() {
                                 <TableCell>
                                   <Button
                                     key={country}
+                                    id={country}
                                     onClick={(e) => handleDeleteCountry(e)}
                                   >
                                     <DeleteIcon id={country}></DeleteIcon>
@@ -758,6 +759,7 @@ export default function AccountPage() {
                                 <TableCell>
                                   <Button
                                     key={type}
+                                    id={type}
                                     onClick={(e) => handleDeleteEventType(e)}
                                   >
                                     <DeleteIcon id={type}></DeleteIcon>

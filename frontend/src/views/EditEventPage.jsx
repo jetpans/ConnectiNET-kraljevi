@@ -1,7 +1,6 @@
 import React from "react";
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../context/SnackbarContext";
 import { useDialog } from "../context/DialogContext";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -96,7 +95,6 @@ export default function EditEventPage() {
   const [paid, setPaid] = useState(false); // paid option selected in radio button
   const [countries, setCountries] = useState(null);
   const [categories, setCategories] = useState(null);
-  const [price, setPrice] = useState(0);
   const [priceErrorState, setPriceErrorState] = useState(false);
   const [priceHelperText, setPriceHelperText] = useState(""); // TODO: implement helper text for price field
   const [imageDialogOpened, setImageDialogOpened] = useState(false);
@@ -104,12 +102,12 @@ export default function EditEventPage() {
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [oldEventData, setOldEventData] = useState(null);
+  const [price, setPrice] = useState(oldEventData && oldEventData !== null ? oldEventData.price : 0);
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("user"))
   );
 
   const { openSnackbar } = useSnackbar();
-  const navigate = useNavigate();
   const accessToken = localStorage.getItem("jwt");
   const API_URL = process.env.REACT_APP_API_URL;
   const dc = new dataController();
@@ -118,6 +116,13 @@ export default function EditEventPage() {
     useDialog();
 
   const { user } = useUser();
+
+  useEffect(() => {
+    if(oldEventData && oldEventData !== null && oldEventData.price && oldEventData.price !== null && oldEventData.price !== 0) {
+      setPrice(oldEventData.price);
+      setPaid(true);
+    }
+  }, [oldEventData]);
 
   const handleOpenImageUploadDialog = (eventId) => {
     const EventImageUploadDialog = (
@@ -203,7 +208,6 @@ export default function EditEventPage() {
       .then((resp) => {
         if (resp.data.success === true) {
           setOldEventData(resp.data.data);
-          console.log(userData);
         }
       })
       .catch((error) => {
@@ -212,19 +216,12 @@ export default function EditEventPage() {
   };
 
   useEffect(() => {
-    if (accessToken === null) {
-      navigate("/login");
-    } else {
-      fetchEventData();
-      fetchUserData();
-    }
-  }, []);
-  //console.log(oldEventData);
-
-  useEffect(() => {
+    fetchEventData();
+    fetchUserData();
     fetchCountries();
     fetchCategories();
-  }, []);
+  }, [user]);
+  //console.log(oldEventData);
 
 
   useEffect(() => {
@@ -233,7 +230,6 @@ export default function EditEventPage() {
         API_URL + "/api/getSubscriberInfo",
         localStorage.getItem("jwt")
       ).then((resp) => {
-        console.log(resp);
         setIsSubscribed(resp.data.data.isSubscribed);
       });
     }
@@ -263,39 +259,51 @@ export default function EditEventPage() {
       countryCode: data.get("country"),
       eventType: data.get("eventType"),
       dateTime: data.get("fromDate"),
-      duration: data.get("toDate"), // TODO: figure out duration
-      //durationUnit: data.get("durationUnit"),
-      price: data.get("price") || 0, // set price to 0 if it is null
+      duration: data.get("toDate"), 
+      price: data.get("price") || 0
     };
 
-    dc.PostData(API_URL + "/api/editEvent/" + eventId, updatedEventData, accessToken)
+    dc.PutData(API_URL + "/api/editEvent/" + eventId, eventId, updatedEventData, accessToken)
         .then((resp) => {
         if (resp.success === true) { 
-            openSnackbar("success", "Event updated successfully!");
-            handleOpenImageUploadDialog(resp.data.data.eventId);
+          openSnackbar("success", "Event updated successfully!");
+          handleOpenImageUploadDialog(resp.data.data.eventId);
         } else {
-            openSnackbar("error", "Error updating event");
+          openSnackbar("error", "Error updating event. Error: " + resp.message);
         }
         })
         .catch((resp) => {
-            openSnackbar("error", "Error updating event");
+          openSnackbar("error", "Error updating event");
         });
     }
 
     const { theme } = useTheme();
 
         return (
-        <div>
-            <ProtectedComponent>
+        <ProtectedComponent roles={[1, -1]}>
+          <div
+            style={{
+              minHeight: "100vh",
+            }}
+          >
                 <CssBaseline />
                 <MainHeader for="Edit Event" />
+                <Paper
+                      sx={{
+                        bgcolor: theme.palette.background.default,
+                        minHeight: "100vh",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                      }}
+                    >
                 {(oldEventData && oldEventData.my_event) || userData.roleId == -1 ? (
-                    <>
-                    <Container maxWidth="sm">
+                    <Container sx={{marginTop: 6, marginBottom: 6}}>
                         {/* <Typography variant="h4" align="center" gutterBottom marginTop={3}>
                                                     Edit Event
                                             </Typography> */}
-                        <Card elevation={4}>
+                        <Card elevation={4} sx={{width: '60vw', display: 'flex', position: 'center', bgcolor: theme.palette.background.table}}>
                             <CardContent>
                                 <Grid
                                     container
@@ -308,6 +316,10 @@ export default function EditEventPage() {
                                             inputProps={{
                                                 pattern: ".{1,200}",
                                                 title: "Must be under 200 characters long",
+                                                style: { color: theme.palette.text.main }
+                                            }}
+                                            InputLabelProps={{
+                                              style: { color: theme.palette.text.light },
                                             }}
                                             required
                                             fullWidth
@@ -321,6 +333,10 @@ export default function EditEventPage() {
                                             inputProps={{
                                                 maxLength: 2000,
                                                 title: "Must be under 2000 characters long",
+                                                style: { color: theme.palette.text.main }
+                                            }}
+                                            InputLabelProps={{
+                                              style: { color: theme.palette.text.light },
                                             }}
                                             required
                                             fullWidth
@@ -336,6 +352,10 @@ export default function EditEventPage() {
                                             inputProps={{
                                                 pattern: "[A-Za-z ]{1,50}",
                                                 title: "Letters only (max 50 characters)",
+                                                style: { color: theme.palette.text.main }
+                                            }}
+                                            InputLabelProps={{
+                                              style: { color: theme.palette.text.light },
                                             }}
                                             required
                                             fullWidth
@@ -349,6 +369,10 @@ export default function EditEventPage() {
                                             inputProps={{
                                                 pattern: ".{1,100}",
                                                 title: "Must be under 100 characters long",
+                                                style: { color: theme.palette.text.main }
+                                            }}
+                                            InputLabelProps={{
+                                              style: { color: theme.palette.text.light },
                                             }}
                                             required
                                             fullWidth
@@ -359,14 +383,15 @@ export default function EditEventPage() {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormControl fullWidth>
-                                            <InputLabel id="country-select-label">Country</InputLabel>
+                                            <InputLabel id="country-select-label" sx={{color: theme.palette.text.light}}>Country</InputLabel>
                                             {/* TODO: fix changing from uncontrolled input to controlled input */}
                                             <Select
                                                 labelId="country-select-label"
                                                 label="Country"
                                                 name="country"
                                                 required
-                                                defaultValue={oldEventData.countryCode}>
+                                                defaultValue={oldEventData.countryCode}
+                                                sx={{color: theme.palette.text.light}}>
                                                 <MenuItem value="none" disabled>
                                                     Select a Country
                                                 </MenuItem>
@@ -384,7 +409,7 @@ export default function EditEventPage() {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormControl fullWidth>
-                                            <InputLabel id="event-type-select-label">
+                                            <InputLabel id="event-type-select-label" sx={{color: theme.palette.text.light}}>
                                                 Event Type
                                             </InputLabel>
                                             <Select
@@ -393,6 +418,7 @@ export default function EditEventPage() {
                                                 name="eventType"
                                                 required
                                                 defaultValue={oldEventData.eventType}
+                                                sx={{color: theme.palette.text.light}}
                                             >
                                                 <MenuItem value="none" disabled>
                                                     Select a Type
@@ -423,7 +449,11 @@ export default function EditEventPage() {
                                             type="datetime-local"
                                             defaultValue={oldEventData.time.slice(0, 10) + "T" + oldEventData.time.slice(11, 16)}
                                             InputLabelProps={{
-                                                shrink: true,
+                                              shrink: true,
+                                              style: { color: theme.palette.text.light },
+                                            }}
+                                            InputProps={{
+                                              style: { color: theme.palette.text.main },
                                             }}
                                         />
                                     </Grid>
@@ -441,7 +471,11 @@ export default function EditEventPage() {
                                             type="datetime-local"
                                             defaultValue={oldEventData.end_time.slice(0, 10) + "T" + oldEventData.end_time.slice(11, 16)}
                                             InputLabelProps={{
-                                                shrink: true,
+                                              shrink: true,
+                                              style: { color: theme.palette.text.light },
+                                            }}
+                                            InputProps={{
+                                              style: { color: theme.palette.text.main },
                                             }}
                                         />
                                     </Grid>
@@ -469,13 +503,14 @@ export default function EditEventPage() {
                                                                             </FormControl>
                                                                     </Grid> */}
                                     <Grid item xs={12}>
-                                        <InputLabel>Pricing</InputLabel>
+                                        <InputLabel sx={{color: theme.palette.text.light}}>Pricing</InputLabel>
                                         <FormControl>
                                             <FormControl component="fieldset">
                                                 <RadioGroup
                                                     name="priceOptions"
                                                     defaultValue={oldEventData.price == 0 ? "free" : "paid"}
                                                     onChange={handleRadioChange}
+                                                    sx={{color: theme.palette.text.light}}
                                                 >
                                                     <FormControlLabel
                                                         value="free"
@@ -500,8 +535,9 @@ export default function EditEventPage() {
                                                         error={priceErrorState}
                                                         InputProps={{
                                                             endAdornment: (
-                                                                <InputAdornment position="end">€</InputAdornment>
+                                                                <InputAdornment position="end" sx={{ color: theme.palette.text.main }}>€</InputAdornment>
                                                             ),
+                                                            style: {color: theme.palette.text.main}
                                                         }}
                                                         type="number"
                                                         margin="normal"
@@ -517,6 +553,9 @@ export default function EditEventPage() {
                                                                 setPriceErrorState(false);
                                                                 setPriceHelperText("");
                                                             }
+                                                        }}
+                                                        InputLabelProps={{
+                                                          style: { color: theme.palette.text.light },
                                                         }}
                                                     />
                                                 </RadioGroup>
@@ -550,22 +589,22 @@ export default function EditEventPage() {
                             </CardContent>
                         </Card>
                     </Container>
-                    </>
                 ) : <>
                     <Card sx={{
-                    height: "100%",
-                    margin: 4,
-                    p: 2,
-                    bgcolor: theme.palette.background.default,
-                    color: theme.palette.text,
+                      height: "100%",
+                      margin: 4,
+                      p: 2,
+                      bgcolor: theme.palette.background.table,
+                      color: theme.palette.text,
                     }}
                     elevation={4}>
                         <Typography
                             variant="h5"
                             gutterBottom
                             color={theme.palette.text.main}
+                            minWidth={'70vw'}
                         >
-                            Oops, this isn't your event!
+                            Loading...
                         </Typography>
                             
                     </Card>
@@ -578,8 +617,9 @@ export default function EditEventPage() {
                     refreshMyEventMedia={refreshMyEventMedia}
                     deleteEventMedia={deleteEventMedia}
                 />
-                <MainFooter />
-            </ProtectedComponent>
-        </div>
+              </Paper>
+              <MainFooter />
+            </div>
+          </ProtectedComponent>
         );
         }

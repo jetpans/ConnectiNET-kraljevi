@@ -274,14 +274,12 @@ export default function CreateEventsPage() {
                     inputProps={{
                       pattern: ".{1,200}",
                       title: "Must be under 200 characters long",
+                      style: { color: theme.palette.text.main }
                     }}
                     required
                     fullWidth
                     label="Event Name"
                     name="eventName"
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
                     InputLabelProps={{
                       style: { color: theme.palette.text.light },
                     }}
@@ -292,6 +290,7 @@ export default function CreateEventsPage() {
                     inputProps={{
                       maxLength: 2000,
                       title: "Must be under 2000 characters long",
+                      style: { color: theme.palette.text.main }
                     }}
                     required
                     fullWidth
@@ -299,9 +298,6 @@ export default function CreateEventsPage() {
                     name="description"
                     multiline
                     rows={4}
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
                     InputLabelProps={{
                       style: { color: theme.palette.text.light },
                     }}
@@ -312,14 +308,12 @@ export default function CreateEventsPage() {
                     inputProps={{
                       pattern: "[A-Za-z ]{1,50}",
                       title: "Letters only (max 50 characters)",
+                      style: { color: theme.palette.text.main }
                     }}
                     required
                     fullWidth
                     label="City"
                     name="city"
-                    InputProps={{
-                      style: { color: theme.palette.text.main },
-                    }}
                     InputLabelProps={{
                       style: { color: theme.palette.text.light },
                     }}
@@ -379,6 +373,7 @@ export default function CreateEventsPage() {
                       label="Event Type"
                       name="eventType"
                       required
+                      sx={{color: theme.palette.text.light}}
                     >
                       <MenuItem value="none" disabled>
                         Select a Type

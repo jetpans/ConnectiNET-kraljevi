@@ -29,7 +29,7 @@ export default function UserUploadedEventImage(props) {
   }, [props]);
 
   return (
-    <>
+    <div style={{ overflowX: 'hidden', display: 'flex', position: 'center' }}>
       {props.src && props.src !== null ? (
         <img
           src={props.src}
@@ -39,6 +39,6 @@ export default function UserUploadedEventImage(props) {
       ) : (
         <></>
       )}
-    </>
+    </div>
   );
 }

@@ -11,8 +11,7 @@ import Box from "@mui/material/Box";
 
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { useParams } from "react-router-dom";
-import UserUploadedImage from "../ui/UserUploadedImage";
+import { Link, useParams } from "react-router-dom";
 
 import { green, grey, indigo } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -63,13 +62,8 @@ export default function OrganizerProfile() {
     window.open(url, "_blank");
   }
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("jwt");
-    if (accessToken === null) {
-      navigate("/login");
-    } else {
-      fetchData();
-    }
+  useEffect(() => {    
+    fetchData();
   }, []);
 
   const { theme } = useTheme();
@@ -136,19 +130,23 @@ export default function OrganizerProfile() {
                         {organizerInfo.organizerName}
                       </Typography>
                       <Divider />
-                      <Typography color={theme.palette.text.main}>
-                        {organizerInfo.username}
-                        <br></br>({organizerInfo.country})
+                      <Typography color={theme.palette.text.main} sx={{paddingTop: 1}}>
+                        {/* {organizerInfo.username} */}
+                        {organizerInfo.country}
                       </Typography>
                       {organizerInfo.socials ? (
                         <>
-                          <CardActions>
+                          <CardActions sx={{paddingLeft: 0, paddingTop: 1}}>
                             <Button
+                              size="large"
                               variant="outlined"
-                              size="small"
                               onClick={goToSocials}
+                              sx={{
+                                color: theme.palette.primary.main,
+                                borderColor: theme.palette.primary.main
+                              }}
                             >
-                              {organizerInfo.organizerName}'s Socials
+                              Visit us
                             </Button>
                           </CardActions>
                         </>

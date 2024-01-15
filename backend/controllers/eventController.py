@@ -144,6 +144,8 @@ class EventController(Controller):
                     "description":event["description"],
                     "time":str(event["dateTime"]),
                     "priority":str(int(random.random()*50)),
+                    "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
+                    "price":event["price"],
                     "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == event["accountId"] else False
                 }, result_dict))
 

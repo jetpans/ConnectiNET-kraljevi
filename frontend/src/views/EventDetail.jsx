@@ -240,7 +240,7 @@ export default function EventDetail(props) {
                 <Typography variant="body1" color={theme.palette.text.main} ml={1}>
                     {"Coming: " + cards.interested + " | Interested: " + cards.maybe + " | Not coming: " + cards.nointerest}
                 </Typography>
-                {user && user !== null && user.roleId === 0 ? 
+                {user && user !== null && user.roleId === 0 && canComment.current === true ? 
                 <Box ml={0}>
                     <Button size="small" ml={1} mr={1}>
                         <Typography onClick={() => {handlePickInterest(1)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm coming</Typography>

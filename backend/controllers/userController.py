@@ -55,9 +55,7 @@ class UserController(Controller):
     @visitor_required()
     def changeInformation(self):
         data = request.get_json()
-        print(f"recieved {data}")
         result = self.testChangeForm(data)
-        print(f"result {result}")
 
         myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
         myOrganiser = self.db.session.query(Organizer).filter(Organizer.accountId == myUser.accountId).first()
@@ -71,6 +69,8 @@ class UserController(Controller):
                 myUser.passwordHash = passwordHash
             f = data
             
+            logging.warning(f)
+            
             myUser.eMail =  f["email"]
             myUser.countryCode = f["countryCode"]
             
@@ -80,6 +80,7 @@ class UserController(Controller):
             elif roleId == 1:
                 myOrganiser.organizerName = f["organizerName"]
                 myOrganiser.hidden = f["hidden"] == "true"
+                myOrganiser.socials = f["socials"]
             self.db.session.commit()
             return {"success": True, "data": "Changed data successfuly"}
         
@@ -95,10 +96,11 @@ class UserController(Controller):
             dict["firstName"] = r[1]
             dict["lastName"] = r[2]
         elif claims["roleId"] == 1:
-            r = self.db.session.query(Account, Organizer.organizerName, Organizer.hidden).join(Organizer, Account.accountId == Organizer.accountId).filter(Account.username == get_jwt_identity()).first()
+            r = self.db.session.query(Account, Organizer.organizerName, Organizer.hidden, Organizer.socials).join(Organizer, Account.accountId == Organizer.accountId).filter(Account.username == get_jwt_identity()).first()
             dict = r[0].__dict__
             dict["organiserName"] = r[1]
             dict["hidden"] = str(r[2])
+            dict["socials"] = str(r[3])
 
         else:
             return {"success": True, "data": "Invalid role"}

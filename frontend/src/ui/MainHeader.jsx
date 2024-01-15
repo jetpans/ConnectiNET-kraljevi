@@ -146,6 +146,7 @@ export default function MainHeader(props) {
 
   useEffect(() => {
     if (user && user !== null && user.profileImage) {
+      console.log(user.profileImage);
       setProfileImage(user.profileImage);
     }
   }, [user]);
@@ -188,9 +189,7 @@ export default function MainHeader(props) {
               </MenuItem>
             </Menu>
             <Button onClick={handleOpenMenu} id="profile-image">
-              {profileImage && profileImage !== "" ? (
-                <UserUploadedAvatar src={profileImage}></UserUploadedAvatar>
-              ) : null}
+              <UserUploadedAvatar src={profileImage}></UserUploadedAvatar>
             </Button>
             {/* <Avatar alt="User Profile Picture" src={"/" + user.profileImage ? user.profileImage : ""} /> */}
             {/* <Button onClick={handleLogout}>

@@ -272,6 +272,7 @@ export default function AccountPage() {
       lastName: data.get("lastName"),
       organizerName: data.get("organizerName"),
       hidden: data.get("hidden"),
+      socials: data.get("socials")
     };
 
     dc.PostData(API_URL + "/api/changeInformation", loginData, accessToken)
@@ -427,7 +428,7 @@ export default function AccountPage() {
                       </TableRow>
                       <TableRow>
                         <TableCell sx={{ color: theme.palette.text.main }}>
-                          Role ID
+                          Role
                         </TableCell>
                         <TableCell sx={{ color: theme.palette.text.main }}>
                           {userData.roleId == -1
@@ -446,6 +447,9 @@ export default function AccountPage() {
                             inputProps={{
                               type: "email",
                             }}
+                            sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                              color: theme.palette.text.main, // Set text color of the TextField input
+                            } }}
                             required
                             defaultValue={userData.eMail}
                             id="email"
@@ -461,7 +465,7 @@ export default function AccountPage() {
                       </TableRow>
                       <TableRow>
                         <TableCell sx={{ color: theme.palette.text.main }}>
-                          Country Code
+                          Country
                         </TableCell>
                         {editMode ? (
                           <TextField
@@ -478,6 +482,9 @@ export default function AccountPage() {
                             defaultValue={countryCode}
                             placeholder={countryCode}
                             select
+                            sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                              color: theme.palette.text.main, // Set text color of the TextField input
+                            } }}
                           >
                             {countries != null ? (
                               countries.map((country) => (
@@ -518,6 +525,9 @@ export default function AccountPage() {
                                 required
                                 id="organizerName"
                                 autoFocus
+                                sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                                  color: theme.palette.text.main, // Set text color of the TextField input
+                                } }}
                               />
                             ) : (
                               <TableCell
@@ -544,6 +554,9 @@ export default function AccountPage() {
                                 }
                                 placeholder={hidden}
                                 select
+                                sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                                  color: theme.palette.text.main, // Set text color of the TextField input
+                                } }}
                               >
                                 <MenuItem value={true}>True</MenuItem>
                                 <MenuItem value={false}>False</MenuItem>
@@ -573,12 +586,37 @@ export default function AccountPage() {
                                 type={"password"}
                                 id="password"
                                 autoComplete="new-password"
+                                sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                                  color: theme.palette.text.main, // Set text color of the TextField input
+                                } }}
                               />
                             ) : (
                               <TableCell
                                 sx={{ color: theme.palette.text.main }}
                               >
                                 *********
+                              </TableCell>
+                            )}
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ color: theme.palette.text.main }}>
+                              Website/Facebook Link:
+                            </TableCell>
+                            {editMode ? (
+                              <TextField
+                                fullWidth
+                                name="socials"
+                                id="socials"
+                                sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                                  color: theme.palette.text.main, // Set text color of the TextField input
+                                } }}
+                                defaultValue={userData.socials}
+                              />
+                            ) : (
+                              <TableCell
+                                sx={{ color: theme.palette.text.main }}
+                              >
+                                {userData.socials ? userData.socials : "None"}
                               </TableCell>
                             )}
                           </TableRow>
@@ -602,6 +640,9 @@ export default function AccountPage() {
                                 fullWidth
                                 id="firstName"
                                 autoFocus
+                                sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                                  color: theme.palette.text.main, // Set text color of the TextField input
+                                } }}
                               />
                             ) : (
                               <TableCell
@@ -613,7 +654,7 @@ export default function AccountPage() {
                           </TableRow>
                           <TableRow>
                             <TableCell sx={{ color: theme.palette.text.main }}>
-                              LastName
+                              Last Name
                             </TableCell>
                             {editMode ? (
                               <TextField
@@ -627,6 +668,9 @@ export default function AccountPage() {
                                 id="lastName"
                                 name="lastName"
                                 autoComplete="family-name"
+                                sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                                  color: theme.palette.text.main, // Set text color of the TextField input
+                                } }}
                               />
                             ) : (
                               <TableCell
@@ -654,6 +698,9 @@ export default function AccountPage() {
                                 type={"password"}
                                 id="password"
                                 autoComplete="new-password"
+                                sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                                  color: theme.palette.text.main, // Set text color of the TextField input
+                                } }}
                               />
                             ) : (
                               <TableCell
@@ -773,7 +820,7 @@ export default function AccountPage() {
                     </TableRow>
 
                     <TableRow>
-                      <TableCell>
+                      <TableCell sx={{ color: theme.palette.text.main }}>
                         <TextField
                           required
                           name="notif-country"
@@ -791,17 +838,12 @@ export default function AccountPage() {
                             input: { color: theme.palette.text.main },
                             "& .MuiInputBase-root": {
                               color: theme.palette.text.main, // Set text color of the TextField input
-                            },
+                            }
                           }}
-                          SelectProps={{
-                            MenuProps: {
-                              PaperProps: {
-                                style: {
-                                  backgroundColor:
-                                    theme.palette.background.default,
-                                },
-                              },
-                            },
+                          InputLabelProps={{
+                            style: {
+                              color: theme.palette.text.main,
+                            }
                           }}
                         >
                           {countries != null ? (
@@ -833,6 +875,14 @@ export default function AccountPage() {
                             setNotificationEventType(event.target.value)
                           }
                           select
+                          sx={{ marginRight: "2rem", bgcolor: theme.palette.background.defaut, input: { color: theme.palette.text.light }, '& .MuiInputBase-root': {
+                            color: theme.palette.text.main, // Set text color of the TextField input
+                          } }}
+                          InputLabelProps={{
+                            style: {
+                              color: theme.palette.text.main,
+                            }
+                          }}
                         >
                           {eventTypes != null ? (
                             eventTypes.map((type) =>

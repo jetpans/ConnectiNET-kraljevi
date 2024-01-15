@@ -12,14 +12,13 @@ import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { Paper } from "@mui/material";
+import { Paper, InputLabel, MenuItem } from "@mui/material";
 import dataController from "../utils/DataController";
-
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-
-import { useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { checkToken } from "../utils/ProtectedComponent";
 import { useSnackbar } from "../context/SnackbarContext";
 
@@ -28,12 +27,19 @@ export default function RegisterPage() {
 
   const [formState, setFormState] = useState("Visitor");
   const [showPassword, setShowPassword] = useState(false);
-
+  const [countryCode, setCountryCode] = useState("");
+  const [countries, setCountries] = useState(null);
   const { user, updateUser, logout, loading } = useUser();
   const { openSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
   const dc = new dataController();
+
+  const fetchCountries = async () => {
+    await dc
+      .GetData(API_URL + "/api/countries")
+      .then((resp) => setCountries(resp.data.data));
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -74,35 +80,23 @@ export default function RegisterPage() {
           // "email": loginData.email
           // });
           openSnackbar("success", "Registration successful! Please log in.");
-          navigate("/login");
+          setTimeout(() => {
+            navigate("/login");
+          }, 300);
         } else {
           // console.log('Error!');
           // console.log(resp.data);
           if (resp.data.data === "Username already in use.") {
-            openSnackbar("error", "Registration unsuccessful. Username already exists.");
+            openSnackbar("warning", "Registration unsuccessful. Username already exists.");
             return;
           }
-          openSnackbar("error", "Registration unsuccessful. " + resp.data.data);
+          openSnackbar("warning", "Registration unsuccessful. " + resp.data.data);
         }
       })
       .catch((resp) => {
-        openSnackbar("error", "Registration unsuccessful. " + resp.data.data);
+        openSnackbar("warning", "Registration unsuccessful. " + resp.data.data);
       });
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem("jwt");
-
-    if(token !== null) {
-      const tokenValid = checkToken(token);
-      if(tokenValid === true) {
-        navigate("/events");
-      } else {
-        localStorage.removeItem("jwt");
-        logout();
-      }
-    }
-  }, []);
 
   useEffect(() => {
     if(user !== null) {
@@ -124,6 +118,7 @@ export default function RegisterPage() {
         }).catch((response) => { console.log(response) });
       }
     }
+    fetchCountries();
   }, [user]);
 
   return (
@@ -201,7 +196,6 @@ export default function RegisterPage() {
                           value="Visitor"
                           control={<Radio />}
                           label="Visitor"
-
                         />
                         <FormControlLabel
                           value="Organizer"
@@ -214,6 +208,10 @@ export default function RegisterPage() {
                       <>
                         <Grid item xs={12} sm={6}>
                           <TextField
+                            inputProps={{
+                              pattern: "[A-Za-z]+",
+                              title: "Must contain only letters.",
+                            }}
                             autoComplete="first-name"
                             name="firstName"
                             required
@@ -225,6 +223,10 @@ export default function RegisterPage() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <TextField
+                            inputProps={{
+                              pattern: "[A-Za-z]+",
+                              title: "Must contain only letters.",
+                            }}
                             required
                             fullWidth
                             id="lastName"
@@ -239,6 +241,10 @@ export default function RegisterPage() {
                       <>
                         <Grid item xs={12}>
                           <TextField
+                            inputProps={{
+                              pattern: "[A-Za-z]+",
+                              title: "Must contain only letters.",
+                            }}
                             autoComplete="organizer-name"
                             name="organizerName"
                             required
@@ -252,6 +258,10 @@ export default function RegisterPage() {
                     ) : null}
                     <Grid item xs={12}>
                       <TextField
+                        inputProps={{
+                          pattern: ".{6,20}",
+                          title: "Must be between 6 and 20 characters long",
+                        }}
                         required
                         fullWidth
                         name="username"
@@ -264,6 +274,9 @@ export default function RegisterPage() {
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
+                        inputProps={{
+                          type: "email",
+                        }}
                         required
                         fullWidth
                         id="email"
@@ -274,6 +287,11 @@ export default function RegisterPage() {
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
+                        inputProps={{
+                          pattern: "[a-zA-Z0-9]*[a-z]+[0-9]+[a-zA-Z0-9]*",
+                          title:
+                            "Must contain at least one lowercase letter, digit and be at least 8 characters long.",
+                        }}
                         required
                         fullWidth
                         name="password"
@@ -293,6 +311,31 @@ export default function RegisterPage() {
                     <Grid item xs={12}>
                       <TextField
                         required
+                        labelId="country-label"
+                        name="country"
+                        id="country"
+                        value={countryCode}
+                        label="Country"
+                        onChange={(event) => setCountryCode(event.target.value)}
+                        style={{ width: "50%" }}
+                        placeholder="Country"
+                        select
+                      >
+                        {countries != null ? (
+                          countries.map((country) => (
+                            <MenuItem
+                              key={country.countryCode}
+                              value={country.countryCode}
+                            >
+                              {country.name}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <MenuItem value={""}>Loading...</MenuItem>
+                        )}
+                      </TextField>
+                      {/* <TextField
+                        required
                         fullWidth
                         name="country"
                         label="Country code"
@@ -300,7 +343,7 @@ export default function RegisterPage() {
                         id="country"
                         autoComplete="country"
                         helperText="3-letter country code, ex: HRV, AUT..."
-                      />
+                      /> */}
                     </Grid>
                   </Grid>
                   <Button

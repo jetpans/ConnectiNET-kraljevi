@@ -18,8 +18,9 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-
 import { useState, useContext, useEffect } from "react";
+import { checkToken } from "../utils/ProtectedComponent";
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function RegisterPage() {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -30,8 +31,10 @@ export default function RegisterPage() {
   const [countryCode, setCountryCode] = useState("");
   const [countries, setCountries] = useState(null);
   const { user, updateUser, logout, loading } = useUser();
+  const { openSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
+  const dc = new dataController();
 
   const fetchCountries = async () => {
     await dc
@@ -95,12 +98,27 @@ export default function RegisterPage() {
   };
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("jwt");
-    if (accessToken !== null) {
-      navigate("/events");
+    if(user !== null) {
+      const accessToken = localStorage.getItem("jwt");
+      if(accessToken === null) {
+        logout();
+      } else {
+        dc.GetData(API_URL + "/api/getInformation", accessToken)
+        .then((response) => {
+          updateUser({
+            username: user.username,
+            roleId: user.roleId,
+            countryCode: user.countryCode,
+            email: user.email,
+            profileImage: response.data.data.profileImage,
+          });
+        }).then((resp) => {
+          navigate("/events");
+        }).catch((response) => { console.log(response) });
+      }
     }
     fetchCountries();
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -325,6 +343,7 @@ export default function RegisterPage() {
                         autoComplete="country"
                         helperText="3-letter country code, ex: HRV, AUT..."
                       /> */}
+                      />
                     </Grid>
                   </Grid>
                   <Button

@@ -4,3 +4,11 @@ flask_bcrypt
 python-dotenv
 gunicorn
 flask_jwt_extended
+datetime
+dateutils
+flask_mail
+mailjet_rest
+firebase-admin
+google-cloud-storage
+# firebase_config
+python-firebase

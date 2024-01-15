@@ -42,6 +42,28 @@ class dataController {
       .finally(() => {});
   }
 
+  PutData(path, id, data, token) {
+    return fetch(path, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({
+        id: id,
+        data: data,
+      })
+    })
+      .then(handleRequest)
+      .then((data) => {
+        return Promise.resolve({ success: true, data: data });
+      })
+      .catch((err) => {
+        return Promise.reject({ success: false, error: err });
+      })
+      .finally(() => {});
+  }
+
   PostFile(path, file, token) {
     return fetch(path, {
       method: "POST",
@@ -74,6 +96,9 @@ class dataController {
 async function handleRequest(response) {
   const text = await response.text();
   const data = text && JSON.parse(text);
+  if(data !== null && data.data !== undefined && data.data !== null && data.data.access_token !== undefined && data.data.access_token !== null) {
+    localStorage.setItem('jwt', data.data.access_token);
+  }
 
   if (!response.ok) {
     if (response.status === 401) {

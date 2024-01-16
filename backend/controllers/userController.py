@@ -24,9 +24,10 @@ from datetime import datetime
 
 
 class UserController(Controller):
-    def __init__(self, app, db, bcrypt, jwt):
+    def __init__(self, app, db, bcrypt, jwt,mail):
         super().__init__(app, db, jwt)
         self.bcrypt = bcrypt
+        self.mail = mail
 
         self.app.add_url_rule("/api/changeInformation", view_func=self.changeInformation, methods=["POST"])
         self.app.add_url_rule("/api/getInformation", view_func=self.getMoreInfo, methods=["GET"])
@@ -138,7 +139,6 @@ class UserController(Controller):
         return "OK"
         
 
-    
     def countries(self):
         dbResp = self.db.session.query(Country).all() 
         result_dict = [u.__dict__ for u in dbResp]
@@ -168,7 +168,7 @@ class UserController(Controller):
             # If no data is found, return a message indicating that
             return {"success":False, "data": "No such user"}
       
-    @jwt_required()  
+    @organiser_required()  
     # @organiser_required()
     def subscribe(self):
         formData = request.get_json()
@@ -370,8 +370,7 @@ class UserController(Controller):
             return {"success":False, "message": "Can't delete account."}
         return {"success":True, "message": "Successfuly deleted account."}
 
-    #@organiser_required()
-    @jwt_required()
+    @organiser_required()
     def createEvent(self):
         data = request.get_json()
         accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
@@ -396,6 +395,10 @@ class UserController(Controller):
                              accountId)
             self.db.session.add(newEvent)
             self.db.session.commit()
+            try:
+                self.sendCreateEventMessage(newEvent)
+            except:
+                pass
             return {"success":True, "data": {"eventId": newEvent.eventId}}
         else:
             return result
@@ -459,8 +462,9 @@ class UserController(Controller):
         all_data = request.get_json()
         data = all_data["data"]
         id = all_data["id"]
-        event_to_update = self.db.session.query(Event).filter(Event.eventId == id).first()
         accountId = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId
+
+        event_to_update = self.db.session.query(Event).filter(and_(Event.eventId == id , Event.accountId == accountId)).first()
         result = self.testEditEventForm(data)
 
         start_time = datetime.strptime(data["dateTime"], "%Y-%m-%dT%H:%M")
@@ -498,3 +502,43 @@ class UserController(Controller):
         
     def testEditEventForm(self, form):
         return self.testCreateEventForm(form)
+    
+    def sendCreateEventMessage(self, event):
+        senders = self.db.session.query(NotificationCountry).join(NotificationEventType, NotificationEventType.accountId == NotificationCountry.accountId)\
+            .filter(and_(NotificationEventType.eventType == event.eventType, NotificationCountry.countryCode == event.countryCode)).all()
+        
+        
+        data = {'Messages': []}
+        for user in senders:
+            email = user.email
+            username = user.username
+            message = {
+                                "From": {
+                                        "Email": "connectinetkraljevi@gmail.com",
+                                        "Name": "ConnectiNET Kraljevi"
+                                },
+                                "To": [
+                                        {
+                                                "Email": email,
+                                                "Name": username
+                                        }
+                                ],
+                                "Subject": f"ConnectiNET new event for YOU",
+                                "TextPart": f"""A new event you might be interested in was just created. 
+                                Check out our page to find out more!
+                                Event name is {event.title} and it is happening at {event.dateTime} in
+                                {event.countryCode}.
+                                
+                                Regards,
+                                ConnectiNET team
+                                """,
+                        },
+            data['Messages'].append(message)
+            
+        result = self.mail.send.create(data=data)
+        
+        return result;
+
+            
+            
+            

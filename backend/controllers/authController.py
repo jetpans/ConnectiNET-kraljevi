@@ -54,27 +54,10 @@ class AuthController(Controller):
                 newOrganizer = Organizer(f["organizerName"], newAcc.accountId)
                 self.db.session.add(newOrganizer)
             self.db.session.commit()
-            
-            data = {
-            'Messages': [
-                            {
-                                    "From": {
-                                            "Email": "connectinetkraljevi@gmail.com",
-                                            "Name": "ConnectiNET Kraljevi"
-                                    },
-                                    "To": [
-                                            {
-                                                    "Email": "stjepan.djelekovcan@gmail.com",
-                                                    "Name": "Test"
-                                            }
-                                    ],
-                                    "Subject": "My first mail!",
-                                    "TextPart": f"User {f['username']} just registered.",
-                            }
-                    ]
-            }
-            result = self.mail.send.create(data=data)
-            print("RESULT OF SEND: ", result)
+            try:
+                self.sendRegistrationMessage(f)
+            except:
+                pass;
             return {"success": True, "data": "Registration successful."}
         
         return result
@@ -181,3 +164,55 @@ class AuthController(Controller):
         return {"success":True, "data": toList}
 
     
+    def sendRegistrationMessage(self, f):
+        del f['password']
+        data = {
+        'Messages': [
+                        {
+                                "From": {
+                                        "Email": "connectinetkraljevi@gmail.com",
+                                        "Name": "ConnectiNET Kraljevi"
+                                },
+                                "To": [
+                                        {
+                                                "Email": "connectinetkraljevi@gmail.com",
+                                                "Name": "Test"
+                                        }
+                                ],
+                                "Subject": f"User registration [{f['username']}]",
+                                "TextPart": f"Following user just registered: " + str(f),
+                        },
+                        {
+                                "From": {
+                                        "Email": "connectinetkraljevi@gmail.com",
+                                        "Name": "ConnectiNET Kraljevi"
+                                },
+                                "To": [
+                                        {
+                                                "Email": f['email'],
+                                                "Name": f['username']
+                                        }
+                                ],
+                                "Subject": f"ConnectiNET Confirm registration [{f['username']}]",
+                                "TextPart": f"""Thanks for registering with us {f['username']}. 
+                                We hope you enjoy your stay.
+                                
+                                Regards,
+                                team Kraljevi
+                                
+                                Our githubs: 
+                                aleksicfilip
+                                Domagoj2002
+                                Dujet
+                                ep1902
+                                jetpans
+                                |Luka|
+                                PapakMate
+                                """,
+                        }
+                ],
+        
+        
+        }
+        result = self.mail.send.create(data=data)
+        print("RESULT OF SEND: ", result)

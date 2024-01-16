@@ -65,7 +65,10 @@ export default function ImageUploadButton(props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", ...props.style }}>
-      <InputLabel htmlFor="image" style={{ width: "100%", marginTop: 2 }}>
+      <InputLabel
+        htmlFor={"image" + props.route}
+        style={{ width: "100%", marginTop: 2 }}
+      >
         <Button
           variant="contained"
           component="span"
@@ -77,7 +80,7 @@ export default function ImageUploadButton(props) {
       <input
         type="file"
         accept="image/*"
-        id="image"
+        id={"image" + props.route}
         formEncType="multipart/form-data"
         onChange={handleImageChange}
         hidden={true}

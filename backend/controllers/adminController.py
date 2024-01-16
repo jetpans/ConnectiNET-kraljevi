@@ -205,4 +205,5 @@ class AdminController(Controller):
         result["organizerName"] = org.organizerName
         result["countryName"] = country.name
         del result['_sa_instance_state']
+        del result['duration']
         return result

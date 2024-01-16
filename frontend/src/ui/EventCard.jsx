@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { Chip } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { browserHistory } from "react-router";
 import { Navigate } from "react-router-dom";
@@ -41,10 +42,14 @@ export default function EventCard(props) {
 
     // navigate("/event", {state: {event: card}});
   }
-  
+
   function editEvent() {
     navigate("/edit/" + card.id);
   }
+
+  useEffect(() => {
+    console.log(props.card);
+  });
 
   return (
     <Card
@@ -61,10 +66,11 @@ export default function EventCard(props) {
         /*console.log("Mouse enter")*/
       }}
     >
-      <CardMedia 
-        key={card.id} 
+      <CardMedia key={card.id} />
+      <img
+        style={{ objectFit: "cover", height: card.image ? "20vh" : 0 }}
+        src={card.image}
       />
-      <img style={{ objectFit: "cover", height: card.image ? "20vh" : 0 }} src={card.image} />
       <CardContent sx={{ flexGrow: 1 }} key={card.id}>
         {/* <img src={card.image}></img> */}
         <Typography
@@ -81,7 +87,10 @@ export default function EventCard(props) {
             : card.description}
         </Typography> */}
         <Typography color={theme.palette.text.light} marginBottom={1}>
-          {card.organizer}
+          By{" "}
+          <Button onClick={() => navigate("/organizer/" + card.accountId)} sx={{color: theme.palette.primary.main}}>
+            {card.organizer}
+          </Button>
         </Typography>
         <Divider />
 
@@ -92,41 +101,48 @@ export default function EventCard(props) {
           {card.time.slice(0, 10)}
         </Typography>
 
-        <Typography color={theme.palette.text.light}>
-          {card.type === 1 ? "Concert" : card.type === 2 ? "Community" : "Food"}
-        </Typography>
-        <Typography color={theme.palette.text.light}>
-          {card.price === 0 ? "Free" : card.price + ' €'}
-        </Typography>
+        <Typography color={theme.palette.text.light}>{card.type}</Typography>
+
         {/* <Typography >
                     {"Interest: " + card.interest}
                 </Typography>  */}
       </CardContent>
-      <CardActions>
-        <Button size="small">
-          <Typography
-            onClick={displayEvent}
-            variant="body1"
-            color={theme.palette.primary.main}
-            style={{ textTransform: "none" }}
-          >
-            See More
-          </Typography>
-        </Button>
-        {card.my_event ? (
-          <>
+      <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
           <Button size="small">
             <Typography
-              onClick={editEvent}
+              onClick={displayEvent}
               variant="body1"
               color={theme.palette.primary.main}
               style={{ textTransform: "none" }}
             >
-              Edit
+              See More
             </Typography>
           </Button>
-          </>
-        ) : null}
+          {card.my_event ? (
+            <>
+              <Button size="small">
+                <Typography
+                  onClick={editEvent}
+                  variant="body1"
+                  color={theme.palette.primary.main}
+                  style={{ textTransform: "none" }}
+                >
+                  Edit
+                </Typography>
+              </Button>
+            </>
+          ) : null}
+        </div>
+        <Chip
+          label={card.price === 0 ? "Free" : card.price + " €"}
+          sx={{
+            bgcolor: theme.palette.secondary,
+            fontSize: "1.3rem",
+            padding: "0.5rem",
+            color: theme.palette.text.light
+          }}
+        ></Chip>
       </CardActions>
     </Card>
   );

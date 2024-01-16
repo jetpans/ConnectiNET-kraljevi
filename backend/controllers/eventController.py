@@ -31,8 +31,12 @@ class EventController(Controller):
         #     return {"success": False, "data": "Authentication required"}
         two_years_ago = datetime.now() - timedelta(days=365 * 2)
 
-        dbResp = self.db.session.query(Event).filter(Event.dateTime >= two_years_ago).all()
-        result_dict = [u.__dict__ for u in dbResp]
+        dbResp = self.db.session.query(Event, EventType).filter(Event.dateTime >= two_years_ago).join(EventType, Event.eventType == EventType.typeId).all()
+        result_dict = []
+        for pair in dbResp:
+            item = pair[0].__dict__
+            item["typeName"] = pair[1].typeName
+            result_dict.append(item)
         toList = list(map( lambda event:
             {
                 "id":event["eventId"],
@@ -42,7 +46,7 @@ class EventController(Controller):
                 "time":str(event["dateTime"]),
                 "country":event["countryCode"],
                 "city":event["city"],
-                "type":event["eventType"],
+                "type":event["typeName"],
                 "priority":str(int(random.random()*50)),
                 "accountId":event["accountId"],
                 "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
@@ -53,7 +57,7 @@ class EventController(Controller):
         return {"success":True, "data": toList}
         
 
-    
+    @jwt_required()
     def getReviewsForEvent(self, eventId):
         dbResp = self.db.session.query(Review, Visitor.firstName, Visitor.lastName).join(Visitor, Review.accountId == Visitor.accountId).filter(Review.eventId == eventId).all()
         result_dict = [u[0].__dict__ for u in dbResp]
@@ -78,8 +82,10 @@ class EventController(Controller):
 
         comments = self.getReviewsForEvent(eventId)
 
-        MyEvent = self.db.session.query(Event).filter(Event.eventId == eventId).first()
-
+        MyEvent = self.db.session.query(Event, EventType).filter(Event.eventId == eventId).join(EventType, EventType.typeId == Event.eventType).first()
+        eventTypeName = MyEvent[1].typeName
+        MyEvent = MyEvent[0]
+        
         interests_with_event_id = self.db.session.query(Interest).filter(Interest.eventId == eventId).all()
         interested_count = 0
         maybe_count = 0
@@ -114,7 +120,7 @@ class EventController(Controller):
             "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == MyEvent.accountId).first().organizerName, 
             "image_org": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().profileImage,
             "countryCode": MyEvent.countryCode,
-            "eventType": MyEvent.eventType,
+            "eventType": eventTypeName,
             "end_time": str(end_time),
             "username": self.db.session.query(Account).filter(Account.accountId == MyEvent.accountId).first().username,
             "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == MyEvent.accountId else False
@@ -152,7 +158,9 @@ class EventController(Controller):
                     "priority":str(int(random.random()*50)),
                     "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
                     "price":event["price"],
-                    "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == event["accountId"] else False
+                    "my_event": True if self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first().accountId == event["accountId"] else False,
+                    "accountId": event["accountId"],
+                
                 }, result_dict))
 
             return jsonify({"success": True, "organizerInfo": profile, "organizerEvents": toList})
@@ -199,7 +207,7 @@ class EventController(Controller):
             logging.warning(e)
             return jsonify({"success": False, "message": "Error creating Comment"})
         
-    @visitor_required()
+    @jwt_required()
     def getEventTypes(self):
         event_types = self.db.session.query(EventType).all()
         event_types = list(map(lambda eType: eType.__dict__, event_types))

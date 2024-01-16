@@ -178,10 +178,13 @@ class ImageController(Controller):
             return {"success":False, 'error':"Media doesn't exist"}
         
 
-        blob_path = media.mediaSource
-        blob_path = blob_path.split("/")[-1]
-        blob = storage.bucket().blob(blob_path)
-        blob.delete()
+        try:
+            blob_path = media.mediaSource
+            blob_path = blob_path.split("/")[-1]
+            blob = storage.bucket().blob(blob_path)
+            blob.delete()
+        except:
+            pass
         self.db.session.delete(media)
         self.db.session.commit()
         return {"success":True, 'error':"Deleted event media successfuly."}

@@ -38,7 +38,6 @@ class UserController(Controller):
         self.app.add_url_rule("/api/extendSubscribe", view_func=self.extendSubscribe, methods=["POST"])
 
         self.app.add_url_rule("/api/getNotificationOptions", view_func = self.getUserNotificationOptions, methods = ["GET"])
-        self.app.add_url_rule("/api/getEventTypes", view_func = self.getEventTypes, methods = ["GET"])
         self.app.add_url_rule("/api/addNotificationEventType", view_func = self.addNotificationEventType, methods = ["POST"])
         self.app.add_url_rule("/api/addNotificationCountry", view_func = self.addNotificationCountry, methods = ["POST"])
         self.app.add_url_rule("/api/deleteNotificationCountry", view_func = self.deleteNotificationCountry, methods = ["POST"])
@@ -69,7 +68,6 @@ class UserController(Controller):
                 myUser.passwordHash = passwordHash
             f = data
             
-            logging.warning(f)
             
             myUser.eMail =  f["email"]
             myUser.countryCode = f["countryCode"]
@@ -277,32 +275,29 @@ class UserController(Controller):
     
     @visitor_required()
     def getUserNotificationOptions(self):
-        print("\n\n GOT REQUEST")
         myUser = self.db.session.query(Account).filter(Account.username == get_jwt_identity()).first()
-        notificationOptionsEventType = self.db.session.query(NotificationEventType,EventType.typeName). \
+        notificationOptionsEventType = self.db.session.query(NotificationEventType,EventType.typeName, NotificationEventType.eventType). \
         join(Account, and_(Account.accountId == NotificationEventType.accountId, Account.username == get_jwt_identity())).\
         join(EventType, EventType.typeId == NotificationEventType.eventType).filter(Account.accountId == myUser.accountId).all()
         
-        notificationOptionsCountry = self.db.session.query(NotificationCountry, Country.name). \
+        notificationOptionsCountry = self.db.session.query(NotificationCountry, Country.name, NotificationCountry.countryCode). \
         join(Account,and_(Account.accountId == NotificationCountry.accountId , Account.username == get_jwt_identity())).\
         join(Country, Country.countryCode == NotificationCountry.countryCode).filter(Account.accountId == myUser.accountId).all()
+                
+        notificationOptionsEventTypeName = list(map(lambda entry: entry[1], notificationOptionsEventType))
+        notificationOptionsCountryName = list(map(lambda entry: entry[1], notificationOptionsCountry))
+        notificationOptionsEventTypeCode = list(map(lambda entry: entry[2], notificationOptionsEventType))
+        notificationOptionsCountryCode = list(map(lambda entry: entry[2], notificationOptionsCountry))
         
-        notificationOptionsEventType = list(map(lambda entry: entry[1], notificationOptionsEventType))
-        notificationOptionsCountry= list(map(lambda entry: entry[1], notificationOptionsCountry))
         result = {
-            "countries":notificationOptionsCountry,
-            "eventTypes" : notificationOptionsEventType}
+            "countries":notificationOptionsCountryName,
+            "eventTypes" : notificationOptionsEventTypeName,
+            "countryCodes":notificationOptionsCountryCode,
+            "eventTypesCodes" : notificationOptionsEventTypeCode
+        }
         
         return {"success":True, "data": result}
 
-    @visitor_required()
-    def getEventTypes(self):
-        events = self.db.session.query(EventType).all()
-        events = list(map(lambda eType: eType.__dict__, events))
-        for item in events:
-            del item['_sa_instance_state']
-        
-        return {"success":True, "data": events}
 
     @visitor_required()
     def addNotificationCountry(self):

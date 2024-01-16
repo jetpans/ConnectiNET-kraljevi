@@ -7,6 +7,7 @@ import { UserProvider } from './context/UserContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { DialogProvider } from './context/DialogContext';
 import { SnackbarProvider } from './context/SnackbarContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,7 +18,9 @@ root.render(
       <ThemeProvider>
         <SnackbarProvider>
           <DialogProvider>
-            <App />
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
           </DialogProvider>
         </SnackbarProvider>
       </ThemeProvider>

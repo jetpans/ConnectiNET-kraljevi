@@ -64,6 +64,25 @@ class dataController {
       .finally(() => {});
   }
 
+  DeleteData(path, id, token) {
+    return fetch(path, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({id})
+    })
+      .then(handleRequest)
+      .then((data) => {
+        return Promise.resolve({ success: true, data: data });
+      })
+      .catch((err) => {
+        return Promise.reject({ success: false, error: err });
+      })
+      .finally(() => {});
+  }
+
   PostFile(path, file, token) {
     return fetch(path, {
       method: "POST",

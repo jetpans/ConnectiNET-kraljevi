@@ -64,6 +64,7 @@ export default function AdminSubscription(props) {
       })
       .catch((e) => console.log(e));
   };
+  
   useEffect(() => {
     fetchData();
   }, []);

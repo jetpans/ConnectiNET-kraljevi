@@ -9,7 +9,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
 import { green, grey, indigo } from "@mui/material/colors";
-import { Menu, MenuItem, Paper, Typography } from "@mui/material";
+import { Menu, MenuItem, Paper, Select, Typography } from "@mui/material";
 import EventCard from "../ui/EventCard";
 import dataController from "../utils/DataController";
 
@@ -28,6 +28,7 @@ import Stack from '@mui/material/Stack';
 import { useTheme } from "../context/ThemeContext";
 import { ProtectedComponent } from "../utils/ProtectedComponent";
 import { useSnackbar } from "../context/SnackbarContext";
+import { useNotification } from "../context/NotificationContext";
 
 
 export default function EventsPage(props) {
@@ -36,15 +37,26 @@ export default function EventsPage(props) {
   const [cards, setCards] = useState(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [cards_help, setCards_help] = useState(null);
-  const [length, setLenght] = useState(null);
+  const [length, setLength] = useState(null);
 
   const [anchorElType, setAnchorElType] = useState(null);
   const [anchorElTime, setAnchorElTime] = useState(null);
   const [anchorElPrice, setAnchorElPrice] = useState(null);
+  const [anchorElCountry, setAnchorElCountry] = useState(null);
+
+  const [selectedTimeValue, setSelectedTimeValue] = useState('');
+  const [selectedPriceValue, setSelectedPriceValue] = useState('');
+  const [selectedCountryValue, setSelectedCountryValue] = useState('');
+  const [selectedTypeValue, setSelectedTypeValue] = useState('');
+
+  const [countries, setCountries] = useState(null);
+
+  const [stupidClearState, setStupidClearState] = useState(0);
 
   //const [sort, setSort] = useState(1);
 
   const { user, updateUser, logout, loading } = useUser();
+  const { notifications, addNotifications, setNewNotification, clearNotifications } = useNotification();
   
   const { openSnackbar } = useSnackbar();
 
@@ -53,18 +65,80 @@ export default function EventsPage(props) {
 
   useEffect(() => {
     fetchData();
+    fetchCountries();
   }, []);
+
+  useEffect(() => {
+    if(user !== null && cards_help !== null && user !== undefined && cards_help !== undefined) {
+      fetchNotificationOptions();
+    }
+  }, [user, cards_help]);
+
+  const fetchNotificationOptions = async () => {
+    const accessToken = localStorage.getItem("jwt");
+    dc.GetData(API_URL + "/api/getNotificationOptions", accessToken)
+    .then((resp) => {
+      if(resp.success === true) {
+        let createdNotifications = []
+        let eventsToSearch = cards_help.filter((event) => {
+          if(checkEventTime(new Date(event.time)) === 'in the next week' || checkEventTime(new Date(event.time)) === 'is today') {
+            return true;
+          } else {
+            return false;
+          }
+        });
+
+        if(resp.data.data.countryCodes !== null && resp.data.data.countryCodes !== undefined && resp.data.data.countryCodes.length > 0) {
+          for(const event of eventsToSearch) {
+            if(resp.data.data.countryCodes.includes(event.country)) {
+              createdNotifications.push(event);
+            }
+          }
+        }
+        if(resp.data.data.eventTypesCodes !== null && resp.data.data.eventTypesCodes !== undefined && resp.data.data.eventTypesCodes.length > 0) {
+          for(const event of eventsToSearch) {
+            if(resp.data.data.eventTypesCodes.includes(event.type) && !createdNotifications.includes(event)) {
+              createdNotifications.push(event);
+            }
+          }
+        }
+
+        if(createdNotifications.length === 0) {
+          clearNotifications();
+        }
+
+        let tester = true;
+        const existingNotifications = JSON.parse(localStorage.getItem("notifications"));
+        if(existingNotifications !== null && existingNotifications !== undefined) {
+          for(const event of createdNotifications) {
+            if(!existingNotifications.includes(event)) {
+              tester = false;
+            }
+          } 
+        } else {
+          tester = false;
+        }
+        if(tester === false && createdNotifications.length > 0) {
+          setNewNotification();
+          addNotifications(createdNotifications.sort((a, b) => {
+            return new Date(b.time) - new Date(a.time);
+          }));
+        }
+      }
+    }).catch((e) => {
+      console.log(e);
+      openSnackbar('error', 'Error fetching Notification Data')
+    });
+  }
 
   const fetchData = async () => {
     const accessToken = localStorage.getItem("jwt");
-    dc.GetData(API_URL + "/getEvents", accessToken).then((resp) => {
-      // console.log("THIS:", resp.data);
+    dc.GetData(API_URL + "/getEvents", accessToken)
+    .then((resp) => {
       if (resp.data.success === true) {
-        // console.log("Cards set to :", resp.data.data);
         setCards(resp.data.data);
         setCards_help(resp.data.data);
-        setLenght(Math.ceil(resp.data.data.length / numOfEventsPerPage))
-
+        setLength(Math.ceil(resp.data.data.length / numOfEventsPerPage))
       }
     }).catch((e) => {
       console.log(e);
@@ -72,95 +146,129 @@ export default function EventsPage(props) {
     });
   };
 
+  const fetchCountries = async () => {
+    await dc
+      .GetData(API_URL + "/api/countries")
+      .then((resp) => setCountries(resp.data.data))
+      .catch((resp) => {
+        console.log(resp);
+      });
+  };
+
   function handleTabChange(event, newValue) {
     setCurrentTab(newValue);
   }
 
-  const Listbox = styled('ul')(
-    ({ theme }) => `
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    box-sizing: border-box;
-    padding: 6px;
-    margin: 12px 0;
-    min-width: 200px;
-    border-radius: 12px;
-    overflow: auto;
-    outline: 0px;
-    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    box-shadow: 0px 4px 6px ${
-      theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
-    };
-    z-index: 1;
-    `,
-  );
-  
   const paginationStyle = {
     fontSize: '1.5rem', // Povećajte veličinu fonta
   };
 
   const { theme, toggleTheme } = useTheme();
   
-  function sortCards(value) {
-    let fakeCard = cards;
+  // function sortCards(value) {
+  //   let fakeCard = cards;
 
-    if (value == 1) {
-      fakeCard = cards.slice().sort((a, b) => {
-              return b.time - a.time;
-            })
-    } else if (value == 2) {
-      fakeCard = cards.slice().sort((a, b) => {
-        return b.price - a.price;
-      })
-    } else if (value == 3) {
-      fakeCard = cards.slice().sort((a, b) => {
-        return a.price - b.price;
-      })
-    } else if (value == 4) {
-      fakeCard = cards.slice().sort((a, b) => {
-        return b.interest - a.interest;
-      })
-    }    
-    setCards(fakeCard)
+  //   if (value == 1) {
+  //     fakeCard = cards.slice().sort((a, b) => {
+  //             return b.time - a.time;
+  //           })
+  //   } else if (value == 2) {
+  //     fakeCard = cards.slice().sort((a, b) => {
+  //       return b.price - a.price;
+  //     })
+  //   } else if (value == 3) {
+  //     fakeCard = cards.slice().sort((a, b) => {
+  //       return a.price - b.price;
+  //     })
+  //   } else if (value == 4) {
+  //     fakeCard = cards.slice().sort((a, b) => {
+  //       return b.interest - a.interest;
+  //     })
+  //   }    
+  //   setCards(fakeCard)
 
+  // }
+
+  const handleChangePrice = (event, newValue) => {
+    setSelectedPriceValue(newValue);
+  };
+  const handleChangeType = (event, newValue) => {
+    setSelectedTypeValue(newValue);
   }
 
-  const [lowerPrice, setLowerPrice] = useState(0);
-  const [upperPrice, setUpperPrice] = useState(100);
+  function checkEventTime(eventTime) {
+    const currentDate = new Date();
+  
+    const timeDifference = eventTime - currentDate;
+  
+    const oneDay = 24 * 60 * 60 * 1000;
+    const oneWeek = 7 * oneDay;
+    const thirtyDays = 30 * oneDay;
 
-  const handleChange = (event, newValue) => {
-    setLowerPrice(newValue[0]);
-    setUpperPrice(newValue[1]);
-  };
+    if (
+      eventTime.getDate() === currentDate.getDate() &&
+      eventTime.getMonth() === currentDate.getMonth() &&
+      eventTime.getFullYear() === currentDate.getFullYear()
+    ) {
+      return 'is today';
+    } else if (timeDifference > 0 && timeDifference <= oneWeek) {
+      return 'in the next week';
+    } else if (timeDifference > 0 && timeDifference <= thirtyDays) {
+      return 'in the next 30 days';
+    } else if (timeDifference < 0 && Math.abs(timeDifference) <= oneWeek) {
+      return 'in the past week';
+    } else if (timeDifference < 0 && Math.abs(timeDifference) <= thirtyDays) {
+      return 'in the past 30 days';
+    } else {
+      return 'out of specified ranges';
+    }
+  }
 
   
   const handleFilter = () => {
-    const oneDay = 24 * 60 * 60 * 1000; // 24 sata
-    const sevenDays = 7 * oneDay;
-    //najmerno stavljeno 6 mjeseci radi testiranja
-    const oneMonth = 6 * 30 * oneDay; 
-
-    const currentTime = new Date();
-
-    
-
     const filteredCards = cards_help.filter((card) => {
-      const cardPrice = card.price; // Pretpostavljeno ime atributa cijene u objektu kartice
-      return cardPrice >= lowerPrice && cardPrice <= upperPrice;
+      const cardPrice = card.price; 
+      if(selectedPriceValue === "free") {
+        return cardPrice === 0;
+      } else if (selectedPriceValue === "paid") {
+        return cardPrice > 0;
+      } else {
+        return true;
+      }
     });
 
-    const filteredCards_time = filteredCards.filter((card) => {
-      const cardTime = new Date(card.time); // Pretpostavljeno ime atributa cijene u objektu kartice
-      const difference = currentTime - cardTime;
-      switch (selectedValue) {
+    const filteredCards_country = filteredCards.filter((card) => {
+      const cardCountry = card.country;
+      if (selectedCountryValue !== '') {
+        return cardCountry === selectedCountryValue;
+      } else {
+        return true;
+      } 
+    });
+
+    const filteredCards_type = filteredCards_country.filter((card) => {
+      const cardType = card.type;
+      if (selectedTypeValue !== '') {
+        return cardType == selectedTypeValue;
+      } else {
+        return true;
+      } 
+    });
+
+    const filteredCards_time = filteredCards_type.filter((card) => {
+      const cardTime = new Date(card.time);
+
+      switch (selectedTimeValue) {
         case "today":
-          return difference <= oneDay;
+          return checkEventTime(cardTime) === 'is today';
         case "week":
-          return difference <= sevenDays;
+          return checkEventTime(cardTime) === 'in the next week';
         case "month":
-          return difference <= oneMonth;
+          return checkEventTime(cardTime) === 'in the next 30 days';
+        case "last_week":
+          return checkEventTime(cardTime) === 'in the past week';
+        case "last_month":
+          return checkEventTime(cardTime) === 'in the past 30 days';
         default:
           return true;
       }     
@@ -168,23 +276,21 @@ export default function EventsPage(props) {
 
     if (Array.isArray(filteredCards_time)) {
       const sizeOfCards = Math.ceil(filteredCards_time.length / numOfEventsPerPage);
-      setLenght(sizeOfCards)
-    } 
-    // Ovdje koristite filtrirane kartice kako god želite
+      setLength(sizeOfCards)
+    }
+
     setCards(filteredCards_time)
   };
 
-  const [selectedValue, setSelectedValue] = useState('');
 
-  const handleChange_time = (event) => {
-    setSelectedValue(event.target.value);
+  const handleChangeTime = (event) => {
+    setSelectedTimeValue(event.target.value);
     // Ovdje možete dodati logiku ili akcije na promjenu odabrane vrijednosti
   };
 
   const clearFilter = () => {
-    setCards(cards_help)
-    setLowerPrice(0);
-    setUpperPrice(40);
+    setCards(cards_help);
+    setStupidClearState(1);
   }
 
   const [currentPage, setCurrentPage] = useState(1); // Postavljanje trenutne stranice na 1, kao primjer
@@ -192,6 +298,20 @@ export default function EventsPage(props) {
   const handlePageChange = (event, pageNumber) => {
     setCurrentPage(pageNumber); 
   };
+
+  // Very good way to clear filter :)
+  useEffect(() => {
+    if(stupidClearState === 1) {
+      setSelectedCountryValue('');
+      setSelectedPriceValue('');
+      setSelectedTimeValue('');
+      setSelectedTypeValue('');
+      setStupidClearState(2);
+    } else if(stupidClearState === 2) {
+      handleFilter();
+      setStupidClearState(0);
+    }
+  }, [stupidClearState]);
 
   return (
     <ProtectedComponent roles={[0, 1, -1]}>
@@ -216,9 +336,20 @@ export default function EventsPage(props) {
                 label="Popular"
                 sx={{ color: theme.palette.text.main }}
               />
-              <Tab label="New" sx={{ color: theme.palette.text.main }} />
+              <Tab 
+                label="Soonest" 
+                sx={{ color: theme.palette.text.main }} 
+              />
               <Tab
-                label="Free"
+                label="Oldest"
+                sx={{ color: theme.palette.text.main }}
+              />
+              <Tab
+                label="Least Expensive"
+                sx={{ color: theme.palette.text.main }}
+              />
+              <Tab
+                label="Most Expensive"
                 sx={{ color: theme.palette.text.main }}
               />
             </Tabs>
@@ -231,30 +362,31 @@ export default function EventsPage(props) {
                   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                     <Button onClick={(event) => {setAnchorElType(event.currentTarget);}} sx={{color: theme.palette.primary.main}}>Type</Button>
                     <Menu open={Boolean(anchorElType)} anchorEl={anchorElType} onClose={() => {setAnchorElType(null)}}>
-                      <MenuItem onClick={() => {}}>
-                        <Typography>Type 1</Typography>
-                      </MenuItem>
-                      <MenuItem onClick={() => {}}>
-                        <Typography>Type 2</Typography>
-                      </MenuItem>
-                      <MenuItem onClick={() => {}}>
-                        <Typography>Type 3</Typography>
-                      </MenuItem>
+                      <RadioGroup
+                        aria-label="gender"
+                        name="gender"
+                        value={selectedTypeValue}
+                        onChange={handleChangeType}
+                      >
+                        <FormControlLabel value={1} control={<Radio />} label="Concert" />
+                        <FormControlLabel value={2} control={<Radio />} label="Community" />
+                        <FormControlLabel value={3} control={<Radio />} label="Food" />
+                      </RadioGroup>
                     </Menu>
 
                     <Button onClick={(event) => {setAnchorElPrice(event.currentTarget);}} sx={{color: theme.palette.primary.main}}>Price</Button>
                     <Menu open={Boolean(anchorElPrice)} anchorEl={anchorElPrice} onClose={() => {setAnchorElPrice(null)}}>
-                      <MenuItem>
-                        <Slider
-                          value={[lowerPrice, upperPrice]}
-                          onChange={handleChange}
-                          min={0}
-                          max={40}
-                          valueLabelDisplay="auto"
-                          aria-labelledby="range-slider"
-                          sx={{ width: 200 }} 
-                        />
-                      </MenuItem>
+                      <FormControl component="fieldset">
+                        <RadioGroup
+                          aria-label="gender"
+                          name="gender"
+                          value={selectedPriceValue}
+                          onChange={handleChangePrice}
+                        >
+                          <FormControlLabel value="free" control={<Radio />} label="Free" />
+                          <FormControlLabel value="paid" control={<Radio />} label="Paid" />
+                        </RadioGroup>
+                      </FormControl>
                     </Menu>
                     
                     <Button onClick={(event) => {setAnchorElTime(event.currentTarget);}} sx={{color: theme.palette.primary.main}}>Time</Button>
@@ -263,22 +395,54 @@ export default function EventsPage(props) {
                         <RadioGroup
                           aria-label="gender"
                           name="gender"
-                          value={selectedValue}
-                          onChange={handleChange_time}
+                          value={selectedTimeValue}
+                          onChange={handleChangeTime}
                         >
                           <FormControlLabel value="today" control={<Radio />} label="Today" />
-                          <FormControlLabel value="week" control={<Radio />} label="This week" />
-                          <FormControlLabel value="month" control={<Radio />} label="This month" />
+                          <FormControlLabel value="week" control={<Radio />} label="Next 7 Days" />
+                          <FormControlLabel value="month" control={<Radio />} label="Next 30 Days" />
+                          <FormControlLabel value="last_week" control={<Radio />} label="Last 7 Days" />
+                          <FormControlLabel value="last_month" control={<Radio />} label="Last 30 Days" />
                         </RadioGroup>
                       </FormControl>
                     </Menu>
+
+                    <Button onClick={(event) => {setAnchorElCountry(event.currentTarget);}} sx={{color: theme.palette.primary.main}}>Country</Button>
+                    <Menu open={Boolean(anchorElCountry)} anchorEl={anchorElCountry} onClose={() => {setAnchorElCountry(null)}}>
+                        {/* <RadioGroup
+                          aria-label="gender"
+                          name="gender"
+                          value={selectedCountryValue}
+                          onChange={handleChangeCountry}
+                        > */}
+                          {countries != null ? (
+                            countries.map((country) => (
+                              <MenuItem
+                                key={country.countryCode}
+                                value={country.countryCode}
+                                onClick={() => {setSelectedCountryValue(country.countryCode); setAnchorElCountry(null)}}
+                              >
+                                {country.name}
+                              </MenuItem>
+                              // <FormControlLabel
+                              //   value={country.countryCode}
+                              //   control={<Radio />} 
+                              //   label={country.name}
+                              // />
+                            ))
+                          ) : (
+                            <MenuItem value={""}>Loading...</MenuItem>
+                          )}
+                        {/* </RadioGroup> */}
+                    </Menu>
+
                   </div>
 
                   <Box sx={{display: 'flex', position: 'center'}}>
-                    <Button variant="outlined" onClick={handleFilter} sx={{mr: 1, color: theme.palette.primary.main}}>
+                    <Button variant="outlined" onClick={handleFilter} sx={{ml: 1, mr: 1, color: theme.palette.primary.main}}>
                       Apply Filter 
                     </Button>
-                    <Button variant="outlined" onClick={clearFilter} sx={{color: theme.palette.primary.main}}>
+                    <Button variant="outlined" onClick={() => {clearFilter()}} sx={{ml: 1, color: theme.palette.primary.main}}>
                       Clear filter
                     </Button>
                   </Box>
@@ -294,7 +458,11 @@ export default function EventsPage(props) {
             {currentTab === 0 ? (
               <Grid container spacing={4}>
                 {cards && cards !== null ? (
-                cards.slice((currentPage - 1) * numOfEventsPerPage, currentPage * numOfEventsPerPage).map((card) => (
+                cards
+                .sort((a, b) => {
+                  return b.interest - a.interest;
+                })
+                .slice((currentPage - 1) * numOfEventsPerPage, currentPage * numOfEventsPerPage).map((card) => (
                   <Grid item key={card.id} xs={12} sm={6} md={6}>
                     <EventCard card={card} />
                   </Grid>
@@ -308,49 +476,127 @@ export default function EventsPage(props) {
                   component="footer"
                 />
               )} 
-                  {/* cards.map((card) => (
-                    <Grid item key={card.id} xs={12} sm={6} md={6}>
-                      <EventCard card={card} />
-                    </Grid>
-                  ))
-                ) : (
-                  <Box
-                    sx={{
-                      bgcolor: theme.palette.secondary.light,
-                      height: "1000px",
-                    }}
-                    component="footer"
-                  />
-                )} */}
               </Grid>
             ) : null}
 
             {currentTab === 1 ? (
               <Grid container spacing={4}>
-                {cards && cards !== null
-                  ? cards
-                      .slice((currentPage - 1) * 4, currentPage * 4)
-                      .map((card) => (
-                        <Grid item key={card} xs={12} sm={6} md={6}>
-                          <EventCard card={card} />
-                        </Grid>
-                      ))
-                  : null}
+                {cards && cards !== null ? (
+                cards
+                .filter((card) => {
+                  const currentDate = new Date();
+                  const objectDate = new Date(card.time);
+                  return objectDate >= currentDate;
+                })
+                .sort((a, b) => {
+                  const currentDate = new Date();
+                  const dateA = new Date(a.time);
+                  const dateB = new Date(b.time);
+                  
+                  const distanceA = Math.abs(dateA - currentDate);
+                  const distanceB = Math.abs(dateB - currentDate);
+
+                  return distanceA - distanceB;
+                }).slice((currentPage - 1) * numOfEventsPerPage, currentPage * numOfEventsPerPage).map((card) => (
+                  <Grid item key={card.id} xs={12} sm={6} md={6}>
+                    <EventCard card={card} />
+                  </Grid>
+                ))
+              ) : (
+                <Box
+                  sx={{
+                    bgcolor: theme.palette.secondary.other,
+                    height: "1000px",
+                  }}
+                  component="footer"
+                />
+              )} 
               </Grid>
             ) : null}
 
             {currentTab === 2 ? (
               <Grid container spacing={4}>
-                {cards && cards !== null
-                  ? cards.sort((a, b) => {return a.interest - b.interest})
-                      .slice((currentPage - 1) * 4, currentPage * 4).map((card) => (
-                        <Grid item key={card} xs={12} sm={6} md={6}>
-                          <EventCard card={card} />
-                        </Grid>
-                      ))
-                  : null}
+                {cards && cards !== null ? (
+                cards
+                .filter((card) => {
+                  const currentDate = new Date();
+                  const objectDate = new Date(card.time);
+                  return objectDate < currentDate;
+                })
+                .sort((a, b) => {
+                  const dateA = new Date(a.time);
+                  const dateB = new Date(b.time);
+
+                  return dateA - dateB;
+                }).slice((currentPage - 1) * numOfEventsPerPage, currentPage * numOfEventsPerPage).map((card) => (
+                  <Grid item key={card.id} xs={12} sm={6} md={6}>
+                    <EventCard card={card} />
+                  </Grid>
+                ))
+              ) : (
+                <Box
+                  sx={{
+                    bgcolor: theme.palette.secondary.other,
+                    height: "1000px",
+                  }}
+                  component="footer"
+                />
+              )} 
+              </Grid>
+            ) : null}     
+
+            {currentTab === 3 ? (
+              <Grid container spacing={4}>
+                {cards && cards !== null ? (
+                cards
+                .sort((a, b) => {
+                  const priceA = a.price;
+                  const priceB = b.price;
+
+                  return priceA - priceB;
+                }).slice((currentPage - 1) * numOfEventsPerPage, currentPage * numOfEventsPerPage).map((card) => (
+                  <Grid item key={card.id} xs={12} sm={6} md={6}>
+                    <EventCard card={card} />
+                  </Grid>
+                ))
+              ) : (
+                <Box
+                  sx={{
+                    bgcolor: theme.palette.secondary.other,
+                    height: "1000px",
+                  }}
+                  component="footer"
+                />
+              )} 
               </Grid>
             ) : null}
+
+            {currentTab === 4 ? (
+              <Grid container spacing={4}>
+                {cards && cards !== null ? (
+                cards
+                .sort((a, b) => {
+                  const priceA = a.price;
+                  const priceB = b.price;
+
+                  return priceB - priceA;
+                }).slice((currentPage - 1) * numOfEventsPerPage, currentPage * numOfEventsPerPage).map((card) => (
+                  <Grid item key={card.id} xs={12} sm={6} md={6}>
+                    <EventCard card={card} />
+                  </Grid>
+                ))
+              ) : (
+                <Box
+                  sx={{
+                    bgcolor: theme.palette.secondary.other,
+                    height: "1000px",
+                  }}
+                  component="footer"
+                />
+              )} 
+              </Grid>
+            ) : null}  
+
             <br></br>
 
             <Stack spacing={2} /*sx={centerStyle}*/>

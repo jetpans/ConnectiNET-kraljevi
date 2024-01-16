@@ -130,13 +130,13 @@ export default function OrganizerProfile() {
                         {organizerInfo.organizerName}
                       </Typography>
                       <Divider />
-                      <Typography color={theme.palette.text.main} sx={{paddingTop: 1}}>
+                      <Typography variant="body1" color={theme.palette.text.main} sx={{paddingTop: 1}}>
                         {/* {organizerInfo.username} */}
                         {organizerInfo.country}
                       </Typography>
                       {organizerInfo.socials ? (
                         <>
-                          <CardActions sx={{paddingLeft: 0, paddingTop: 1}}>
+                          <CardActions sx={{ paddingLeft: 0, paddingTop: 1 }}>
                             <Button
                               size="large"
                               variant="outlined"
@@ -146,7 +146,7 @@ export default function OrganizerProfile() {
                                 borderColor: theme.palette.primary.main
                               }}
                             >
-                              Visit us
+                              More about us
                             </Button>
                           </CardActions>
                         </>

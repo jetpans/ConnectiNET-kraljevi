@@ -31,6 +31,7 @@ export default function EventDetail(props) {
   const [showLimitedComments, setShowLimitedComments] = useState(true);
 
   const canComment = useRef(false);
+  const canInterest = useRef(false);
 
   // const handleShowAllComments = () => {
   //      setShowAllComments(true);
@@ -102,59 +103,67 @@ export default function EventDetail(props) {
         const currentDate = new Date();
         parsedEventDate.setHours(parsedEventDate.getHours() - 1);
         const timeDifference = parsedEventDate - currentDate;
+
         if (timeDifference < 0 && timeDifference > -48 * 60 * 60 * 1000) {
             canComment.current = true;
         }
+
+        if (timeDifference >= 0) {
+          canInterest.current = true;
+      }
     }
   }, [cards]);
 
+  const { openSnackbar } = useSnackbar();
 
-    const handlePickInterest = async (interest) => {
-        if(props && props.event) {
-            const accessToken = localStorage.getItem("jwt");
-            dc.PostData(API_URL + "/setInterest/" + props.event.id, {
-                interest: interest
-            }, accessToken).then((resp) => {
-            // console.log("THIS:", resp.data);
-            if (resp.data.success === true) {
-                props.closeDialog();
-            }
-            }).catch((e) => {console.log(e)});
-        }
+  const handlePickInterest = async (interest) => {
+    if(props && props.event) {
+      const accessToken = localStorage.getItem("jwt");
+      dc.PostData(API_URL + "/setInterest/" + props.event.id, {
+          interest: interest
+      }, accessToken).then((resp) => {
+      // console.log("THIS:", resp.data);
+      if (resp.data.success === true) {
+        openSnackbar("success", "Interest posted successfully!");
+        props.closeDialog();
+      }
+      }).catch((e) => {
+        openSnackbar("error", "Unknown Error");
+        console.log(e)
+      });
     }
+  }
 
-    const { openSnackbar } = useSnackbar();
+  const handleSubmit = (event) => {
+    if(props && props.event) {
+      const accessToken = localStorage.getItem("jwt");
 
-    const handleSubmit = (event) => {
-        if(props && props.event) {
-            const accessToken = localStorage.getItem("jwt");
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
 
-            event.preventDefault();
-            const data = new FormData(event.currentTarget);
+      if(data.get("comment").length < 5 || data.get("comment").length > 200) {
+          openSnackbar("error", "Comment must be between 5 and 200 characters long!");
+          return;
+      }
 
-            if(data.get("comment").length < 5 || data.get("comment").length > 200) {
-                openSnackbar("error", "Comment must be between 5 and 200 characters long!");
-                return;
-            }
+      const newComment = {
+          comment: data.get('comment')
+      }
 
-            const newComment = {
-                comment: data.get('comment')
-            }
-
-            dc.PostData(API_URL + "/createComment/" + props.event.id, newComment, accessToken)
-            .then((resp) => {
-                if (resp.success === true && resp.data.success === true) {
-                    openSnackbar("success", "Comment posted successfully!");
-                    props.closeDialog();
-                } else {
-                    openSnackbar("error", "Error creating Comment");
-                }
-            })
-            .catch((resp) => {
-                openSnackbar("error", "Error creating Comment");
-            });
-        }   
-    }
+      dc.PostData(API_URL + "/createComment/" + props.event.id, newComment, accessToken)
+      .then((resp) => {
+          if (resp.success === true && resp.data.success === true) {
+              openSnackbar("success", "Comment posted successfully!");
+              props.closeDialog();
+          } else {
+              openSnackbar("error", "Error creating Comment");
+          }
+      })
+      .catch((resp) => {
+          openSnackbar("error", "Error creating Comment");
+      });
+    }   
+  }
 
   const { theme, toggleTheme } = useTheme();
 
@@ -236,32 +245,49 @@ export default function EventDetail(props) {
                 {cards.organizer}
                 {/* <Link to={"/organizer/" + cards.accountId} /> */}
               </Button>
-              <Divider sx={{bgcolor: theme.palette.text.main}} />
-                <Typography variant="body1" color={theme.palette.text.main} ml={1}>
-                    {"Coming: " + cards.interested + " | Interested: " + cards.maybe + " | Not coming: " + cards.nointerest}
-                </Typography>
-                {user && user !== null && user.roleId === 0 && canComment.current === true ? 
-                <Box ml={0}>
-                    <Button size="small" ml={1} mr={1}>
-                        <Typography onClick={() => {handlePickInterest(1)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm coming</Typography>
-                    </Button>
-                    <Button size="small" ml={1} mr={1}>
-                        <Typography onClick={() => {handlePickInterest(0)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm interested</Typography>
-                    </Button>
-                    <Button size="small" ml={1} mr={1}>
-                        <Typography onClick={() => {handlePickInterest(-1)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm not coming</Typography>
-                    </Button>
-                </Box> : null}
-                <Typography variant="h6" sx={{marginBottom: 3, marginTop: 3, display: 'flex', justifyContent: 'right'}} color={theme.palette.text.main}>
+              <Typography variant="h5" color={theme.palette.text.main} ml={1} mt={1}>
+                {cards.time.slice(0, 10) + ', ' + cards.time.slice(11, 16)}
+              </Typography>
+              <Divider sx={{bgcolor: theme.palette.text.light}} />
+                <Box sx={{display: 'flex', justifyContent: 'space-between'}} mb={1}>
+                  <div>
+                    <Typography variant="body1" color={theme.palette.primary.light} ml={1} mt={1}>
+                      {cards.location + ', ' + cards.city}
+                    </Typography>
+                    <Typography variant="body1" color={theme.palette.text.light} ml={1}>
+                        {cards.type === 1 ? "Concert" : cards.type === 2 ? "Community" : "Food"}
+                    </Typography>
+                  </div>
+                  <div>
+                    <Typography variant="body1" color={theme.palette.text.main} ml={1}>
+                      {"Coming: " + cards.interested + " | Interested: " + cards.maybe + " | Not coming: " + cards.nointerest}
+                    </Typography>
+                    {user && user !== null && user.roleId === 0 && canInterest.current === true ? 
+                    <Box ml={0}>
+                        <Button size="small" ml={1} mr={1}>
+                            <Typography onClick={() => {handlePickInterest(1)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm coming</Typography>
+                        </Button>
+                        <Button size="small" ml={1} mr={1}>
+                            <Typography onClick={() => {handlePickInterest(0)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm interested</Typography>
+                        </Button>
+                        <Button size="small" ml={1} mr={1}>
+                            <Typography onClick={() => {handlePickInterest(-1)}} variant="body1" color={theme.palette.primary.main} style={{ textTransform: 'none' }}>I'm not coming</Typography>
+                        </Button>
+                    </Box> : null}
+                  </div>
+                </Box>
+                
+                <Typography variant="h6" sx={{marginBottom: 1, marginTop: 1, display: 'flex', justifyContent: 'right'}} color={theme.palette.text.main}>
                     {"Description: "}
                 </Typography>
-                <Typography variant="body1" sx={{marginBottom: 3, marginTop: 3, display: 'flex', justifyContent: 'right'}} color={theme.palette.text.main}>
+                <Typography variant="body1" sx={{marginBottom: 3, marginTop: 2, display: 'flex', justifyContent: 'right'}} color={theme.palette.text.main}>
                     {cards.description}
                 </Typography>
-                <Divider sx={{bgcolor: theme.palette.text.main}} />
+                <Divider sx={{bgcolor: theme.palette.text.light}} />
                 <Typography variant="h6" sx={{marginTop: 3}} color={theme.palette.text.main}>  
                     {"Comments: "}
                 </Typography>
+                {reviews && reviews !== null && reviews.length === 0 ? <Typography variant="body1" sx={{marginTop: 1}} color={theme.palette.text.main}>{"No Comments for this Event"}</Typography> : null}
                 {reviews && reviews !== null ? showLimitedComments ? reviews.slice(0,3).map(review => {
                     return (
                         <CommentBlock author={review.firstName + ' ' + review.lastName} content={review.comment} timestamp={review.time}></CommentBlock>

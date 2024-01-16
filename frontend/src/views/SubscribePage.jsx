@@ -53,19 +53,7 @@ export default function SubscribePage(props) {
     expireDate: "",
   });
 
-  const handleClickCard = (event) => {
-    const kartica = document.getElementById("kartica");
-    const opcija = document.getElementById("opcija");
-    kartica.style.display = "block";
-    opcija.style.display = "none";
-  };
-
-  const handleClickPayPal = (event) => {
-    const paypal = document.getElementById("paypal");
-    const opcija = document.getElementById("opcija");
-    paypal.style.display = "block";
-    opcija.style.display = "none";
-  };
+  const [subscriptionPrice, setSubscriptionPrice] = useState(null);
 
   const handleSubmitCard = (event) => {
     event.preventDefault();
@@ -180,6 +168,13 @@ export default function SubscribePage(props) {
       localStorage.getItem("jwt")
     ).then((resp) => {
       setDateData(resp.data.data);
+    });
+
+    dc.GetData(
+      API_URL + "/api/getSubscriptionPrice",
+      localStorage.getItem("jwt")
+    ).then((resp) => {
+      setSubscriptionPrice(resp.data.data.value);
     });
   };
 
@@ -470,7 +465,7 @@ export default function SubscribePage(props) {
       {dateData.isSubscribed ? (
         <Card
           variant="outlined"
-          sx={{ width: "35%", height: "50vh", minWidth: 350, minHeight: 350, marginTop: "0vh" }}
+          sx={{ width: "35%", height: "55vh", minWidth: 350, minHeight: 400, marginTop: "0vh" }}
         >
           <CardContent
             sx={{
@@ -492,14 +487,34 @@ export default function SubscribePage(props) {
             <Typography
               variant="body2"
               color="text.secondary"
+              sx={{ marginBottom: "15px", display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}
+              maxWidth={'25vw'}
+            >
+              ConnectiNET Premium is a subscription service that allows you to expand your social network and meet new people 
+              beyond what the free ConnectiNET experience allows you to do. 
+              By subscribing you will be able to create events with an entry fee, 
+              allowing you to really grow together with your community in a sustainable way. 
+            </Typography>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
               sx={{ marginBottom: "15px" }}
             >
-              Subscription status:
-              {dateData.isSubscribed === "True"
-                ? "Subscribed"
-                : "Nije pretplaćen"}
+              Current Subscription Price: {subscriptionPrice} € / month
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+
+            <Typography
+              variant="body1"
+              color="text.primary"
+              sx={{ marginBottom: "15px" }}
+            >
+              Subscription status: 
+              {dateData.isSubscribed === "True"
+                ? " Subscribed"
+                : " Not Subscribed"}
+            </Typography>
+            <Typography variant="body1" color="text.primary">
               Subscribed from {dateData.startDate} to {dateData.expireDate}
             </Typography>
           </CardContent>
@@ -508,18 +523,18 @@ export default function SubscribePage(props) {
             sx={{
               flexDirection: "column",
               alignItems: "center",
-              marginTop: "20px",
+              marginTop: "20px"
             }}
           >
-            <Button size="small" onClick={() => handleCancelSubscription()}>
-              Cancel subscription
-            </Button>
-            <Button size="small" onClick={() => openDialog(ChooseDialog)}>
+            <Button size="large" variant="contained" sx={{marginBottom: 1 }} onClick={() => openDialog(ChooseDialog)}>
               Extend subscription
+            </Button>
+            <Button size="small" variant="outlined" onClick={() => handleCancelSubscription()}>
+              Cancel subscription
             </Button>
           </CardActions>
         </Card>
-      ) : (
+      ) : ( 
         <Card
           variant="outlined"
           sx={{ width: 345, minHeight: "350px", marginTop: "0vh" }}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -14,6 +14,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useDialog } from "../context/DialogContext";
 import EventDetail from "../views/EventDetail";
 import UserUploadedEventImage from "./UserUploadedEventImage";
+import { Divider } from "@mui/material";
 
 export default function EventCard(props) {
   const { card } = props;
@@ -74,20 +75,28 @@ export default function EventCard(props) {
         >
           {card.title}
         </Typography>
-        <Typography color={theme.palette.text.light}>
+        {/* <Typography color={theme.palette.text.light} marginTop={1} marginBottom={1}>
           {card.description.length > maxDescriptionLength
             ? `${card.description.slice(0, maxDescriptionLength)}...`
             : card.description}
+        </Typography> */}
+        <Typography color={theme.palette.text.light} marginBottom={1}>
+          {card.organizer}
+        </Typography>
+        <Divider />
+
+        <Typography color={theme.palette.text.light} marginTop={1}>
+          {card.city}
+        </Typography>
+        <Typography color={theme.palette.text.light}>
+          {card.time.slice(0, 10)}
         </Typography>
 
         <Typography color={theme.palette.text.light}>
-          {"Organizator: " + card.organizer}
+          {card.type === 1 ? "Concert" : card.type === 2 ? "Community" : "Food"}
         </Typography>
         <Typography color={theme.palette.text.light}>
-          {"Vrijeme: " + card.time.slice(0, 10)}
-        </Typography>
-        <Typography color={theme.palette.text.light}>
-          {"Cijena: " + card.price}
+          {card.price === 0 ? "Free" : card.price + ' €'}
         </Typography>
         {/* <Typography >
                     {"Interest: " + card.interest}

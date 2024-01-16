@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 import logging
 from flask import Flask,jsonify,request,render_template, session
-from models import Account, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, Country
+from models import Account, EventType, Visitor, Organizer, Event, Review, Payment, Subscription, Data, EventMedia, Interest, Country
 from dotenv import load_dotenv
 from controllers.controller import Controller
 import random
@@ -21,6 +21,7 @@ class EventController(Controller):
         self.app.add_url_rule("/getOrganizerPublicProfile/<int:organizerId>", view_func=self.getOrganizerPublicProfile, methods=["GET"])
         self.app.add_url_rule("/setInterest/<int:eventId>", view_func=self.setInterest, methods=["POST"])
         self.app.add_url_rule("/createComment/<int:eventId>", view_func=self.createComment, methods=["POST"])
+        self.app.add_url_rule("/api/getEventTypes", view_func = self.getEventTypes, methods = ["GET"])
 
     
     # @visitor_required()
@@ -28,8 +29,9 @@ class EventController(Controller):
     def getEvents(self):
         # if getRole(self.auth_users) not in [-1,1,0]:
         #     return {"success": False, "data": "Authentication required"}
-        
-        dbResp = self.db.session.query(Event).all() 
+        two_years_ago = datetime.now() - timedelta(days=365 * 2)
+
+        dbResp = self.db.session.query(Event).filter(Event.dateTime >= two_years_ago).all()
         result_dict = [u.__dict__ for u in dbResp]
         toList = list(map( lambda event:
             {
@@ -38,6 +40,9 @@ class EventController(Controller):
                 "image":event["displayImageSource"],
                 "description":event["description"],
                 "time":str(event["dateTime"]),
+                "country":event["countryCode"],
+                "city":event["city"],
+                "type":event["eventType"],
                 "priority":str(int(random.random()*50)),
                 "accountId":event["accountId"],
                 "organizer": self.db.session.query(Organizer).filter(Organizer.accountId == event["accountId"]).first().organizerName, 
@@ -64,7 +69,6 @@ class EventController(Controller):
                 "lastName":lastName,
                 "eventId":review["eventId"]
             }, result_dict, firstNameList, lastNameList))
-        # comments = [review.comment for review in dbResp]
         return toList
     
     @jwt_required()
@@ -133,8 +137,10 @@ class EventController(Controller):
                 "country": country.name,
                 "socials": organizer.socials
             }
+            
+            two_years_ago = datetime.now() - timedelta(days=365 * 2)
 
-            dbResp = self.db.session.query(Event).filter_by(accountId=organizerId).all() 
+            dbResp = self.db.session.query(Event).filter(Event.dateTime >= two_years_ago).filter_by(accountId=organizerId).all() 
             result_dict = [u.__dict__ for u in dbResp]
             toList = list(map( lambda event:
                 {
@@ -193,3 +199,11 @@ class EventController(Controller):
             logging.warning(e)
             return jsonify({"success": False, "message": "Error creating Comment"})
         
+    @visitor_required()
+    def getEventTypes(self):
+        event_types = self.db.session.query(EventType).all()
+        event_types = list(map(lambda eType: eType.__dict__, event_types))
+        for item in event_types:
+            del item['_sa_instance_state']
+        
+        return {"success":True, "data": event_types}

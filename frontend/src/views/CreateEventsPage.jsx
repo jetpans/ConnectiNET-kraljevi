@@ -21,6 +21,7 @@ import {
   Grid,
   Paper,
   Box,
+  Typography,
 } from "@mui/material";
 import {
   Radio,
@@ -196,9 +197,8 @@ export default function CreateEventsPage() {
         API_URL + "/api/getSubscriberInfo",
         localStorage.getItem("jwt")
       ).then((resp) => {
-        console.log(resp);
         setIsSubscribed(resp.data.data.isSubscribed);
-      });
+      }).catch(e => console.log(e));
     }
   }, [user]);
 
@@ -484,6 +484,11 @@ export default function CreateEventsPage() {
                             label="Paid"
                             disabled={isSubscribed ? false : true}
                           />
+                          {isSubscribed === false || isSubscribed === undefined || isSubscribed === null ? 
+                            <Button sx={{color: theme.palette.primary.main, marginTop: 1, marginBottom: 1}} onClick={() => {navigate("/premium");}}>Subsrcibe to ConnectiNET Premium to create Events with an Entry Fee</Button>
+                            : 
+                            null
+                          }
                           <TextField
                             fullWidth
                             label="Entry fee"

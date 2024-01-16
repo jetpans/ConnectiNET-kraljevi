@@ -36,7 +36,6 @@ app.config["MAIL_SECRET"] = os.environ.get("MAIL_SECRET")
 app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
 
 cred = credentials.Certificate("./firebase_key.json")
-print(cred.project_id)
 firebase_app = firebase_admin.initialize_app(cred, {
     'storageBucket': 'imgstoremarko.appspot.com'
 })
@@ -74,7 +73,7 @@ def catch_all(path):
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization'
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
     response.headers["Access-Control-Allow-Credentials"] = "true"
     return response
 

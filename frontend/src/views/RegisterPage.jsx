@@ -308,7 +308,16 @@ export default function RegisterPage() {
                         onClick={() => setShowPassword(!showPassword)}
                       /> */}
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item 
+                        xs={12} 
+                        sx={{
+                          display: "flex",
+                          position: "center",
+                          justifyContent: "center",
+                          alignItems: "center"
+                        }} 
+                      fullWidth
+                    >
                       <TextField
                         required
                         labelId="country-label"
@@ -320,6 +329,7 @@ export default function RegisterPage() {
                         style={{ width: "50%" }}
                         placeholder="Country"
                         select
+                        fullWidth
                       >
                         {countries != null ? (
                           countries.map((country) => (

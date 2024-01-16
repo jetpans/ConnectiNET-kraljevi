@@ -45,7 +45,6 @@
 					\begin{packed_enum}
 						\item filtrirati događaje po kategoriji, lokaciji, vremenu održavanja
 						\item sortirati događaje po kategoriji, udaljenosti, vremenu održavanja, cijeni, ocjeni
-						\item pretraživati događaje po ključnim riječima
 					\end{packed_enum}
 					\item pregledati detalje događaja
 					\item pregledati recenzije drugih posjetitelja
@@ -100,7 +99,6 @@
 					\item sve što prijavljeni korisnik može
 					\item vidjeti popis svih registriranih korisnika i njihovih osobnih podataka
 					\item dodavati nove administratore
-					\item pristupiti statistici o korištenju aplikacije
 					\item ukloniti recenzije koje krše pravila korištenja aplikacije
 					\item ukloniti događaje koji krše pravila korištenja aplikacije
 					\item ukloniti korisničke račune koji krše pravila korištenja aplikacije
@@ -165,7 +163,7 @@
 					\begin{packed_item}
 
 						\item \textbf{Glavni sudionik:} Korisnik
-						\item  \textbf{Cilj:} Dobiti pristup korisnickom sučelju
+						\item  \textbf{Cilj:} Dobiti pristup korisničkom sučelju
 						\item  \textbf{Sudionici:} Baza podataka
 						\item  \textbf{Preduvjet:} Registracija
 						\item  \textbf{Opis osnovnog tijeka:}
@@ -182,7 +180,7 @@
 
 						\item[] \begin{packed_item}
 
-							\item[2.a] Neispravno korisnicko ime/lozinka 
+							\item[2.a] Neispravno korisničko ime/lozinka 
 							\item[] \begin{packed_enum}
 
 								\item Sustav obavjestava korisnika o neuspjelom upisu i vraća ga na stranicu za prijavu
@@ -260,7 +258,7 @@
 							\item Otvara se stranica s osobnim podacima korisnika
 							\item Korisnik briše račun
 							\item Korisnicki račun se izbriše iz baze podataka
-							\item Otvara se stranica za registraciju
+							\item Otvara se stranica za prijavu
 						\end{packed_enum}
 
 						\item  \textbf{Opis mogućih odstupanja:}
@@ -304,9 +302,8 @@
 
 						\item[] \begin{packed_enum}
 
-							\item Korisnik ima mogućost filtriranja događaja po kategorijama, lokacijama te vremenu izvođenja događaja
-							\item Korisnik ima mogućnost sortiranja događaja po kategorijama, lokacijama te vremenu izvođenja događaja
-							\item Korisnik ima mogućnost traženja neke ključne riječi
+							\item Korisnik ima mogućost filtriranja događaja po kategorijama, lokacijama, vremenu izvođenja i cijeni događaja
+							\item Korisnik ima mogućnost sortiranja događaja po popularnosti (interesu), vremenu izvođenja te cijeni događaja
 
 						\end{packed_enum}
 
@@ -325,7 +322,7 @@
 						\item[] \begin{packed_enum}
 
 							\item Korisnik odabire događaj
-							\item Prikazuje mu se detalji o događaju poput naziva, vrste, lokacije, vremena početka, trajanja, foto/video galerije te popis recenzija
+							\item Prikazuje mu se detalji o događaju poput naziva, vrste, lokacije, vremena početka, trajanja, foto galerije te popis recenzija
 
 						\end{packed_enum}
 
@@ -395,7 +392,7 @@
 	
 							\item Posjetitelj otvara stranicu s popisom događaja
 							\item Odabire događaj
-							\item Posjetitelj odabire opciju "Prikaži recenzije"
+							\item Posjetitelj odabire opciju "Prikaži sve recenzije"
 
 						\end{packed_enum}
 						
@@ -597,7 +594,7 @@
 						\item \textbf{Glavni sudionik:} Posjetitelj
 						\item  \textbf{Cilj:} Primanje obavijesti o događajima
 						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen i ***
+						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen
 						\item  \textbf{Opis osnovnog tijeka:}
 						
 						\item[] \begin{packed_enum}
@@ -687,10 +684,8 @@
 							\item Svi korisnici s navedenim pretraživanjem u imenu se prikazuju
 							\item Administrator odabire željenog korisnika
 							\item Administrator odabire opciju "Recenzije"
-							\item Administrator upisuje ime događaja u tražilicu
-							\item Administrator odabire željeni događaj
-							\item Korisnikova recenzija odabranog događaja se prikazuje
-							\item Administrator odabire opciju "Ukloni recenziju"
+							\item Korisnikove recenzije za sve događaje se prikazuju
+							\item Administrator odabire opciju "Ukloni recenziju" na nekoj od recenzija
 							\item Administrator odabire opciju "Da, ukloni recenziju"
 							\item Recenzija je uklonjena
 						\end{packed_enum}
@@ -823,24 +818,7 @@
 						\end{packed_item}
 					\end{packed_item}
 
-					\noindent \underbar{\textbf{UC25 - Pregled statistike}}
-					\begin{packed_item}
-	
-						\item \textbf{Glavni sudionik:} Administrator
-						\item  \textbf{Cilj:} Pregled statistike
-						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Administrator je prijavljen
-						\item  \textbf{Opis osnovnog tijeka:}
-						
-						\item[] \begin{packed_enum}
-	
-							\item Administrator odabire opciju "Administratorske postavke"
-							\item Administrator odabire opciju "Statistika"
-							\item Administratoru se prikažu različite statistike vezane za pretplate, događaje i korisnike
-						\end{packed_enum}
-					\end{packed_item}
-
-					\noindent \underbar{\textbf{UC26 - Uređivanje javnog profila}}
+					\noindent \underbar{\textbf{UC25 - Uređivanje javnog profila}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Organizator
@@ -852,8 +830,6 @@
 						\item[] \begin{packed_enum}
 	
 							\item Organizator odabire opciju "Osobni podatci"
-							\item Organizator odabire opciju "Javni profil"
-							\item Organizator odabire opciju "Uredi javni profil"
 							\item Organizator unosi podatke o sebi
 							\item Organizator odabire opciju "Potvrdi promjene"
 						\end{packed_enum}
@@ -871,7 +847,7 @@
 						\end{packed_item}
 					\end{packed_item}
 
-					\noindent \underbar{\textbf{UC27 - Skrivanje javnog profila}}
+					\noindent \underbar{\textbf{UC26 - Skrivanje javnog profila}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Organizator
@@ -883,7 +859,6 @@
 						\item[] \begin{packed_enum}
 	
 							\item Organizator odabire opciju "Osobni podatci"
-							\item Organizator odabire opciju "Javni profil"
 							\item Organizator odabire opciju "Sakrij javni profil"
 							\item Organizator odabire opciju "Potvrdi"
 						\end{packed_enum}

@@ -413,12 +413,12 @@ export default function EventDetail(props) {
               </Typography>
 
               <ImageList
-                sx={{ width: "60rem", height: "20rem" }}
+                sx={{ width: "100%", height: media && media !== undefined && media.length > 0 ? "20rem" : "0rem", borderColor: theme.palette.primary.main, borderWidth: media && media !== undefined && media.length > 0 ? "0.15rem" : "0rem", borderStyle: "solid" }}
                 cols={3}
                 rowHeight={"20rem"}
               >
                 {media.map((item) => (
-                  <ImageListItem key={item.mediaId}>
+                  <ImageListItem key={item.mediaId} sx={{width: "100%", height: "20rem"}} >
                     <img src={item.mediaSource} loading="lazy" />
                   </ImageListItem>
                 ))}

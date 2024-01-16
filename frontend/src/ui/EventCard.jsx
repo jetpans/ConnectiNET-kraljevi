@@ -88,7 +88,7 @@ export default function EventCard(props) {
         </Typography> */}
         <Typography color={theme.palette.text.light} marginBottom={1}>
           By{" "}
-          <Button onClick={() => navigate("/organizer/" + card.accountId)}>
+          <Button onClick={() => navigate("/organizer/" + card.accountId)} sx={{color: theme.palette.primary.main}}>
             {card.organizer}
           </Button>
         </Typography>
@@ -140,6 +140,7 @@ export default function EventCard(props) {
             bgcolor: theme.palette.secondary,
             fontSize: "1.3rem",
             padding: "0.5rem",
+            color: theme.palette.text.light
           }}
         ></Chip>
       </CardActions>

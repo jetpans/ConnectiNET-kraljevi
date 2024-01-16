@@ -108,8 +108,6 @@ export default function EditEventPage() {
         </DialogActions>
       </Paper>
     );
-
-    openDialog(EventImageUploadDialog);
   };
 
   const refreshMyEventMedia = async (eventId) => {

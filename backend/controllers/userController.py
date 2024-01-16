@@ -380,7 +380,7 @@ class UserController(Controller):
         end_time = datetime.strptime(data["duration"], "%Y-%m-%dT%H:%M")
         duration = end_time - start_time
         data["duration"] = duration
-
+        
         if result == "OK":
             # TODO: fix constructor
             newEvent = Event(data["dateTime"], 
@@ -401,6 +401,7 @@ class UserController(Controller):
                 pass
             return {"success":True, "data": {"eventId": newEvent.eventId}}
         else:
+            print("GOT HERE \n")
             return result
         
     def testCreateEventForm(self, form):
@@ -432,7 +433,7 @@ class UserController(Controller):
         # eventType
         if "eventType" not in form.keys():
             return {"success": False, "data": "Event type is missing."}
-        if int(form["eventType"]) not in list(map(lambda x: x[0], self.db.session.query(EventType.typeId).all())):
+        if form["eventType"] not in list(map(lambda x: x[0], self.db.session.query(EventType.typeName).all())):
             return {"success": False, "data": f"Invalid event type. ({form['eventType']})"}
         # dateTime
         if "dateTime" not in form.keys():
@@ -470,7 +471,8 @@ class UserController(Controller):
         start_time = datetime.strptime(data["dateTime"], "%Y-%m-%dT%H:%M")
         end_time = datetime.strptime(data["duration"], "%Y-%m-%dT%H:%M")
         duration = end_time - start_time
-                
+
+        myEventTypeId = self.db.session.query(EventType).filter(EventType.typeName == data["eventType"]).first().typeId
         if result == "OK":
             try:
                 event_to_update.dateTime = data["dateTime"]
@@ -481,7 +483,7 @@ class UserController(Controller):
                 event_to_update.location = data["location"]
                 event_to_update.duration = duration
                 event_to_update.price = data["price"]
-                event_to_update.eventType = data["eventType"]
+                event_to_update.eventType = myEventTypeId
                 # event_to_update = Event(data["dateTime"], 
                 #                  data["title"], 
                 #                  data["description"], 

@@ -122,9 +122,9 @@ export default function UserTable() {
     e.preventDefault();
     let accountId = e.target.id;
 
-    dc.PostData(
+    dc.DeleteData(
       API_URL + "/api/admin/deleteAccount/" + accountId,
-      "",
+      accountId,
       accessToken
     )
       .then((resp) => {
@@ -273,15 +273,18 @@ export default function UserTable() {
                       </Button>
                     ) : null}
                   </>
-                ) : user.roleId == 0 ? (
+                ) : user.roleId == 0 || user.roleId == -1 ? (
                   <>
-                    <Button
-                      id={user.accountId}
-                      onClick={(e) => handleMakeAdmin(e)}
-                      sx={{color: theme.palette.primary.main}}
-                    >
-                      Make Administrator
-                    </Button>{" "}
+                    {user.roleId == 0 ? 
+                      <Button
+                        id={user.accountId}
+                        onClick={(e) => handleMakeAdmin(e)}
+                        sx={{color: theme.palette.primary.main}}
+                      >
+                        Make Administrator
+                      </Button>
+                    : null}
+                    {" "}
                     {user.reviews === true ? (
                       <Button
                         id={user.accountId}
@@ -295,15 +298,17 @@ export default function UserTable() {
                     ) : (
                       <></>
                     )}
-                    <Button
-                      id={user.accountId}
-                      onClick={(e) => {
-                        handleDeleteAccount(e);
-                      }}
-                      sx={{color: theme.palette.primary.main}}
-                    >
-                      Delete account
-                    </Button>
+                    {user.roleId == 0 ? 
+                      <Button
+                        id={user.accountId}
+                        onClick={(e) => {
+                          handleDeleteAccount(e);
+                        }}
+                        sx={{color: theme.palette.primary.main}}
+                      >
+                        Delete account
+                      </Button>
+                    : null}
                   </>
                 ) : null}
               </TableCell>

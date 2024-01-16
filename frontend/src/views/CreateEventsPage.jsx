@@ -155,7 +155,7 @@ export default function CreateEventsPage() {
 
   const deleteEventMedia = (event) => {
     const mediaId = event.currentTarget.id;
-    dc.PostData(API_URL + "/api/deleteEventMedia/" + mediaId, "", accessToken)
+    dc.DeleteData(API_URL + "/api/deleteEventMedia/" + mediaId, mediaId, accessToken)
       .then((resp) => {
         if (resp.data && resp.data.success === true) {
           openSnackbar("success", "Successfuly deleted media.");
@@ -388,7 +388,7 @@ export default function CreateEventsPage() {
                         categories.map((category) => (
                           <MenuItem
                             key={category.typeId}
-                            value={category.typeId}
+                            value={category.typeName}
                           >
                             {category.typeName}
                           </MenuItem>

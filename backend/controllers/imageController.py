@@ -27,7 +27,7 @@ class ImageController(Controller):
         self.app.add_url_rule("/api/uploadEventImage/<eventId>", view_func=self.uploadEventImage, methods=["POST"])
         self.app.add_url_rule("/api/getEventMedia/<eventId>", view_func=self.getEventMedia, methods=["GET"])
         self.app.add_url_rule("/api/uploadEventMedia/<eventId>", view_func=self.addEventMedia, methods=["POST"])
-        self.app.add_url_rule("/api/deleteEventMedia/<mediaId>", view_func=self.deleteEventMedia, methods=["POST"])
+        self.app.add_url_rule("/api/deleteEventMedia/<mediaId>", view_func=self.deleteEventMedia, methods=["DELETE"])
 
     # @visitor_required()
     def upload_image(self):

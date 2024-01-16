@@ -413,7 +413,7 @@ export default function EventDetail(props) {
               </Typography>
 
               <ImageList
-                sx={{ width: "100%", height: media && media !== undefined && media.length > 0 ? "20rem" : "0rem", borderColor: theme.palette.primary.main, borderWidth: media && media !== undefined && media.length > 0 ? "0.15rem" : "0rem", borderStyle: "solid" }}
+                sx={{ width: "100%", height: media && media !== undefined && media.length > 0 ? "20rem" : "0rem" }}
                 cols={3}
                 rowHeight={"20rem"}
               >

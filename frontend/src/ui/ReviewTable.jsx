@@ -40,9 +40,9 @@ export default function ReviewTable(props) {
   };
 
   const deleteReview = (e) => {
-    dc.PostData(
+    dc.DeleteData(
       API_URL + "/api/admin/deleteReview/" + e.target.id,
-      "",
+      e.target.id,
       accessToken
     )
       .then((resp) => {

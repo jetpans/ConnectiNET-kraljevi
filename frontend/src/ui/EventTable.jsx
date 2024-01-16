@@ -44,9 +44,9 @@ export default function EventTable(props) {
   }, []);
 
   const handleDeleteEvent = (event) => {
-    dc.PostData(
+    dc.DeleteData(
       API_URL + "/api/admin/deleteEvent/" + event.target.id,
-      "",
+      event.target.id,
       accessToken
     )
       .then((resp) => {

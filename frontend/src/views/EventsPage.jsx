@@ -368,9 +368,9 @@ export default function EventsPage(props) {
                         value={selectedTypeValue}
                         onChange={handleChangeType}
                       >
-                        <FormControlLabel value={1} control={<Radio />} label="Concert" />
-                        <FormControlLabel value={2} control={<Radio />} label="Community" />
-                        <FormControlLabel value={3} control={<Radio />} label="Food" />
+                        <FormControlLabel value={"Concert"} control={<Radio />} label="Concert" />
+                        <FormControlLabel value={"Community"} control={<Radio />} label="Community" />
+                        <FormControlLabel value={"Food"} control={<Radio />} label="Food" />
                       </RadioGroup>
                     </Menu>
 

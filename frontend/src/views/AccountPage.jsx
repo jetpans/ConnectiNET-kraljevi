@@ -206,7 +206,7 @@ export default function AccountPage() {
 
   const handleDeleteEventType = (e) => {
     let eventTypeName = e.currentTarget.id;
-    dc.PostData(
+    dc.DeleteData(
       API_URL + "/api/deleteNotificationEventType",
       { typeName: eventTypeName },
       accessToken
@@ -225,7 +225,7 @@ export default function AccountPage() {
 
   const handleDeleteCountry = (event) => {
     let countryName = event.currentTarget.id;
-    dc.PostData(
+    dc.DeleteData(
       API_URL + "/api/deleteNotificationCountry",
       { countryName: countryName },
       accessToken
@@ -245,7 +245,7 @@ export default function AccountPage() {
   const handleDeleteAccount = () => {
     closeDialog();
 
-    dc.PostData(API_URL + "/api/deleteAccount", "", accessToken)
+    dc.DeleteData(API_URL + "/api/deleteAccount", -1, accessToken)
       .then((resp) => {
         if (resp.data.success === true) {
           openSnackbar("success", "Successfuly deleted.");

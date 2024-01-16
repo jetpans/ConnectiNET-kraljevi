@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { Chip } from "@mui/material";
+import { Chip, Container, Grid, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { browserHistory } from "react-router";
 import { Navigate } from "react-router-dom";
@@ -16,18 +16,68 @@ import { useDialog } from "../context/DialogContext";
 import EventDetail from "../views/EventDetail";
 import UserUploadedEventImage from "./UserUploadedEventImage";
 import { Divider } from "@mui/material";
+import dataController from "../utils/DataController";
+import { useSnackbar } from "../context/SnackbarContext";
 
 export default function EventCard(props) {
   const { card } = props;
   const { theme, toggleTheme } = useTheme();
   const maxDescriptionLength = 150;
   const { openDialog, closeDialog } = useDialog();
+  const { openSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const dc = new dataController();
 
   const handleCloseAndReroute = (path) => {
     closeDialog();
     navigate(path);
   };
+
+  const confirmDeleteEventDialog = (
+    <Paper sx={{ bgcolor: theme.palette.background.table }}>
+      <div className="dialog-content">
+        <Container sx={{ py: 4 }} maxWidth="lg" width="100px">
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography variant="h6" color={theme.palette.text.main}>
+              Are you sure you want to delete this event?{" "}
+            </Typography>
+            <br />
+            <br />
+            <br />
+          </Grid>
+
+          <Box
+            fullWidth
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: "2rem",
+            }}
+          >
+            <Button
+              sx={{ bgcolor: "green" }}
+              type="submit"
+              form="edit-form"
+              onClick={() => handleDeleteEvent()}
+              variant="contained"
+            >
+              Yes
+            </Button>
+            <Button
+              sx={{ bgcolor: "red" }}
+              onClick={closeDialog}
+              variant="contained"
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Container>
+      </div>
+    </Paper>
+  );
 
   function displayEvent() {
     openDialog(
@@ -47,9 +97,26 @@ export default function EventCard(props) {
     navigate("/edit/" + card.id);
   }
 
-  useEffect(() => {
-    console.log(props.card);
-  });
+  function deleteEvent() {
+    openDialog(confirmDeleteEventDialog)
+  }
+  
+  function handleDeleteEvent() {
+    const accessToken = localStorage.getItem("jwt");
+
+    dc.DeleteData(API_URL + "/api/deleteOrganizerEvent/" + card.id, card.id, accessToken)
+    .then((resp) => {
+      if (resp.data.success === true) {
+        openSnackbar("success", "Successfuly delted event.");
+        setTimeout(() => {
+          navigate(0);
+        }, 1000)
+      } else {
+        openSnackbar("error", "Failed to delete event.");
+      }
+    })
+    .catch((e) => console.log(e));
+  }
 
   return (
     <Card
@@ -121,16 +188,30 @@ export default function EventCard(props) {
           </Button>
           {card.my_event ? (
             <>
-              <Button size="small">
-                <Typography
-                  onClick={editEvent}
-                  variant="body1"
-                  color={theme.palette.primary.main}
-                  style={{ textTransform: "none" }}
-                >
-                  Edit
-                </Typography>
-              </Button>
+              <>
+                <Button size="small">
+                  <Typography
+                    onClick={editEvent}
+                    variant="body1"
+                    color={theme.palette.primary.main}
+                    style={{ textTransform: "none" }}
+                  >
+                    Edit
+                  </Typography>
+                </Button>
+              </>
+              <>
+                <Button size="small">
+                  <Typography
+                    onClick={deleteEvent}
+                    variant="body1"
+                    color={theme.palette.primary.main}
+                    style={{ textTransform: "none" }}
+                  >
+                    Delete
+                  </Typography>
+                </Button>
+              </>
             </>
           ) : null}
         </div>

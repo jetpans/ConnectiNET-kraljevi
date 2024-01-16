@@ -22,6 +22,7 @@ import {
   Paper,
   Box,
   Typography,
+  Avatar,
 } from "@mui/material";
 import {
   Radio,
@@ -124,7 +125,7 @@ export default function EditEventPage() {
 
   const deleteEventMedia = (event) => {
     let mediaId = event.currentTarget.id;
-    dc.PostData(API_URL + "/api/deleteEventMedia/" + mediaId, "", accessToken)
+    dc.DeleteData(API_URL + "/api/deleteEventMedia/" + mediaId, mediaId, accessToken)
       .then((resp) => {
         if (resp.data && resp.data.success === true) {
           openSnackbar("success", "Successfuly deleted media.");
@@ -418,7 +419,7 @@ export default function EditEventPage() {
                             categories.map((category) => (
                               <MenuItem
                                 key={category.typeId}
-                                value={category.typeId}
+                                value={category.typeName}
                               >
                                 {category.typeName}
                               </MenuItem>
@@ -603,10 +604,11 @@ export default function EditEventPage() {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
+                  bgcolor: theme.palette.background.table
                 }}
               >
-                <Paper sx={{ bgcolor: "white" }}>
-                  <DialogTitle>Upload Event Picture</DialogTitle>
+                <Paper sx={{ bgcolor: theme.palette.background.table }}>
+                  <DialogTitle sx={{color: theme.palette.text.main}}>Upload Event Picture</DialogTitle>
 
                   <DialogContent>
                     <Box
@@ -614,10 +616,10 @@ export default function EditEventPage() {
                       sx={{ display: "flex", justifyContent: "center" }}
                     >
                       <UserUploadedImage
-                        src={oldEventData.image}
+                        src={oldEventData.image} notProfileImage={true}
                       ></UserUploadedImage>
                     </Box>
-                    <DialogContentText>
+                    <DialogContentText sx={{color: theme.palette.text.main, marginTop: 2}}>
                       This image will be displayed on the event card.
                     </DialogContentText>
                     <ImageUploadButton
@@ -626,10 +628,10 @@ export default function EditEventPage() {
                   </DialogContent>
                 </Paper>
 
-                <Paper sx={{ bgcolor: "white" }}>
-                  <DialogTitle>Upload Event Media</DialogTitle>
+                <Paper sx={{ bgcolor: theme.palette.background.table }}>
+                  <DialogTitle sx={{color: theme.palette.text.main}}>Upload Event Media</DialogTitle>
                   <DialogContent>
-                    <DialogContentText>
+                    <DialogContentText sx={{color: theme.palette.text.light}}>
                       These images will be displayed on your event page
                     </DialogContentText>
                     <Box
@@ -645,12 +647,14 @@ export default function EditEventPage() {
                       {eventMedia.map((entry) => (
                         <div>
                           <Button
-                            sx={{ position: "relative" }}
+                            sx={{ position: "relative", paddingLeft: 0, marginLeft: 0, top: 50 }}
                             key={entry.mediaId}
                             id={entry.mediaId}
                             onClick={(e) => deleteEventMedia(e)}
-                          >
-                            <DeleteIcon></DeleteIcon>
+                          > 
+                            <Avatar sx={{bgcolor: 'black'}}>
+                              <DeleteIcon sx={{color: 'red'}} />
+                            </Avatar>
                           </Button>
                           <img
                             style={{ maxWidth: "80%" }}

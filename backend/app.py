@@ -26,18 +26,21 @@ from firebase_admin import credentials, storage
 app = Flask(__name__)
 
 env = os.environ.get('FLASK_ENV')
-app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["IMAGE_DIRECTORY"] = "images"
+
 
 app.config["MAIL_API_KEY"] = os.environ.get('MAIL_API_KEY')
 app.config["MAIL_SECRET"] = os.environ.get("MAIL_SECRET")
  
 app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024 # X * 1024 *1024 === X Megabytes
 
+FIREBASE_URL = os.environ.get('FIREBASE_URL')
+
 cred = credentials.Certificate("./firebase_key.json")
 firebase_app = firebase_admin.initialize_app(cred, {
-    'storageBucket': 'imgstoremarko.appspot.com'
+    'storageBucket': FIREBASE_URL
 })
 bucket = storage.bucket()
 

@@ -194,25 +194,10 @@ class AuthController(Controller):
                                         }
                                 ],
                                 "Subject": f"ConnectiNET Confirm registration [{f['username']}]",
-                                "TextPart": f"""Thanks for registering with us {f['username']}. 
-                                We hope you enjoy your stay.
-                                
-                                Regards,
-                                team Kraljevi
-                                
-                                Our githubs: 
-                                aleksicfilip
-                                Domagoj2002
-                                Dujet
-                                ep1902
-                                jetpans
-                                |Luka|
-                                PapakMate
-                                """,
+                                "TextPart": f"""Thanks for registering with us {f['username']}.\n We hope you enjoy your stay.\n \nRegards,\nteam Kraljevi\n \nOur githubs: \n aleksicfilip\n Domagoj2002\n Dujet\n ep1902\n jetpans\n |Luka|\n PapakMate\n """,
                         }
                 ],
         
         
         }
         result = self.mail.send.create(data=data)
-        print("RESULT OF SEND: ", result)

@@ -400,13 +400,7 @@ class EventController(Controller):
                                         }
                                 ],
                                 "Subject": f"ConnectiNET new event for YOU",
-                                "TextPart": f"""A new event you might be interested in was just created. 
-                                Check out our page to find out more!
-                                Event name is {event.title} and it is happening at {event.dateTime} in
-                                {event.countryCode}.
-                                
-                                Regards,
-                                ConnectiNET team
+                                "TextPart": f"""A new event you might be interested in was just created.\nCheck out our page to find out more!\nEvent name is {event.title} and it is happening at {event.dateTime} in {event.countryCode}.\n\nRegards,\nConnectiNET team\n
                                 """,
                         },
             data['Messages'].append(message)

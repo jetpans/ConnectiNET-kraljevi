@@ -333,7 +333,7 @@ export default function EventDetail(props) {
                     />
                     <Chip
                       sx={{ bgcolor: "#fff875" }}
-                      label={"Intersted: " + cards.maybe}
+                      label={"Interested: " + cards.maybe}
                     />
                     <Chip
                       sx={{ bgcolor: "#fc727f" }}
@@ -413,12 +413,21 @@ export default function EventDetail(props) {
               </Typography>
 
               <ImageList
-                sx={{ width: "100%", height: media && media !== undefined && media.length > 0 ? "20rem" : "0rem" }}
+                sx={{
+                  width: "100%",
+                  height:
+                    media && media !== undefined && media.length > 0
+                      ? "20rem"
+                      : "0rem",
+                }}
                 cols={3}
                 rowHeight={"20rem"}
               >
                 {media.map((item) => (
-                  <ImageListItem key={item.mediaId} sx={{width: "100%", height: "20rem"}} >
+                  <ImageListItem
+                    key={item.mediaId}
+                    sx={{ width: "100%", height: "20rem" }}
+                  >
                     <img src={item.mediaSource} loading="lazy" />
                   </ImageListItem>
                 ))}

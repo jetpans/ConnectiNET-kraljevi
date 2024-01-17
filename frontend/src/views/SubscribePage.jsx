@@ -222,13 +222,33 @@ export default function SubscribePage(props) {
           }}
         >
           <Grid container justifyContent="center">
-            <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button onClick={() => {openDialog(KarticaDialog)}} variant="contained">
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <Button
+                onClick={() => {
+                  openDialog(KarticaDialog);
+                }}
+                variant="contained"
+              >
                 Pay by card
               </Button>
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button onClick={() => {openDialog(PaypalDialog)}} variant="contained">
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <Button
+                onClick={() => {
+                  openDialog(PaypalDialog);
+                }}
+                variant="contained"
+              >
                 Pay with PayPal
               </Button>
             </Grid>
@@ -247,8 +267,8 @@ export default function SubscribePage(props) {
           </Button>
         </CardActions>
       </Card>
-    )
-  }
+    );
+  };
 
   const KarticaDialog = () => {
     return (
@@ -350,8 +370,8 @@ export default function SubscribePage(props) {
           </Box>
         </CardContent>
       </Card>
-    )
-  }
+    );
+  };
 
   const PaypalDialog = () => {
     return (
@@ -399,7 +419,7 @@ export default function SubscribePage(props) {
               placeholder="Enter paypal username"
               inputProps={{
                 inputMode: "text",
-                maxLength: 30
+                maxLength: 30,
               }}
               sx={{ marginBottom: "10px" }}
             />
@@ -410,7 +430,7 @@ export default function SubscribePage(props) {
               type="password"
               inputProps={{
                 inputMode: "text",
-                maxLength: 30
+                maxLength: 30,
               }}
               sx={{ marginBottom: "10px" }}
             />
@@ -439,8 +459,8 @@ export default function SubscribePage(props) {
           </Box>
         </CardContent>
       </Card>
-    )
-  }
+    );
+  };
 
   return (
     <ProtectedComponent roles={[1, -1]}>
@@ -455,142 +475,164 @@ export default function SubscribePage(props) {
       >
         <CssBaseline />
         <MainHeader for="Account" />
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {dateData.isSubscribed ? (
-        <Card
-          variant="outlined"
-          sx={{ width: "35%", height: "55vh", minWidth: 350, minHeight: 400, marginTop: "0vh" }}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "30px",
-            }}
-          >
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              sx={{ marginBottom: "45px" }}
-            >
-              Welcome {userData.username}
-            </Typography>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ marginBottom: "15px", display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center" }}
-              maxWidth={'25vw'}
-            >
-              ConnectiNET Premium is a subscription service that allows you to expand your social network and meet new people 
-              beyond what the free ConnectiNET experience allows you to do. 
-              By subscribing you will be able to create events with an entry fee, 
-              allowing you to really grow together with your community in a sustainable way. 
-            </Typography>
-
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{ marginBottom: "15px" }}
-            >
-              Current Subscription Price: {subscriptionPrice} € / month
-            </Typography>
-
-            <Typography
-              variant="body1"
-              color="text.primary"
-              sx={{ marginBottom: "15px" }}
-            >
-              Subscription status: 
-              {dateData.isSubscribed === "True"
-                ? " Subscribed"
-                : " Not Subscribed"}
-            </Typography>
-            <Typography variant="body1" color="text.primary">
-              Subscribed from {dateData.startDate} to {dateData.expireDate}
-            </Typography>
-          </CardContent>
-
-          <CardActions
-            sx={{
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "20px"
-            }}
-          >
-            <Button size="large" variant="contained" sx={{marginBottom: 1 }} onClick={() => openDialog(ChooseDialog)}>
-              Extend subscription
-            </Button>
-            <Button size="small" variant="outlined" onClick={() => handleCancelSubscription()}>
-              Cancel subscription
-            </Button>
-          </CardActions>
-        </Card>
-      ) : ( 
-        <Card
-          variant="outlined"
-          sx={{ width: 345, minHeight: "350px", marginTop: "0vh" }}
-        >
-          <CardContent
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "30px",
-            }}
-          >
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              sx={{ marginBottom: "45px" }}
-            >
-              Welcome {userData.username}
-            </Typography>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ marginBottom: "15px" }}
-            >
-              Subscription status: Not subscribed
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Price: 10$/mth
-            </Typography>
-          </CardContent>
-
-          <CardActions
-            sx={{
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "65px",
-            }}
-          >
-            <Button
-              size="small"
-              onClick={() => {
-                openDialog(ChooseDialog);
+          {dateData.isSubscribed ? (
+            <Card
+              variant="outlined"
+              sx={{
+                width: "35%",
+                height: "55vh",
+                minWidth: 350,
+                minHeight: 400,
+                marginTop: "0vh",
               }}
-              variant="contained"
             >
-              Subscribe
-            </Button>
-          </CardActions>
-        </Card>
-      )}
-      
-      </div>
-      <MainFooter />
-      </ Paper>
-      </ ProtectedComponent>
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: "30px",
+                }}
+              >
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ marginBottom: "45px" }}
+                >
+                  Welcome {userData.username}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    marginBottom: "15px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                  maxWidth={"25vw"}
+                >
+                  ConnectiNET Premium is a subscription service that allows you
+                  to expand your social network and meet new people beyond what
+                  the free ConnectiNET experience allows you to do. By
+                  subscribing you will be able to create events with an entry
+                  fee, allowing you to really grow together with your community
+                  in a sustainable way.
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ marginBottom: "15px" }}
+                >
+                  Current Subscription Price: {subscriptionPrice} € / month
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  color="text.primary"
+                  sx={{ marginBottom: "15px" }}
+                >
+                  Subscription status:
+                  {dateData.isSubscribed === "True"
+                    ? " Subscribed"
+                    : " Not Subscribed"}
+                </Typography>
+                <Typography variant="body1" color="text.primary">
+                  Subscribed from {dateData.startDate} to {dateData.expireDate}
+                </Typography>
+              </CardContent>
+
+              <CardActions
+                sx={{
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: "20px",
+                }}
+              >
+                <Button
+                  size="large"
+                  variant="contained"
+                  sx={{ marginBottom: 1 }}
+                  onClick={() => openDialog(ChooseDialog)}
+                >
+                  Extend subscription
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => handleCancelSubscription()}
+                >
+                  Cancel subscription
+                </Button>
+              </CardActions>
+            </Card>
+          ) : (
+            <Card
+              variant="outlined"
+              sx={{ width: 345, minHeight: "350px", marginTop: "0vh" }}
+            >
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: "30px",
+                }}
+              >
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ marginBottom: "45px" }}
+                >
+                  Welcome {userData.username}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ marginBottom: "15px" }}
+                >
+                  Subscription status: Not subscribed
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Price: {subscriptionPrice}$/mth
+                </Typography>
+              </CardContent>
+
+              <CardActions
+                sx={{
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: "65px",
+                }}
+              >
+                <Button
+                  size="small"
+                  onClick={() => {
+                    openDialog(ChooseDialog);
+                  }}
+                  variant="contained"
+                >
+                  Subscribe
+                </Button>
+              </CardActions>
+            </Card>
+          )}
+        </div>
+        <MainFooter />
+      </Paper>
+    </ProtectedComponent>
   );
 }

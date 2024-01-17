@@ -48,10 +48,16 @@
 		
 		\section{Dijagram razmještaja}
 			
-			\textbf{\textit{dio 2. revizije}}
+			%\textbf{\textit{dio 2. revizije}}
 			
-			 \textit{Potrebno je umetnuti \textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
-			
+			 %\textit{Potrebno je umetnuti \textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
+			 Sustav je baziran na arhitekturi ”klijent – poslužitelj”, a klijenti koriste web preglednik kako bi pristupili web aplikaciji. Na poslužiteljskom računalu nalaze se poslužitelj frontend dijela web aplikacije, poslužitelj backend dijela web aplikacije te poslužitelj baze podataka. Backend dio aplikacije nalazi se unutar Docker kontejenera koji predstavlja okruženje koje sadrži sve što je potrebno za izvođenje dotičnog dijela aplikacije. Pohrana slika realizirana je uz pomoć usluge Firebase Storage koja je dio Firebase-a, platforme za razvoj mobilnih i web aplikacija. Firebase Storage se za pohranu i dohvat korisnički generiranih sadržaja oslanja na uslugu Google Cloud Storage. Sve spomenute usluge dio su šire platforme pod nazivom Google Cloud Platform (GCP). Odgovornost backend dijela web aplikacije je da korisničku sliku otpremi na Firebase Storage te da prihvati javnu poveznicu na tu sliku i pohrani je u bazu podataka. Frontend dio će preko te poveznice tu sliku dohvatiti s Firebase Storage-a i prikazati je korisniku. Komunikacija između osnovnih dijelova sustava odvija se preko HTTPS veze.
+			 \begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{dijagrami/diagram_razmjestaja.jpeg}
+				\caption{Dijagram razmještaja}
+			\label{fig:my_image}
+			\end{figure}
 			\eject 
 		
 		\section{Upute za puštanje u pogon}

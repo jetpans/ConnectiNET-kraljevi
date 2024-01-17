@@ -34,16 +34,14 @@ import { useTheme } from "../context/ThemeContext";
 import { useDialog } from "../context/DialogContext";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import AddCardIcon from "@mui/icons-material/AddCard";
-import GroupsIcon from '@mui/icons-material/Groups';
+import GroupsIcon from "@mui/icons-material/Groups";
 import { useSnackbar } from "../context/SnackbarContext";
 import UserUploadedAvatar from "./UserUploadedAvatar";
-import PriceChangeIcon from '@mui/icons-material/PriceChange';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
+import PriceChangeIcon from "@mui/icons-material/PriceChange";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import NotificationAddIcon from "@mui/icons-material/NotificationAdd";
 import { useNotification } from "../context/NotificationContext";
 import EventDetail from "../views/EventDetail";
-
-
 
 export default function MainHeader(props) {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -54,17 +52,35 @@ export default function MainHeader(props) {
   const navigate = useNavigate();
 
   const [tabs, setTabs] = useState(
-      user === null ? ["Events"] :
-      user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "Create New Event", "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Profile", "Events", /** "My Events", */ "Account", "ConnectiNET Premium"/**, "Temp" */, "Browse Users", "Change Subscription Price"]
-    : ["Events"]); 
+    user === null
+      ? ["Events"]
+      : user.roleId === 0
+      ? ["Events", "Account"]
+      : user.roleId === 1
+      ? [
+          "Profile",
+          "Events",
+          "Create New Event",
+          "Account",
+          "ConnectiNET Premium" /**, "Temp" */,
+        ]
+      : user.roleId === -1
+      ? [
+          "Profile",
+          "Events",
+          /** "My Events", */ "Account",
+          "ConnectiNET Premium" /**, "Temp" */,
+          "Browse Users",
+          "Change Subscription Price",
+        ]
+      : ["Events"]
+  );
 
   const [profileImage, setProfileImage] = useState("");
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorElNotification, setAnchorElNotification] = useState(null);
-  
+
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
@@ -74,12 +90,23 @@ export default function MainHeader(props) {
 
   useEffect(() => {
     setTabs(
-      user === null ? ["Events"] :
-      user.roleId === 0 ? ["Events", "Account"] 
-    : user.roleId === 1 ? ["Profile", "Events", "Create New Event", "Account", "ConnectiNET Premium"/**, "Temp" */]
-    : user.roleId === -1 ? ["Events", "Account", "Browse Users", "Change Subscription Price"]
-    : ["Events"]);
-  }, [user])
+      user === null
+        ? ["Events"]
+        : user.roleId === 0
+        ? ["Events", "Account"]
+        : user.roleId === 1
+        ? [
+            "Profile",
+            "Events",
+            "Create New Event",
+            "Account",
+            "ConnectiNET Premium" /**, "Temp" */,
+          ]
+        : user.roleId === -1
+        ? ["Events", "Account", "Browse Users", "Change Subscription Price"]
+        : ["Events"]
+    );
+  }, [user]);
 
   const dc = new dataController();
 
@@ -149,13 +176,36 @@ export default function MainHeader(props) {
     setAnchorElNotification(document.getElementById("notification-icon"));
   };
 
+  const fetchInformation = async () => {
+    let accessToken = localStorage.getItem("jwt");
+    dc.GetData(API_URL + "/api/getInformation", accessToken)
+      .then((response) => {
+        updateUser({
+          id: user.id,
+          username: user.username,
+          roleId: user.roleId,
+          countryCode: user.countryCode,
+          email: user.email,
+          profileImage: response.data.data.profileImage,
+        });
+      })
+      .catch((e) => console.log(e));
+  };
   useEffect(() => {
+    fetchInformation();
     if (user && user !== null && user.profileImage) {
       setProfileImage(user.profileImage);
     }
   }, [user]);
 
-  const { notifications, addNotifications, clearNotifications, saveNotificationState, setSeenNotifications, alert } = useNotification();
+  const {
+    notifications,
+    addNotifications,
+    clearNotifications,
+    saveNotificationState,
+    setSeenNotifications,
+    alert,
+  } = useNotification();
   const { openDialog, closeDialog } = useDialog();
 
   const handleCloseAndReroute = (path) => {
@@ -175,12 +225,12 @@ export default function MainHeader(props) {
             variant="h5"
             color={theme.palette.secondary.light}
             noWrap
-            textAlign="center"  
+            textAlign="center"
             style={{
-              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',  
-              fontFamily: 'Roboto, sans-serif', 
-              fontWeight: 400, 
-              marginLeft: '6.5vw',
+              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
+              fontFamily: "Roboto, sans-serif",
+              fontWeight: 400,
+              marginLeft: "6.5vw",
             }}
           >
             {props.for}
@@ -192,8 +242,15 @@ export default function MainHeader(props) {
             </Button>
             {user && user !== null && user.roleId === 0 ? (
               <>
-                <Button onClick={handleOpenMenuNotification} id="notification-icon">
-                  {alert === false ? <NotificationsNoneIcon sx={{ color: "#FFF" }} /> : <NotificationAddIcon sx={{ color: "#FFF" }} />}
+                <Button
+                  onClick={handleOpenMenuNotification}
+                  id="notification-icon"
+                >
+                  {alert === false ? (
+                    <NotificationsNoneIcon sx={{ color: "#FFF" }} />
+                  ) : (
+                    <NotificationAddIcon sx={{ color: "#FFF" }} />
+                  )}
                 </Button>
                 <Menu
                   id="notifications-menu"
@@ -207,34 +264,51 @@ export default function MainHeader(props) {
                     setSeenNotifications();
                   }}
                 >
-                  {notifications && notifications !== null && notifications.length > 0 ? 
-                  notifications.map((notification, index) => 
-                  (<MenuItem onClick={() => {
-                    openDialog(
-                      <EventDetail
-                        event={notification}
-                        closeDialog={closeDialog}
-                        closeDialogExtended={(path) => {
-                          handleCloseAndReroute(path);
+                  {notifications &&
+                  notifications !== null &&
+                  notifications.length > 0 ? (
+                    notifications.map((notification, index) => (
+                      <MenuItem
+                        onClick={() => {
+                          openDialog(
+                            <EventDetail
+                              event={notification}
+                              closeDialog={closeDialog}
+                              closeDialogExtended={(path) => {
+                                handleCloseAndReroute(path);
+                              }}
+                            />
+                          );
                         }}
-                      />
-                    );
-                  }}>
-                      <Avatar src={notification.image} variant="rounded">
-                        {notification.image !== null && notification.image !== "" ? null : <EventIcon />}
-                      </Avatar>
-                      <div>
-                        <Typography marginRight={1} marginLeft={1}>{notification.title}</Typography>
-                        <Typography variant="body2" marginRight={1} marginLeft={1} color={theme.palette.primary.main}>{notification.time.slice(0, 10)}</Typography>
-                      </div>
+                      >
+                        <Avatar src={notification.image} variant="rounded">
+                          {notification.image !== null &&
+                          notification.image !== "" ? null : (
+                            <EventIcon />
+                          )}
+                        </Avatar>
+                        <div>
+                          <Typography marginRight={1} marginLeft={1}>
+                            {notification.title}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            marginRight={1}
+                            marginLeft={1}
+                            color={theme.palette.primary.main}
+                          >
+                            {notification.time.slice(0, 10)}
+                          </Typography>
+                        </div>
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem onClick={() => {}}>
+                      <Typography marginRight={1}>No notifications</Typography>
                     </MenuItem>
-                  )) : 
-                  (<MenuItem onClick={() => {}}>
-                    <Typography marginRight={1}>No notifications</Typography>
-                  </MenuItem>)
-                  }
+                  )}
                 </Menu>
-                </>
+              </>
             ) : null}
             <Button onClick={handleOpenMenu} id="profile-image">
               <UserUploadedAvatar src={profileImage}></UserUploadedAvatar>
@@ -252,7 +326,9 @@ export default function MainHeader(props) {
                 "aria-labelledby": "basic-button",
               }}
             >
-              <Typography marginRight={2} marginLeft={2} marginBottom={1}>{user && user !== null ? user.username : 'User'}</Typography>
+              <Typography marginRight={2} marginLeft={2} marginBottom={1}>
+                {user && user !== null ? user.username : "User"}
+              </Typography>
               <Divider />
               <MenuItem
                 onClick={() => {
@@ -334,7 +410,7 @@ export default function MainHeader(props) {
                     ) : text === "Change Subscription Price" ? (
                       <PriceChangeIcon />
                     ) : null}
-                  </ListItemIcon> 
+                  </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
               </ListItem>

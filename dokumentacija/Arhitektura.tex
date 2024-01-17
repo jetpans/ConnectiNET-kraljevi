@@ -417,7 +417,7 @@
 			 Na dijagramu aktivnosti prikazan je proces ostavljanja recenzije od strane korisnika. Korisnik se najprije prijavi u sustav ako je već jednom uspješno završio proces registracije. Nakon toga odabirom opcije pregleda događaja dolazi do popisa svih trenutno evidentiranih događaja u bazi podataka nad kojim odabirom neke od funkcija za kontrolu pregleda (sortiranje, filtriranje, traženje ključne riječi) reducira izbor prema vlastitim željama. Kada pronađe i odabere željeni događaj otvara mu se prikaz s dodatnim informacijama o dotičnom događaju. Ako je događaj završio unazad 48 sati, Korisnik odabirom funkcije za ostavljenje recenzija popunjava obrazac za ostavljanje recenzije. Ispravnim popunjavanjem obrasca, recenzija se pohranjuje u bazi podataka.  
 			 \begin{figure}[htbp]
 				\centering
-				\includegraphics[height=0.7\textheight]{dijagrami/dijagram_aktivnosti_v2.png}
+				\includegraphics[width=1\textwidth]{dijagrami/diagram_aktivnosti_finally.jpeg} %height=0.7\textheight
 				\caption{Dijagram aktivnosti}
 			\label{fig:my_image}
 			\end{figure}
@@ -425,6 +425,13 @@
 			\eject
 		\section{Dijagram komponenti}
 		
-			\textbf{\textit{dio 2. revizije}}\\
+			%\textbf{\textit{dio 2. revizije}}\\
 		
-			 \textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
+			 %\textit{Potrebno je priložiti dijagram komponenti s pripadajućim opisom. Dijagram komponenti treba prikazivati strukturu cijele aplikacije.}
+			 Sustavu se pristupa preko dva različita sučelja. Preko sučelja za dohvat HTML, CSS, JS i JSX datoteka poslužuju se datoteke koje pripadaju frontend dijelu aplikacije. Router je komponenta koja na upit s url-a određuje koja datoteka će se poslužiti na sučelje. Frontend dio se sastoji od većeg broja JavaScript datoteka koje su raspoređene u logičke cjeline views, ui i context. Views datoteke definiraju osnovnu strukturu stranice koja će se prikazati korisniku. Ui datoteke predstavljaju komponente koje dopunjuju strukturu stranice. Context sadrži kontekste koji olakšavaju dijeljenje podataka između React komponenata. ProtectedComponent.jsx datoteka je React komponenta koja služi kao zaštitni omotač za druge komponente. Koristi se za provjeru je li korisnik prijavljen i ima li odgovarajuće ovlasti za pristup određenim dijelovima aplikacije. Ako korisnik nije prijavljen ili nema odgovarajuće ovlasti, komponenta preusmjerava korisnika na stranicu za prijavu ili na drugu stranicu. Sve JavaScript datoteke ovise o React biblioteci iz koje dohvaćaju gotove komponente kao što su gumbi, forme i slično. Preko sučelja za dohvat JSON podataka pristupa se REST API komponenti. REST API poslužuje podatke koji pripadaju backend dijelu aplikacije. SQLAlchemy je zadužen za dohvaćanje tablica iz baze podataka pomoću SQL upita. Podaci koji su pristigli iz baze se šalju dalje MVC arhitekturi u obliku jednostavnih Python klasa ili tuple-ova koji se kasnijom obradom pretvaraju u JSON objekte. Util.py implementira sučelje koje se koristi za provjeru prava pristupa određenim podacima i rutama. React-view komponenta preko oba sučelja komunicira s ConnectiNET aplikacijom te ovisno o korisnikovim akcijama osvježava prikaz i dohvaća nove podatke ili datoteke. Oba sučelja ovise o komponenti DataController.js koja preuzetim zahtjevima s korisničkog sučelja dodaje potrebne parametre i šalje zahtjev na poslužitelj. Kada poslužitelj vrati odgovor, DataController.js obrađuje taj odgovor i prosljeđuje ga natrag korisničkom sučelju.
+			 \begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{dijagrami/component_diagram_finally.jpeg}
+				\caption{Dijagram komponenti}
+			\label{fig:my_image}
+			\end{figure}

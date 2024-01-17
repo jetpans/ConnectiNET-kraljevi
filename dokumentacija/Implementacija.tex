@@ -14,7 +14,15 @@
 			 
 			 Aplikacija je napisana koristeći web okvir Flask\footnote{https://flask.palletsprojects.com/en/3.0.x/}. Razvijen je od strane Armina Ronachera, vođe Međunarodne grupe entuzijasta za Python. Temelji se na WSGI alatima i Jinja2 predlošku. Ovaj okvir pokriva širok spektar primjene, od osnovnih koncepta kao što su postavljanje i instalacija do naprednijih koncepta poput autentifikacije korisnika i integracije baze podataka.
 			 
-			 Za izradu frontenda korišten je React\footnote{https://reactjs.org/} i jezik JavaScript\footnote{https://www.javascript.com/}. React, također poznat kao React.js ili ReactJS, je biblioteka u JavaScriptu za izgradnju korisničkih sučelja. Održavana je od strane Facebooka. React se najčešće koristi kao osnova u razvoju web ili mobilnih aplikacija. Složene aplikacije u Reactu obično zahtijevaju korištenje dodatnih biblioteka za interakciju s API-jem.		 
+			 Za izradu frontenda korišten je React\footnote{https://reactjs.org/} i jezik JavaScript\footnote{https://www.javascript.com/}. React, također poznat kao React.js ili ReactJS, je biblioteka u JavaScriptu za izgradnju korisničkih sučelja. Održavana je od strane Facebooka. React se najčešće koristi kao osnova u razvoju web ili mobilnih aplikacija. Složene aplikacije u Reactu obično zahtijevaju korištenje dodatnih biblioteka za interakciju s API-jem.
+
+			 Kao pomoć u razvoju korištena je usluga ElephantSQL\footnote{https://www.elephantsql.com/} za hosting baze podataka. ElephantSQL nudi korisnički prijateljsku i skalabilnu platformu za upravljanje PostgreSQL bazama podataka u oblaku. Pojednostavljuje proces opskrbe, upravljanja i skaliranja PostgreSQL instanci, omogućujući razvojnom timu da se usredotoči na funkcionalnost svoje aplikacije umjesto na upravljanje infrastrukturom.
+
+			 S ciljem pojednostavljenja procesa slanja e-mailova koji je integriran unutar aplikacije, korišten je Mailjet\footnote{https://www.mailjet.com/} - cloud-based pružatelj usluga e-pošte (ESP) koji omogućuje slanje transakcijskih i marketinških e-mail kampanja. Mailjetova platforma osigurava pouzdano slanje na sigurnoj i robustnoj infrastrukturi koja se nalazi na Google Cloud Platformi, te nadzire i optimizira ključne analitike poput stopa otvaranja, stopa odbijanja i spam pogodaka.
+
+			 Svoju primjenu u izradi ovog projekta pronašao je i Docker\footnote{https://www.docker.com/} - otvorena platforma za razvoj, isporuku i pokretanje aplikacija. Docker omogućuje odvajanje aplikacija od infrastrukture kako bi se softver mogao brzo isporučiti1. Docker pruža mogućnost pakiranja i pokretanja aplikacije u labavo izoliranom okruženju zvanom kontejner. Kontejneri su lagani i sadrže sve što je potrebno za pokretanje aplikacije. U kontekstu izrade web aplikacija, Docker pojednostavljuje razvoj omogućujući programerima stvaranje prijenosnih i konzistentnih okruženja aplikacija, smanjujući složenost postavljanja i održavanja razvojnih, testnih i produkcijskih okruženja. Kontejneri su odlični za kontinuiranu integraciju i kontinuiranu isporuku (CI/CD) radnih tokova.
+
+             Kao platforma za deployment korišten je Render\footnote{https://render.com/} koji omogućuje brzo i jednostavno postavljanje web aplikacija. Podržava sve glavne jezike, besplatne certifikate, zaštitu od DDoS napada i automatsko postavljanje iz GitHuba. Također nudi i sučelje za brzo i jednostavno objavljivanje statičkog web sadržaja. Može se koristiti za postavljanje različitih vrsta aplikacija, uključujući Node.js, Express i Flask aplikacije.		 
 			 
 			 Za izradu dokumentacije korišten je LateX\footnote{https://www.latex-project.org/}, markup jezik koji svoju osnovnu primjenu nalazi u izradi znanstvenih publikacija. Osnovna mu je značajka da pisac koristi konvencije označavanja koje predstavljaju ugrađene naredbe za definiranje opće strukture dokumenta, stiliziranje teksta, dodavanje citata, unakrsnih referenci i sl.Tako stvorenu LaTeX datoteku obrađuje softver zvan TeX engine koji koristi ugrađene naredbe kako bi vodio i kontrolirao proces izgradnje profesionalno složenenog PDF dokumenta.
 			\eject 
@@ -48,10 +56,16 @@
 		
 		\section{Dijagram razmještaja}
 			
-			\textbf{\textit{dio 2. revizije}}
+			%\textbf{\textit{dio 2. revizije}}
 			
-			 \textit{Potrebno je umetnuti \textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
-			
+			 %\textit{Potrebno je umetnuti \textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
+			 Sustav je baziran na arhitekturi ”klijent – poslužitelj”, a klijenti koriste web preglednik kako bi pristupili web aplikaciji. Na poslužiteljskom računalu nalaze se poslužitelj frontend dijela web aplikacije, poslužitelj backend dijela web aplikacije te poslužitelj baze podataka. Backend dio aplikacije nalazi se unutar Docker kontejenera koji predstavlja okruženje koje sadrži sve što je potrebno za izvođenje dotičnog dijela aplikacije. Pohrana slika realizirana je uz pomoć usluge Firebase Storage koja je dio Firebase-a, platforme za razvoj mobilnih i web aplikacija. Firebase Storage se za pohranu i dohvat korisnički generiranih sadržaja oslanja na uslugu Google Cloud Storage. Sve spomenute usluge dio su šire platforme pod nazivom Google Cloud Platform (GCP). Odgovornost backend dijela web aplikacije je da korisničku sliku otpremi na Firebase Storage te da prihvati javnu poveznicu na tu sliku i pohrani je u bazu podataka. Frontend dio će preko te poveznice tu sliku dohvatiti s Firebase Storage-a i prikazati je korisniku. Komunikacija između osnovnih dijelova sustava odvija se preko HTTPS veze.
+			 \begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{dijagrami/diagram_razmjestaja.jpeg}
+				\caption{Dijagram razmještaja}
+			\label{fig:my_image}
+			\end{figure}
 			\eject 
 		
 		\section{Upute za puštanje u pogon}

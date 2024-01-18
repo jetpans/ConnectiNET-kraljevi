@@ -6,11 +6,11 @@ driver = webdriver.Chrome()
 
 try:
     driver.maximize_window()
-    driver.get("http://localhost:3000")
+    driver.get("https://progi-fe-xo22.onrender.com/login")
 
     login(driver, "serbiangamesbl", "password123")
 
-    driver.implicitly_wait(0.5)
+    driver.implicitly_wait(10)
     butt = driver.find_element("xpath", "//*[@id='root']/div[1]/div[2]/div[3]/div[1]/div/div[3]/div[1]/button")
     butt.click()
 

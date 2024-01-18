@@ -196,7 +196,7 @@ export default function MainHeader(props) {
     if (user && user !== null && user.profileImage) {
       setProfileImage(user.profileImage);
     }
-  }, [user]);
+  }, [user.profileImage]);
 
   const {
     notifications,

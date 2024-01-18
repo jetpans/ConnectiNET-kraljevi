@@ -15,7 +15,7 @@ from util import login
 #--------------------------------------------------------------
 try:
     driver.maximize_window()
-    driver.get("http://localhost:3000")
+    driver.get("https://progi-fe-xo22.onrender.com/login")
 
     time.sleep(2)
     driver.implicitly_wait(10)

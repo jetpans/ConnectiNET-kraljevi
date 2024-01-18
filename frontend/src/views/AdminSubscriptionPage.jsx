@@ -28,7 +28,7 @@ import {
 import { useState, useEffect } from "react";
 import MainHeader from "../ui/MainHeader.jsx";
 import MainFooter from "../ui/MainFooter";
-import { dblClick } from "@testing-library/user-event/dist/click";
+// import { dblClick } from "@testing-library/user-event/dist/click";
 import { ProtectedComponent } from "../utils/ProtectedComponent";
 import { useSnackbar } from "../context/SnackbarContext";
 import { useTheme } from "../context/ThemeContext";

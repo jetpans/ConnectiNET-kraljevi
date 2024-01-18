@@ -41,7 +41,7 @@
 				\begin{packed_enum}
 					
 					\item pregledati popis događaja
-					\item kontrolirati način prikaza popisa događaja
+					\item upravljati načinom prikaza popisa događaja
 					\begin{packed_enum}
 						\item filtrirati događaje po kategoriji, lokaciji, vremenu održavanja
 						\item sortirati događaje po kategoriji, udaljenosti, vremenu održavanja, cijeni, ocjeni
@@ -140,7 +140,9 @@
 						\item[] \begin{packed_enum}
 
 							\item Korisnik odabire opciju za registraciju
+							\item Sustav vraća korisniku obrazac za registraciju
 							\item Korisnik unosi potrebne korisničke podatke
+							\item Sustav provjerava točnost unesenih podataka i da li je korisničko ime već zauzeto
 							\item Korisnik prima obavijest o uspješnoj registraciji 
 
 						\end{packed_enum}
@@ -215,7 +217,7 @@
 						\item \textbf{Glavni sudionik:} Organizator, posjetitelj
 						\item  \textbf{Cilj:} Promijeniti osobne podatke
 						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Organizator je prijavljen
+						\item  \textbf{Preduvjet:} Organizator je prijavljen (vidi UC2)
 						\item  \textbf{Opis osnovnog tijeka:}
 
 						\item[] \begin{packed_enum}
@@ -254,7 +256,7 @@
 
 						\item[] \begin{packed_enum}
 
-							\item Korisnik pregledava osobne podatke
+							\item Korisnik pregledava osobne podatke (vidi UC3)
 							\item Otvara se stranica s osobnim podacima korisnika
 							\item Korisnik briše račun
 							\item Korisnicki račun se izbriše iz baze podataka
@@ -321,7 +323,7 @@
 
 						\item[] \begin{packed_enum}
 
-							\item Korisnik odabire događaj
+							\item Korisnik odabire događaj (vidi UC6)
 							\item Prikazuje mu se detalji o događaju poput naziva, vrste, lokacije, vremena početka, trajanja, foto galerije te popis recenzija
 
 						\end{packed_enum}
@@ -340,7 +342,7 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Posjetitelj otvara stranicu s popisom događaja (vidi UC6)
 							\item Odabire događaj
 							\item Odabire stupanj interesa između „sigurno dolazim“, „možda dolazim“ i „ne dolazim“
 
@@ -359,7 +361,7 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Posjetitelj otvara stranicu s popisom događaja (vidi UC6)
 							\item Odabire događaj
 							\item Posjetitelj odabire opciju "Ostavi recenziju"
 							\item Posjetitelj piše recenziju
@@ -390,7 +392,7 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Posjetitelj otvara stranicu s popisom događaja (vidi UC6)
 							\item Odabire događaj
 							\item Posjetitelj odabire opciju "Prikaži sve recenzije"
 
@@ -883,21 +885,21 @@
 
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_posjetitelja.jpg}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalost_posjetitelja_new.png}
 						\caption{Dijagram obrasca uporabe, funkcionalnost posjetitelja}
 					\label{fig:my_image}
 					\end{figure}
 					
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_organizatora.jpg}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_organizatora_new.png}
 						\caption{Dijagram obrasca uporabe, funkcionalnost organizatora}
 					\label{fig:my_image}
 					\end{figure}
 
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora.jpg}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora_new.png}
 						\caption{Dijagram obrasca uporabe, funkcionalnost administratora}
 					\label{fig:my_image}
 					\end{figure}
@@ -941,7 +943,7 @@
 
 				\begin{figure}[htbp]
 					\centering
-					\includegraphics[width=1\textwidth]{dijagrami/UC5-seq.jpg}
+					\includegraphics[width=1\textwidth]{dijagrami/UC5-seq.png}
 					\caption{Sekvencijski dijagram za UC5}
 				\label{fig:my_image}
 				\end{figure}
@@ -998,7 +1000,7 @@
 				\item Izvršavanje dijela programa u kojem se pristupa bazi podataka ne smije trajati duže od nekoliko sekundi
 				\item Sustav treba biti implementiran kao web aplikacija koristeći objektno orijentirane jezike
 				\item Neispravno korištenje korisničkog sučelja ne smije narušiti funkcionalnost i rad sustava
-				\item Sustav treba biti jednostavan za korištenje, korisnici se trebaju znati koristiti korisničkim sučeljem bez opširnih uputa
+				\item Sustav treba biti jednostavan za korištenje, korisnici trebaju znati koristiti korisničko sučelje bez opširnih uputa
 				\item Nadogradnja sustava ne smije narušavati postojeće funkcionalnosti sustava
 				\item Sustav kao valutu koristi Euro
 				\item Veza s bazom podataka mora biti kvalitetno zaštićena, brza i otporna na vanjske greške

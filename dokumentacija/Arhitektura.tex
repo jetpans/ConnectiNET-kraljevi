@@ -13,7 +13,7 @@
 		\item Baza podataka
 	\end{itemize}
 
-	\underline{Web preglednik} je program koji omogućuje pregled web-stranica i multimedijskih sadržaja na istima s korisničkog računala. Izvorni kod internetskih stranica se interpretira na web pregledniku i prikazuje korisniku na pristupačan način i služi kao glavna pristupna točka aplikaciji s korisničke strane. Web preglednik je također zadužen za komunikaciju s web poslužiteljem putem zahtjeva.
+	\underline{Web Klijent} je program koji omogućuje pregled web-stranica i multimedijskih sadržaja na istima s korisničkog računala. Izvorni kod internetskih stranica se interpretira na web pregledniku i prikazuje korisniku na pristupačan način i služi kao glavna pristupna točka aplikaciji s korisničke strane. Web preglednik je također zadužen za komunikaciju s web poslužiteljem putem zahtjeva.
 	
 	\underline{Web poslužitelj} je program koji obrađuje zahtjeve klijenata i šalje im odgovor, time omogućavajući klijentu komunikaciju s aplikacijom. Web poslužitelj je zadužen za obradu zahtjeva i slanje odgovora putem HTTP-a (engl.\textit{Hyper Text Transfer Protocol}), standardnog protokola za prijenos informacija na webu.
 	
@@ -28,6 +28,13 @@
 		\item \textbf{View} - Komponenta sustava odgovorna za prikaz podataka korisniku. Može biti formatirana u obliku HTML dokumenata, kao JSON ili u drugom formatu. Ima interakciju s Controller-om, od kojeg prima podatke za prikaz.
 		\item \textbf{Controller} - Komponenta sustava koja prima ulazne podatke i prosljeđuje ih Model-u ili View-u. Zadužena je za korisničke zahtjeve i odgovore te obavlja interakciju s ostalim komponentama sustava.
 	\end{itemize}
+
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=1\textwidth]{slike/skica_mvc.jpg}
+		\caption{Skica osnovne arhitekture sustava}
+	\label{fig:my_image}
+	\end{figure}
 
 	%Osim navedenih dijelova arhitekture, dio poslovne logike se nalazi u sloju Service.
 	

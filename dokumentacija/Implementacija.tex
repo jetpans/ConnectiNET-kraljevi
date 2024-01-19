@@ -43,15 +43,71 @@
 			
 			
 			\subsection{Ispitivanje sustava}
+			Svi testovi izvršeni su koristeći Selenium WebDriver. Ispitivanje se radilo po obrascima uporabe kako bi se provjerila osnovna funkcionalnost sustava. Prikazivanje ispitivanja UC1 (i UC2), UC4, UC5, UC9 i UC12.
 			
-			 \textit{Potrebno je provesti i opisati ispitivanje sustava koristeći radni okvir Selenium\footnote{\url{https://www.seleniumhq.org/}}. Razraditi \textbf{minimalno 4 ispitna slučaja} u kojima će se ispitati redovni slučajevi, rubni uvjeti te poziv funkcionalnosti koja nije implementirana/izaziva pogrešku kako bi se vidjelo na koji način sustav reagira kada nešto nije u potpunosti ostvareno. Ispitni slučaj se treba sastojati od ulaza (npr. korisničko ime i lozinka), očekivanog izlaza ili rezultata, koraka ispitivanja i dobivenog izlaza ili rezultata.\\ }
-			 
-			 \textit{Izradu ispitnih slučajeva pomoću radnog okvira Selenium moguće je provesti pomoću jednog od sljedeća dva alata:}
-			 \begin{itemize}
-			 	\item \textit{dodatak za preglednik \textbf{Selenium IDE} - snimanje korisnikovih akcija radi automatskog ponavljanja ispita	}
-			 	\item \textit{\textbf{Selenium WebDriver} - podrška za pisanje ispita u jezicima Java, C\#, PHP koristeći posebno programsko sučelje.}
-			 \end{itemize}
-		 	\textit{Detalji o korištenju alata Selenium bit će prikazani na posebnom predavanju tijekom semestra.}
+			\noindent \underbar{\textbf{Ispitni slučaj 1: Stvaranje korisničkog računa}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Unos uloge, imena, prezimena, korisničkog imena, email adrese, lozinke i države
+					\item Odabir opcija "Sign Up" i "Sign In"
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za prijavu
+				\item[2.a] Korisnik je uspješno registriran
+				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni i provjereni uspješnom prijavom na kreirani korisnički račun. Aplikacije je prošla test.
+			\end{packed_item}
+
+			\noindent \underbar{\textbf{Ispitni slučaj 2: Uređivanje korisničkog računa}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje Account stranice u web pregledniku
+					\item Odabir opcije "Edit Account" i "Save Changes"
+					\item Unos novih podataka u polja za uređivanje
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za uređivanje
+				\item[2.a] Korisnik je uspješno uređen
+				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+			\end{packed_item}
+
+			\noindent \underbar{\textbf{Ispitni slučaj 3: Brisanje korisničkog računa}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje Account stranice u web pregledniku
+					\item Odabir opcije "Delete Account" i potvrde brisanja
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1.a] Korisnički račun je obrisan nakon pritiska "Yes" za potvrdu brisanja
+				\item[1.b] Korisnički račun nije obrisan nakon pritiska "No" za potvrdu brisanja 
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+			\end{packed_item}
 			
 			\eject 
 		

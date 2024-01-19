@@ -218,7 +218,8 @@
 				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
 				\end{packed_item}
 
-				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni i provjereni uspješnom prijavom na kreirani korisnički račun. Aplikacije je prošla test.
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni i provjereni uspješnom prijavom na kreirani korisnički račun. Aplikacija je prošla test.
+
 				\begin{figure}[htbp]
 					\centering
 					\includegraphics[width=1\textwidth]{slike/selenium_test_1.png}
@@ -246,7 +247,8 @@
 				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
 				\end{packed_item}
 
-				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
+
 				\begin{figure}[htbp]
 					\centering
 					\includegraphics[width=1\textwidth]{slike/selenium_test_2.png}
@@ -272,13 +274,57 @@
 				\item[1.b] Korisnički račun nije obrisan nakon pritiska "No" za potvrdu brisanja 
 				\end{packed_item}
 
-				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
 				\begin{figure}[htbp]
 					\centering
 					\includegraphics[width=1\textwidth]{slike/selenium_test_3.png}
 					\caption{Testiranje brisanja korisničkog računa}
 				\label{fig:my_image}
 				\end{figure}
+
+			\noindent \underbar{\textbf{Ispitni slučaj 4: Stvaranje novog događaja}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Unos i odabir potrebnih podataka za kreiranje novog događaja
+					\item Odabir opcije za "Create event"
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za kreiranje novog eventa
+				\item[2.a] Događaj je uspješno kreiran
+				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
+			\end{packed_item}
+
+
+			\noindent \underbar{\textbf{Ispitni slučaj 5: Ostavljanje razine zainteresiranosti}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Ulazak u detaljni prikaz o događaju klikom na "See more"
+					\item Odabir razine zainteresiranosti
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za prijavu
+				\item[2] Korisnik je oodabrao razinu zainteresiranosti
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
+
 			\end{packed_item}
 			
 			\eject 

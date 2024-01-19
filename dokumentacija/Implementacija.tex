@@ -32,18 +32,172 @@
 	
 		\section{Ispitivanje programskog rješenja}
 			
-			\textbf{\textit{dio 2. revizije}}\\
-			
-			 \textit{U ovom poglavlju je potrebno opisati provedbu ispitivanja implementiranih funkcionalnosti na razini komponenti i na razini cijelog sustava s prikazom odabranih ispitnih slučajeva. Studenti trebaju ispitati temeljnu funkcionalnost i rubne uvjete.}
-	
 			
 			\subsection{Ispitivanje komponenti}
-			\textit{Potrebno je provesti ispitivanje jedinica (engl. unit testing) nad razredima koji implementiraju temeljne funkcionalnosti. Razraditi \textbf{minimalno 6 ispitnih slučajeva} u kojima će se ispitati redovni slučajevi, rubni uvjeti te izazivanje pogreške (engl. exception throwing). Poželjno je stvoriti i ispitni slučaj koji koristi funkcionalnosti koje nisu implementirane. Potrebno je priložiti izvorni kôd svih ispitnih slučajeva te prikaz rezultata izvođenja ispita u razvojnom okruženju (prolaz/pad ispita). }
-			
-			
+			Svi testovi komponenti su izvršeni koristeći python biblioteke unittest i requests. Ispitivanje se radilo po obrascima uporabe kako bi se provjerila osnovna funkcionalnost sustava i neki rubni slučajevi, pokut pokušaja dohvata bez tokena za autorizaciju. Prikazano je ispitivanje UC2, UC5, UC6, UC12 i UC13. Slijedi izvorni kod datoteke za testiranje, također vidljiv u /testing direktoriju repozitorija koda. Ispod izvornog koda je i slika izlaza terminala nakon pokretanja testiraanja.
+
+			\begin{verbatim}
+				import requests
+				import unittest
+
+				class TestApp(unittest.TestCase):
+					def setUp(self):
+						self.base_url = 'http://127.0.0.1:5000'
+						
+					def test_login(self, username, password):
+						response = requests.post(
+							self.base_url + '/login', 
+							json={'username': username, 'password': password}
+						)
+						self.assertEqual(response.status_code, 200, 'Status code is not 200')
+						self.assertIn(
+							'access_token', 
+							response.json()['data'], 
+							'Response does not contain access_token'
+						)
+						print('Test Login Passed')
+						return response.json()
+
+					def test_get_events(self, token):
+						response = requests.get(
+							self.base_url + '/getEvents', 
+							headers={'Authorization': 'Bearer ' + token}
+						)
+						self.assertEqual(
+							response.status_code, 
+							200, 
+							'Status code is not 200'
+						)
+						self.assertIsInstance(
+							response.json()['data'], 
+							list, 
+							'Response data is not a list'
+						)
+						print('Test Get Events Passed')
+						return response.json()
+					
+					def test_get_events_without_token(self):
+						response = requests.get(self.base_url + '/getEvents')
+						self.assertEqual(
+							response.status_code, 
+							401, 
+							'Status code is not 401'
+						)
+						self.assertIn(
+							'msg', 
+							response.json(), 
+							'Response does not contain msg'
+						)
+						print('Test Get Events Without jwt failed, as expected')
+						return response.json()
+					
+					def test_create_event(self, token):
+						response = requests.post(
+							self.base_url + '/api/createEvent', 
+							headers={'Authorization': 'Bearer ' + token}, 
+							json={
+								'title':'EventName',
+								'description':'Description',
+								'city':'City',
+								'location':'Place',
+								'countryCode':'CCK',
+								'eventType':'Concert',
+								'dateTime':'2024-01-26T12:00',
+								'duration':'2024-01-29T12:00',
+								'price':'1'
+							})
+						self.assertEqual(
+							response.status_code, 200, 
+							'Status code is not 200'
+						)
+						self.assertIn(
+							'eventId', 
+							response.json()['data'], 
+							'Response does not contain eventId'
+						)
+						print('Test Edit Event Passed')
+						return response.json()
+					
+					def test_edit_event(self, token, id):
+						response = requests.put(
+							self.base_url + '/api/editEvent/62', 
+							headers={'Authorization': 'Bearer ' + token},
+							json={
+								'title':'NewEventName',
+								'description':'New Description',
+								'city':'New City',
+								'location':'New Place',
+								'countryCode':'HRV',
+								'eventType':'Community',
+								'dateTime':'2025-01-26T12:00',
+								'duration':'2025-02-29T12:00',
+								'price':'20'
+							})
+						self.assertEqual(
+							response.status_code, 
+							200, 
+							'Status code is not 200'
+						)
+						self.assertIn(
+							'success', 
+							response.json(), 
+							'Response does not contain success'
+						)
+						print('Test Edit Event Passed')
+						return response.json()
+					
+					def test_delete_account(self, token):
+						response = requests.delete(
+							self.base_url + '/api/deleteAccount', 
+							headers={'Authorization': 'Bearer ' + token}
+						)
+						self.assertEqual(
+							response.status_code, 
+							200, 
+							'Status code is not 200'
+						)
+						self.assertIn(
+							'success', 
+							response.json(), 
+							'Response does not contain success'
+						)
+						print('Test Delete Account Passed')
+						return response.json()
+					
+					
+
+				# Instantiate the test class
+				test_app = TestApp()
+				test_app.setUp()
+
+				# Login
+				jwt = test_app.test_login(
+					'kraljevi', 
+					'pass123kraljevi')['data']['access_token']
+
+				# Attempt to get events
+				test_app.test_get_events(jwt)
+				test_app.test_get_events_without_token()
+
+				# Create and edit an event
+				new_event_id = test_app.test_create_event(
+					jwt)['data']['eventId']
+				test_app.test_edit_event(jwt, new_event_id)
+
+				# Delete a user
+				jwt = test_app.test_login('testuser', 
+					'password123')['data']['access_token']
+				test_app.test_delete_account(jwt)
+			\end{verbatim}			
+			\begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{slike/unit_test.png}
+				\caption{Izlaz terminala nakon pokretanja testiranja}
+			\label{fig:my_image}
+			\end{figure}
 			
 			\subsection{Ispitivanje sustava}
-			Svi testovi izvršeni su koristeći Selenium WebDriver. Ispitivanje se radilo po obrascima uporabe kako bi se provjerila osnovna funkcionalnost sustava. Prikazivanje ispitivanja UC1 (i UC2), UC4, UC5, UC9 i UC12.
+			Svi testovi izvršeni su koristeći Selenium WebDriver. Ispitivanje se radilo po obrascima uporabe kako bi se provjerila osnovna funkcionalnost sustava. Prikazano je ispitivanje UC1 (i UC2), UC4, UC5, UC9 i UC12. Izvorni kod vidljiv je u direktoriju testing.
 			
 			\noindent \underbar{\textbf{Ispitni slučaj 1: Stvaranje korisničkog računa}}
 			\begin{packed_item}
@@ -65,6 +219,12 @@
 				\end{packed_item}
 
 				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni i provjereni uspješnom prijavom na kreirani korisnički račun. Aplikacije je prošla test.
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{slike/selenium_test_1.png}
+					\caption{Testiranje stvaranja korisničkog računa}
+				\label{fig:my_image}
+				\end{figure}
 			\end{packed_item}
 
 			\noindent \underbar{\textbf{Ispitni slučaj 2: Uređivanje korisničkog računa}}
@@ -87,6 +247,12 @@
 				\end{packed_item}
 
 				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{slike/selenium_test_2.png}
+					\caption{Testiranje uređivanja korisničkog računa}
+				\label{fig:my_image}
+				\end{figure}
 			\end{packed_item}
 
 			\noindent \underbar{\textbf{Ispitni slučaj 3: Brisanje korisničkog računa}}
@@ -107,6 +273,12 @@
 				\end{packed_item}
 
 				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{slike/selenium_test_3.png}
+					\caption{Testiranje brisanja korisničkog računa}
+				\label{fig:my_image}
+				\end{figure}
 			\end{packed_item}
 			
 			\eject 
@@ -228,7 +400,8 @@
 							\begin{verbatim}
 							FLASK_ENV (production za produkciju, development za razvoj)
 							SECRET_KEY (vaš tajni ključ)
-							DB_CONNECT_URL_PROD (Render url za povezivanje s bazom podataka iz prethodnog koraka)
+							DB_CONNECT_URL_PROD (Render url za povezivanje 
+								s bazom podataka iz prethodnog koraka)
 							MAIL_API_KEY (API ključ dobiven od Mailjet platforme)
 							MAIL_SECRET (tajni ključ dobiven od Mailjet platforme)
 							FIREBASE_URL (url dobiven od Firebase platforme)
@@ -241,7 +414,8 @@
 							\item Za runtime odaberite Node.js, za build naredbu odaberite \texttt{npm install && npm run build}, a za start naredbu odaberite \texttt{node app.js}.
 							\item U varijable okruženja dodajte sve potrebne varijable:
 							\begin{verbatim}
-							REACT_APP_API_URL (Render url za povezivanje s backend poslužiteljem iz prethodnog koraka)
+							REACT_APP_API_URL (Render url za povezivanje 
+								s backend poslužiteljem iz prethodnog koraka)
 							HOST (0.0.0.0)
 							PORT (3000)
 							\end{verbatim}

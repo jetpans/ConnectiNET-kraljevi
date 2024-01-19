@@ -12,3 +12,7 @@
 *.toc
 
 .temp-doc
+
+
+backend/firebase_key.json
+backend/images/

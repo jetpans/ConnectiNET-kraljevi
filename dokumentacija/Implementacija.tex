@@ -40,7 +40,49 @@
 			\subsection{Ispitivanje komponenti}
 			\textit{Potrebno je provesti ispitivanje jedinica (engl. unit testing) nad razredima koji implementiraju temeljne funkcionalnosti. Razraditi \textbf{minimalno 6 ispitnih slučajeva} u kojima će se ispitati redovni slučajevi, rubni uvjeti te izazivanje pogreške (engl. exception throwing). Poželjno je stvoriti i ispitni slučaj koji koristi funkcionalnosti koje nisu implementirane. Potrebno je priložiti izvorni kôd svih ispitnih slučajeva te prikaz rezultata izvođenja ispita u razvojnom okruženju (prolaz/pad ispita). }
 			
-			
+			\noindent \underbar{\textbf{Ispitni slučaj 4: Stvaranje novog događaja}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Unos i odabir potrebnih podataka za kreiranje novog događaja
+					\item Odabir opcije za "Create event"
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za kreiranje novog eventa
+				\item[2.a] Događaj je uspješno kreiran
+				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+			\end{packed_item}
+
+
+			\noindent \underbar{\textbf{Ispitni slučaj 5: Ostavljanje razine zainteresiranosti}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Ulazak u detaljni prikaz o događaju klikom na "See more"
+					\item Odabir razine zainteresiranosti
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za prijavu
+				\item[2] Korisnik je oodabrao razinu zainteresiranosti
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacije je prošla test.
+			\end{packed_item}
 			
 			\subsection{Ispitivanje sustava}
 			

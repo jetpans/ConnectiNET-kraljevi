@@ -5,7 +5,7 @@ FER Programsko Inžinjerstvo ak. godina 2023./2024. Tim-3 Kraljevi
 # Deployed application links
 - deployed website: https://progi-fe-xo22.onrender.com
 - deployed backend server: https://progi-be-14ge.onrender.com
-
+- admin login -> demosAdmin:password123demos
 
 # Start instructions
 Backend:

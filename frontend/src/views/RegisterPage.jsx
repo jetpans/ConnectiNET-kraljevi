@@ -87,10 +87,16 @@ export default function RegisterPage() {
           // console.log('Error!');
           // console.log(resp.data);
           if (resp.data.data === "Username already in use.") {
-            openSnackbar("warning", "Registration unsuccessful. Username already exists.");
+            openSnackbar(
+              "warning",
+              "Registration unsuccessful. Username already exists."
+            );
             return;
           }
-          openSnackbar("warning", "Registration unsuccessful. " + resp.data.data);
+          openSnackbar(
+            "warning",
+            "Registration unsuccessful. " + resp.data.data
+          );
         }
       })
       .catch((resp) => {
@@ -99,23 +105,27 @@ export default function RegisterPage() {
   };
 
   useEffect(() => {
-    if(user !== null) {
+    if (user !== null) {
       const accessToken = localStorage.getItem("jwt");
-      if(accessToken === null) {
+      if (accessToken === null) {
         logout();
       } else {
         dc.GetData(API_URL + "/api/getInformation", accessToken)
-        .then((response) => {
-          updateUser({
-            username: user.username,
-            roleId: user.roleId,
-            countryCode: user.countryCode,
-            email: user.email,
-            profileImage: response.data.data.profileImage,
+          .then((response) => {
+            updateUser({
+              username: user.username,
+              roleId: user.roleId,
+              countryCode: user.countryCode,
+              email: user.email,
+              profileImage: response.data.data.profileImage,
+            });
+          })
+          .then((resp) => {
+            navigate("/events");
+          })
+          .catch((response) => {
+            console.log(response);
           });
-        }).then((resp) => {
-          navigate("/events");
-        }).catch((response) => { console.log(response) });
       }
     }
     fetchCountries();
@@ -209,7 +219,7 @@ export default function RegisterPage() {
                         <Grid item xs={12} sm={6}>
                           <TextField
                             inputProps={{
-                              pattern: "[A-Za-z]+",
+                              pattern: "^[A-Za-zČčĆćŠšĐđŽž ]{1,50}$",
                               title: "Must contain only letters.",
                             }}
                             autoComplete="first-name"
@@ -224,7 +234,7 @@ export default function RegisterPage() {
                         <Grid item xs={12} sm={6}>
                           <TextField
                             inputProps={{
-                              pattern: "[A-Za-z]+",
+                              pattern: "^[A-Za-zČčĆćŠšĐđŽž ]{1,50}$",
                               title: "Must contain only letters.",
                             }}
                             required
@@ -242,7 +252,7 @@ export default function RegisterPage() {
                         <Grid item xs={12}>
                           <TextField
                             inputProps={{
-                              pattern: "[A-Za-z]+",
+                              pattern: "^[A-Za-zČčĆćŠšĐđŽž ]{1,50}$",
                               title: "Must contain only letters.",
                             }}
                             autoComplete="organizer-name"
@@ -259,7 +269,7 @@ export default function RegisterPage() {
                     <Grid item xs={12}>
                       <TextField
                         inputProps={{
-                          pattern: ".{6,20}",
+                          pattern: "^[a-zA-Z0-9]{6,20}$",
                           title: "Must be between 6 and 20 characters long",
                         }}
                         required
@@ -308,14 +318,15 @@ export default function RegisterPage() {
                         onClick={() => setShowPassword(!showPassword)}
                       /> */}
                     </Grid>
-                    <Grid item 
-                        xs={12} 
-                        sx={{
-                          display: "flex",
-                          position: "center",
-                          justifyContent: "center",
-                          alignItems: "center"
-                        }} 
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        display: "flex",
+                        position: "center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
                       fullWidth
                     >
                       <TextField

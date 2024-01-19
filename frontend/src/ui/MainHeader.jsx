@@ -181,21 +181,19 @@ export default function MainHeader(props) {
     dc.GetData(API_URL + "/api/getInformation", accessToken)
       .then((response) => {
         updateUser({
-          id: user.id,
-          username: user.username,
-          roleId: user.roleId,
-          countryCode: user.countryCode,
-          email: user.email,
+          id: response.data.data.accountId,
+          username: response.data.data.username,
+          roleId: response.data.data.roleId,
+          countryCode: response.data.data.countryCode,
+          email: response.data.data.email,
           profileImage: response.data.data.profileImage,
         });
+        setProfileImage(response.data.data.profileImage);
       })
       .catch((e) => console.log(e));
   };
   useEffect(() => {
     fetchInformation();
-    if (user && user !== null && user.profileImage) {
-      setProfileImage(user.profileImage);
-    }
   }, []);
 
   const {

@@ -487,10 +487,9 @@ export default function SubscribePage(props) {
               variant="outlined"
               sx={{
                 width: "35%",
-                height: "55vh",
                 minWidth: 350,
-                minHeight: 400,
                 marginTop: "0vh",
+                minHeight: "35rem",
               }}
             >
               <CardContent
@@ -520,7 +519,6 @@ export default function SubscribePage(props) {
                     alignItems: "center",
                     textAlign: "center",
                   }}
-                  maxWidth={"25vw"}
                 >
                   ConnectiNET Premium is a subscription service that allows you
                   to expand your social network and meet new people beyond what

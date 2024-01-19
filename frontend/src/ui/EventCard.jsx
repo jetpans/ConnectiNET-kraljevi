@@ -98,24 +98,28 @@ export default function EventCard(props) {
   }
 
   function deleteEvent() {
-    openDialog(confirmDeleteEventDialog)
+    openDialog(confirmDeleteEventDialog);
   }
-  
+
   function handleDeleteEvent() {
     const accessToken = localStorage.getItem("jwt");
 
-    dc.DeleteData(API_URL + "/api/deleteOrganizerEvent/" + card.id, card.id, accessToken)
-    .then((resp) => {
-      if (resp.data.success === true) {
-        openSnackbar("success", "Successfuly delted event.");
-        setTimeout(() => {
-          navigate(0);
-        }, 1000)
-      } else {
-        openSnackbar("error", "Failed to delete event.");
-      }
-    })
-    .catch((e) => console.log(e));
+    dc.DeleteData(
+      API_URL + "/api/deleteOrganizerEvent/" + card.id,
+      card.id,
+      accessToken
+    )
+      .then((resp) => {
+        if (resp.data.success === true) {
+          openSnackbar("success", "Successfuly delted event.");
+          setTimeout(() => {
+            navigate(0);
+          }, 1000);
+        } else {
+          openSnackbar("error", "Failed to delete event.");
+        }
+      })
+      .catch((e) => console.log(e));
   }
 
   return (
@@ -133,12 +137,12 @@ export default function EventCard(props) {
         /*console.log("Mouse enter")*/
       }}
     >
-      <CardMedia key={card.id} />
+      <CardMedia />
       <img
         style={{ objectFit: "cover", height: card.image ? "20vh" : 0 }}
         src={card.image}
       />
-      <CardContent sx={{ flexGrow: 1 }} key={card.id}>
+      <CardContent sx={{ flexGrow: 1 }}>
         {/* <img src={card.image}></img> */}
         <Typography
           gutterBottom
@@ -155,7 +159,10 @@ export default function EventCard(props) {
         </Typography> */}
         <Typography color={theme.palette.text.light} marginBottom={1}>
           By{" "}
-          <Button onClick={() => navigate("/organizer/" + card.accountId)} sx={{color: theme.palette.primary.main}}>
+          <Button
+            onClick={() => navigate("/organizer/" + card.accountId)}
+            sx={{ color: theme.palette.primary.main }}
+          >
             {card.organizer}
           </Button>
         </Typography>
@@ -221,7 +228,7 @@ export default function EventCard(props) {
             bgcolor: theme.palette.secondary,
             fontSize: "1.3rem",
             padding: "0.5rem",
-            color: theme.palette.text.light
+            color: theme.palette.text.light,
           }}
         ></Chip>
       </CardActions>

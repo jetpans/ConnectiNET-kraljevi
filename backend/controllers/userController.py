@@ -103,7 +103,6 @@ class UserController(Controller):
         print(r)
         del dict['_sa_instance_state']
         del dict['passwordHash']
-        del dict['accountId']
         return {"success": True, "data": dict}
 
 

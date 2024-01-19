@@ -38,8 +38,8 @@ export default function EventDetail(props) {
   const [showLimitedComments, setShowLimitedComments] = useState(true);
   const [media, setMedia] = useState([]);
 
-  const canComment = useRef(false);
-  const canInterest = useRef(false);
+  const [canComment, setCanComment] = useState(false);
+  const [canInterest, setCanInterest] = useState(false);
 
   // const handleShowAllComments = () => {
   //      setShowAllComments(true);
@@ -123,7 +123,7 @@ export default function EventDetail(props) {
     if (
       user &&
       user !== null &&
-      user.roleId === 0 &&
+      (user.roleId === 0 || user.roleId === -1) &&
       cards &&
       cards !== null &&
       cards.time &&
@@ -135,11 +135,11 @@ export default function EventDetail(props) {
       const timeDifference = parsedEventDate - currentDate;
 
       if (timeDifference < 0 && timeDifference > -48 * 60 * 60 * 1000) {
-        canComment.current = true;
+        setCanComment(true);
       }
 
       if (timeDifference >= 0) {
-        canInterest.current = true;
+        setCanInterest(true);
       }
     }
   }, [cards]);
@@ -343,8 +343,8 @@ export default function EventDetail(props) {
 
                   {user &&
                   user !== null &&
-                  user.roleId === 0 &&
-                  canInterest.current === true ? (
+                  (user.roleId === 0 || user.roleId === -1) &&
+                  canInterest == true ? (
                     <Box ml={0}>
                       <Button size="small" ml={1} mr={1}>
                         <Typography
@@ -496,8 +496,8 @@ export default function EventDetail(props) {
               </Typography>
               {user &&
               user !== null &&
-              user.roleId === 0 &&
-              canComment.current === true ? (
+              (user.roleId === 0 || user.roleId === -1) &&
+              canComment == true ? (
                 <Grid
                   container
                   spacing={2}

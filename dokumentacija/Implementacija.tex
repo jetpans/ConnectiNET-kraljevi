@@ -14,7 +14,17 @@
 			 
 			 Aplikacija je napisana koristeći web okvir Flask\footnote{https://flask.palletsprojects.com/en/3.0.x/}. Razvijen je od strane Armina Ronachera, vođe Međunarodne grupe entuzijasta za Python. Temelji se na WSGI alatima i Jinja2 predlošku. Ovaj okvir pokriva širok spektar primjene, od osnovnih koncepta kao što su postavljanje i instalacija do naprednijih koncepta poput autentifikacije korisnika i integracije baze podataka.
 			 
-			 Za izradu frontenda korišten je React\footnote{https://reactjs.org/} i jezik JavaScript\footnote{https://www.javascript.com/}. React, također poznat kao React.js ili ReactJS, je biblioteka u JavaScriptu za izgradnju korisničkih sučelja. Održavana je od strane Facebooka. React se najčešće koristi kao osnova u razvoju web ili mobilnih aplikacija. Složene aplikacije u Reactu obično zahtijevaju korištenje dodatnih biblioteka za interakciju s API-jem.		 
+			 Za izradu frontenda korišten je React\footnote{https://reactjs.org/} i jezik JavaScript\footnote{https://www.javascript.com/}. React, također poznat kao React.js ili ReactJS, je biblioteka u JavaScriptu za izgradnju korisničkih sučelja. Održavana je od strane Facebooka. React se najčešće koristi kao osnova u razvoju web ili mobilnih aplikacija. Složene aplikacije u Reactu obično zahtijevaju korištenje dodatnih biblioteka za interakciju s API-jem.
+
+			 Kao pomoć u razvoju korištena je usluga ElephantSQL\footnote{https://www.elephantsql.com/} za hosting baze podataka. ElephantSQL nudi korisnički prijateljsku i skalabilnu platformu za upravljanje PostgreSQL bazama podataka u oblaku. Pojednostavljuje proces opskrbe, upravljanja i skaliranja PostgreSQL instanci, omogućujući razvojnom timu da se usredotoči na funkcionalnost svoje aplikacije umjesto na upravljanje infrastrukturom.
+
+			 S ciljem pojednostavljenja procesa slanja e-mailova koji je integriran unutar aplikacije, korišten je Mailjet\footnote{https://www.mailjet.com/} - cloud-based pružatelj usluga e-pošte (ESP) koji omogućuje slanje transakcijskih i marketinških e-mail kampanja. Mailjetova platforma osigurava pouzdano slanje na sigurnoj i robustnoj infrastrukturi koja se nalazi na Google Cloud Platformi, te nadzire i optimizira ključne analitike poput stopa otvaranja, stopa odbijanja i spam pogodaka.
+
+			 Za pohranu slika korišten je Firebase Storage\footnote{https://firebase.google.com/products/storage/} - usluga koja dio platforme Firebase unutar Google Cloud Platform-a (GCP) i koja omogućuje pohranu i upravljanje medijima generiranim od strane korisnika web i mobilnih aplikacija. Kada koristimo Firebase Storage, datoteke se prenose izravno od i do klijenta. Kada korisnik prenese datoteku na Firebase Storage, generira se URL za tu datoteku. Taj URL se može zatim spremiti u bazu podataka na poslužitelju. Dakle, na poslužitelju ostaje samo poveznica na datoteku, a sama datoteka se pohranjuje u Firebase Storage. Ovo omogućuje efikasno upravljanje datotekama bez potrebe za velikom infrastrukturom na poslužitelju. Također, smanjuje se opterećenje na poslužitelju jer se prijenos datoteka obavlja izravno između klijenta i Firebase Storage-a.
+
+			 Svoju primjenu u izradi ovog projekta pronašao je i Docker\footnote{https://www.docker.com/} - otvorena platforma za razvoj, isporuku i pokretanje aplikacija. Docker omogućuje odvajanje aplikacija od infrastrukture kako bi se softver mogao brzo isporučiti1. Docker pruža mogućnost pakiranja i pokretanja aplikacije u labavo izoliranom okruženju zvanom kontejner. Kontejneri su lagani i sadrže sve što je potrebno za pokretanje aplikacije. U kontekstu izrade web aplikacija, Docker pojednostavljuje razvoj omogućujući programerima stvaranje prijenosnih i konzistentnih okruženja aplikacija, smanjujući složenost postavljanja i održavanja razvojnih, testnih i produkcijskih okruženja. Kontejneri su odlični za kontinuiranu integraciju i kontinuiranu isporuku (CI/CD) radnih tokova.
+
+             Kao platforma za puštanje u pogon korišten je Render\footnote{https://render.com/} koji omogućuje brzo i jednostavno postavljanje web aplikacija. Podržava sve glavne jezike, besplatne certifikate, zaštitu od DDoS napada i automatsko postavljanje iz GitHuba. Također nudi i sučelje za brzo i jednostavno objavljivanje statičkog web sadržaja. Može se koristiti za postavljanje različitih vrsta aplikacija, uključujući Node.js, Express i Flask aplikacije.		 
 			 
 			 Za izradu dokumentacije korišten je LateX\footnote{https://www.latex-project.org/}, markup jezik koji svoju osnovnu primjenu nalazi u izradi znanstvenih publikacija. Osnovna mu je značajka da pisac koristi konvencije označavanja koje predstavljaju ugrađene naredbe za definiranje opće strukture dokumenta, stiliziranje teksta, dodavanje citata, unakrsnih referenci i sl.Tako stvorenu LaTeX datoteku obrađuje softver zvan TeX engine koji koristi ugrađene naredbe kako bi vodio i kontrolirao proces izgradnje profesionalno složenenog PDF dokumenta.
 			\eject 
@@ -22,46 +32,435 @@
 	
 		\section{Ispitivanje programskog rješenja}
 			
-			\textbf{\textit{dio 2. revizije}}\\
-			
-			 \textit{U ovom poglavlju je potrebno opisati provedbu ispitivanja implementiranih funkcionalnosti na razini komponenti i na razini cijelog sustava s prikazom odabranih ispitnih slučajeva. Studenti trebaju ispitati temeljnu funkcionalnost i rubne uvjete.}
-	
 			
 			\subsection{Ispitivanje komponenti}
-			\textit{Potrebno je provesti ispitivanje jedinica (engl. unit testing) nad razredima koji implementiraju temeljne funkcionalnosti. Razraditi \textbf{minimalno 6 ispitnih slučajeva} u kojima će se ispitati redovni slučajevi, rubni uvjeti te izazivanje pogreške (engl. exception throwing). Poželjno je stvoriti i ispitni slučaj koji koristi funkcionalnosti koje nisu implementirane. Potrebno je priložiti izvorni kôd svih ispitnih slučajeva te prikaz rezultata izvođenja ispita u razvojnom okruženju (prolaz/pad ispita). }
-			
-			
+			Svi testovi komponenti su izvršeni koristeći python biblioteke unittest i requests. Ispitivanje se radilo po obrascima uporabe kako bi se provjerila osnovna funkcionalnost sustava i neki rubni slučajevi, pokut pokušaja dohvata bez tokena za autorizaciju. Prikazano je ispitivanje UC2, UC5, UC6, UC12 i UC13. Slijedi izvorni kod datoteke za testiranje, također vidljiv u /testing direktoriju repozitorija koda. Ispod izvornog koda je i slika izlaza terminala nakon pokretanja testiraanja.
+
+			\begin{verbatim}
+				import requests
+				import unittest
+
+				class TestApp(unittest.TestCase):
+					def setUp(self):
+						self.base_url = 'http://127.0.0.1:5000'
+						
+					def test_login(self, username, password):
+						response = requests.post(
+							self.base_url + '/login', 
+							json={'username': username, 'password': password}
+						)
+						self.assertEqual(response.status_code, 200, 'Status code is not 200')
+						self.assertIn(
+							'access_token', 
+							response.json()['data'], 
+							'Response does not contain access_token'
+						)
+						print('Test Login Passed')
+						return response.json()
+
+					def test_get_events(self, token):
+						response = requests.get(
+							self.base_url + '/getEvents', 
+							headers={'Authorization': 'Bearer ' + token}
+						)
+						self.assertEqual(
+							response.status_code, 
+							200, 
+							'Status code is not 200'
+						)
+						self.assertIsInstance(
+							response.json()['data'], 
+							list, 
+							'Response data is not a list'
+						)
+						print('Test Get Events Passed')
+						return response.json()
+					
+					def test_get_events_without_token(self):
+						response = requests.get(self.base_url + '/getEvents')
+						self.assertEqual(
+							response.status_code, 
+							401, 
+							'Status code is not 401'
+						)
+						self.assertIn(
+							'msg', 
+							response.json(), 
+							'Response does not contain msg'
+						)
+						print('Test Get Events Without jwt failed, as expected')
+						return response.json()
+					
+					def test_create_event(self, token):
+						response = requests.post(
+							self.base_url + '/api/createEvent', 
+							headers={'Authorization': 'Bearer ' + token}, 
+							json={
+								'title':'EventName',
+								'description':'Description',
+								'city':'City',
+								'location':'Place',
+								'countryCode':'CCK',
+								'eventType':'Concert',
+								'dateTime':'2024-01-26T12:00',
+								'duration':'2024-01-29T12:00',
+								'price':'1'
+							})
+						self.assertEqual(
+							response.status_code, 200, 
+							'Status code is not 200'
+						)
+						self.assertIn(
+							'eventId', 
+							response.json()['data'], 
+							'Response does not contain eventId'
+						)
+						print('Test Edit Event Passed')
+						return response.json()
+					
+					def test_edit_event(self, token, id):
+						response = requests.put(
+							self.base_url + '/api/editEvent/62', 
+							headers={'Authorization': 'Bearer ' + token},
+							json={
+								'title':'NewEventName',
+								'description':'New Description',
+								'city':'New City',
+								'location':'New Place',
+								'countryCode':'HRV',
+								'eventType':'Community',
+								'dateTime':'2025-01-26T12:00',
+								'duration':'2025-02-29T12:00',
+								'price':'20'
+							})
+						self.assertEqual(
+							response.status_code, 
+							200, 
+							'Status code is not 200'
+						)
+						self.assertIn(
+							'success', 
+							response.json(), 
+							'Response does not contain success'
+						)
+						print('Test Edit Event Passed')
+						return response.json()
+					
+					def test_delete_account(self, token):
+						response = requests.delete(
+							self.base_url + '/api/deleteAccount', 
+							headers={'Authorization': 'Bearer ' + token}
+						)
+						self.assertEqual(
+							response.status_code, 
+							200, 
+							'Status code is not 200'
+						)
+						self.assertIn(
+							'success', 
+							response.json(), 
+							'Response does not contain success'
+						)
+						print('Test Delete Account Passed')
+						return response.json()
+					
+					
+
+				# Instantiate the test class
+				test_app = TestApp()
+				test_app.setUp()
+
+				# Login
+				jwt = test_app.test_login(
+					'kraljevi', 
+					'pass123kraljevi')['data']['access_token']
+
+				# Attempt to get events
+				test_app.test_get_events(jwt)
+				test_app.test_get_events_without_token()
+
+				# Create and edit an event
+				new_event_id = test_app.test_create_event(
+					jwt)['data']['eventId']
+				test_app.test_edit_event(jwt, new_event_id)
+
+				# Delete a user
+				jwt = test_app.test_login('testuser', 
+					'password123')['data']['access_token']
+				test_app.test_delete_account(jwt)
+			\end{verbatim}			
+			\begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{slike/unit_test.png}
+				\caption{Izlaz terminala nakon pokretanja testiranja}
+			\label{fig:my_image}
+			\end{figure}
 			
 			\subsection{Ispitivanje sustava}
+			Svi testovi izvršeni su koristeći Selenium WebDriver. Ispitivanje se radilo po obrascima uporabe kako bi se provjerila osnovna funkcionalnost sustava. Prikazano je ispitivanje UC1 (i UC2), UC4, UC5, UC9 i UC12. Izvorni kod vidljiv je u direktoriju testing.
 			
-			 \textit{Potrebno je provesti i opisati ispitivanje sustava koristeći radni okvir Selenium\footnote{\url{https://www.seleniumhq.org/}}. Razraditi \textbf{minimalno 4 ispitna slučaja} u kojima će se ispitati redovni slučajevi, rubni uvjeti te poziv funkcionalnosti koja nije implementirana/izaziva pogrešku kako bi se vidjelo na koji način sustav reagira kada nešto nije u potpunosti ostvareno. Ispitni slučaj se treba sastojati od ulaza (npr. korisničko ime i lozinka), očekivanog izlaza ili rezultata, koraka ispitivanja i dobivenog izlaza ili rezultata.\\ }
-			 
-			 \textit{Izradu ispitnih slučajeva pomoću radnog okvira Selenium moguće je provesti pomoću jednog od sljedeća dva alata:}
-			 \begin{itemize}
-			 	\item \textit{dodatak za preglednik \textbf{Selenium IDE} - snimanje korisnikovih akcija radi automatskog ponavljanja ispita	}
-			 	\item \textit{\textbf{Selenium WebDriver} - podrška za pisanje ispita u jezicima Java, C\#, PHP koristeći posebno programsko sučelje.}
-			 \end{itemize}
-		 	\textit{Detalji o korištenju alata Selenium bit će prikazani na posebnom predavanju tijekom semestra.}
+			\noindent \underbar{\textbf{Ispitni slučaj 1: Stvaranje korisničkog računa}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Unos uloge, imena, prezimena, korisničkog imena, email adrese, lozinke i države
+					\item Odabir opcija "Sign Up" i "Sign In"
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za prijavu
+				\item[2.a] Korisnik je uspješno registriran
+				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni i provjereni uspješnom prijavom na kreirani korisnički račun. Aplikacija je prošla test.
+
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{slike/selenium_test_1.png}
+					\caption{Testiranje stvaranja korisničkog računa}
+				\label{fig:my_image}
+				\end{figure}
+			\end{packed_item}
+
+			\noindent \underbar{\textbf{Ispitni slučaj 2: Uređivanje korisničkog računa}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje Account stranice u web pregledniku
+					\item Odabir opcije "Edit Account" i "Save Changes"
+					\item Unos novih podataka u polja za uređivanje
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za uređivanje
+				\item[2.a] Korisnik je uspješno uređen
+				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
+
+				\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=1\textwidth]{slike/selenium_test_2.png}
+					\caption{Testiranje uređivanja korisničkog računa}
+				\label{fig:my_image}
+				\end{figure}
+			\end{packed_item}
+
+			\noindent \underbar{\textbf{Ispitni slučaj 3: Brisanje korisničkog računa}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje Account stranice u web pregledniku
+					\item Odabir opcije "Delete Account" i potvrde brisanja
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1.a] Korisnički račun je obrisan nakon pritiska "Yes" za potvrdu brisanja
+				\item[1.b] Korisnički račun nije obrisan nakon pritiska "No" za potvrdu brisanja 
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
+
+			\end{packed_item}
+
+			\noindent \underbar{\textbf{Ispitni slučaj 4: Stvaranje novog događaja}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Unos i odabir potrebnih podataka za kreiranje novog događaja
+					\item Odabir opcije za "Create event"
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za kreiranje novog eventa
+				\item[2.a] Događaj je uspješno kreiran
+				\item[2.b] Neki od unesenih podataka je u neispravnom formatu, obavijest upozorava korisnika
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
+			\end{packed_item}
+
+			\noindent \underbar{\textbf{Ispitni slučaj 5: Ostavljanje razine zainteresiranosti}}
+			\begin{packed_item}
+
+				\item  \textbf{Ulaz:}
+				\item[] \begin{packed_enum}
+
+					\item Otvaranje stranice za registraciju u web pregledniku
+					\item Ulazak u detaljni prikaz o događaju klikom na "See more"
+					\item Odabir razine zainteresiranosti
+
+				\end{packed_enum}
+				
+				\item  \textbf{Očekivani rezultat:}
+				\item[] \begin{packed_item}
+				\item[1] Uneseni podaci su vidljivi na stranici za prijavu
+				\item[2] Korisnik je oodabrao razinu zainteresiranosti
+				\end{packed_item}
+
+				\item  \textbf{Rezultat:} Svi očekivani rezultati su ostvareni. Aplikacija je prošla test.
 			
+			\end{packed_item}
 			\eject 
 		
 		
 		\section{Dijagram razmještaja}
 			
-			\textbf{\textit{dio 2. revizije}}
+			%\textbf{\textit{dio 2. revizije}}
 			
-			 \textit{Potrebno je umetnuti \textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
-			
+			 %\textit{Potrebno je umetnuti \textbf{specifikacijski} dijagram razmještaja i opisati ga. Moguće je umjesto specifikacijskog dijagrama razmještaja umetnuti dijagram razmještaja instanci, pod uvjetom da taj dijagram bolje opisuje neki važniji dio sustava.}
+			 Sustav je baziran na arhitekturi ”klijent – poslužitelj”, a klijenti koriste web preglednik kako bi pristupili web aplikaciji. Na poslužiteljskom računalu nalaze se poslužitelj frontend dijela web aplikacije, poslužitelj backend dijela web aplikacije te poslužitelj baze podataka. Backend dio aplikacije nalazi se unutar Docker kontejnera koji predstavlja okruženje koje sadrži sve što je potrebno za izvođenje dotičnog dijela aplikacije. Pohrana slika realizirana je uz pomoć usluge Firebase Storage koja je dio Firebase-a, platforme za razvoj mobilnih i web aplikacija. Firebase Storage se za pohranu i dohvat korisnički generiranih sadržaja oslanja na uslugu Google Cloud Storage. Sve spomenute usluge dio su šire platforme pod nazivom Google Cloud Platform (GCP). Odgovornost backend dijela web aplikacije je da prihvati generiranu javnu poveznicu na tu sliku i pohrani je u bazu podataka nakon što se korisnička slika otpremi na Firebase Storage. Firebase Storage omogućuje izravan prijenos datoteka od i do klijenta čime se rasterećuje poslužitelj koji samo procesuira poveznice. Komunikacija između osnovnih dijelova sustava odvija se preko HTTPS veze.
+			 \begin{figure}[htbp]
+				\centering
+				\includegraphics[width=1\textwidth]{dijagrami/diagram_razmjestaja_new2.jpeg}
+				\caption{Dijagram razmještaja}
+			\label{fig:my_image}
+			\end{figure}
 			\eject 
-		
-		\section{Upute za puštanje u pogon}
-		
-			\textbf{\textit{dio 2. revizije}}\\
-		
-			 \textit{U ovom poglavlju potrebno je dati upute za puštanje u pogon (engl. deployment) ostvarene aplikacije. Na primjer, za web aplikacije, opisati postupak kojim se od izvornog kôda dolazi do potpuno postavljene baze podataka i poslužitelja koji odgovara na upite korisnika. Za mobilnu aplikaciju, postupak kojim se aplikacija izgradi, te postavi na neku od trgovina. Za stolnu (engl. desktop) aplikaciju, postupak kojim se aplikacija instalira na računalo. Ukoliko mobilne i stolne aplikacije komuniciraju s poslužiteljem i/ili bazom podataka, opisati i postupak njihovog postavljanja. Pri izradi uputa preporučuje se \textbf{naglasiti korake instalacije uporabom natuknica} te koristiti što je više moguće \textbf{slike ekrana} (engl. screenshots) kako bi upute bile jasne i jednostavne za slijediti.}
+
 			
+			\begin{document}
 			
-			 \textit{Dovršenu aplikaciju potrebno je pokrenuti na javno dostupnom poslužitelju. Studentima se preporuča korištenje neke od sljedećih besplatnih usluga: \href{https://aws.amazon.com/}{Amazon AWS}, \href{https://azure.microsoft.com/en-us/}{Microsoft Azure} ili \href{https://www.heroku.com/}{Heroku}. Mobilne aplikacije trebaju biti objavljene na F-Droid, Google Play ili Amazon App trgovini.}
+			\section{Upute za puštanje u pogon}
+				
+			\subsection{Priprema Lokalnog Razvojnog Okruženja}
 			
+			Za početak, potrebno je klonirati repozitorij s izvornim kodom na svoje računalo koristeći naredbu:
+			\texttt{git clone \url{https://github.com/jetpans/ConnectiNET-kraljevi}} 
+			Nakon toga je potrebno instalirati alate potrebne za pokretanje aplikacije lokalno:
 			
+			\begin{itemize}
+					\item Instalirajte Docker i Docker Compose ili Docker Engine (\url{https://docs.docker.com/engine/install/})
+					\item Instalirajte Node.js i npm za frontend (\url{https://nodejs.org/en/download})
+					\item Instalirajte Python za backend (u slučaju da želite pokrenuti backend lokalno bez korištenja Docker kontejenera) (\url{https://www.python.org/downloads/})
+					\item Instalirajte PostgreSQL bazu podataka (\url{https://www.postgresql.org/download/})
+			\end{itemize}
+			
+			Za daljnji razvoj aplikacije preporuča se koristiti radno okruženje poput Visual Studio Code-a (\url{https://code.visualstudio.com/}). 
+			
+			\subsection{Postavljanje Backend-a s Docker Compose}
+			
+			U backend direktoriju se nalaze Dockerfile i docker-compose datoteke. Izvršite u naredbenom retku naredbu 
+			\texttt{docker-compose up --build} 
+			za izgradnju Docker kontejnera i pokretanje backend poslužitelja.
+			
+			\subsection{Konfiguracija PostgreSQL Baze Podataka}
+			
+			\subsubsection{Stvaranje PostgreSQL baze podataka}
+			
+			\begin{itemize}
+					\item Prije nego što počnete, osigurajte da imate PostgreSQL instaliran na lokalnom sustavu.
+					\item Koristite alat poput pgAdmin ili izravno putem terminala, stvorite novu bazu podataka za vašu aplikaciju.
+					\item Definirajte korisnika i lozinku s odgovarajućim ovlastima na novoj bazi.
+			\end{itemize}
+			
+			\subsubsection{Punjenje PostgreSQL Baze Podataka}
+			
+			Kako biste sagradili inicijalno stanje baze podataka, u razvojnoj fazi prvo smo napisali "SQLAlchemy" razrede koji modeliraju naše tablice u bazi podataka i spremili ih u datoteku models.py. Nakon toga, sagradili smo naše prazne entitete u bazi podataka sljedećim naredbama u python okruženju:
+			
+			\begin{verbatim}
+			from models import app,db
+			app.app_context().push()
+			db.create_all()
+			\end{verbatim}
+			
+			Osnovne podatke za vrstu događanja ručno smo unijeli u bazu koristeći "INSERT INTO" naredbe. Podatke za države kopirali smo iz javno dostupnog GitHub repozitorija te ih također unijeli koristeći "INSERT INTO" naredbe. Nakon unosa svih potrebnih inicijalnih vrijednosti u bazu, ovo stanje baze podataka spremili smo u datoteku backup.sql koristeći naredbu naredbenog retka:
+			
+			\begin{verbatim}
+			pg_dump -c "<URI baze podataka>" > backup.sql
+			\end{verbatim}
+			
+			Datoteka backup.sql sada ima sve potrebne PostgreSQL naredbe za čišćenje (-c) i unos starih podataka te se može koristiti za iniciranje baze podataka za vrijeme puštanja aplikacije u pogon.
+			
+			Bazu sada možemo puniti iz prije napravljene sigurnosne kopije sa svim potrebnim, unaprijed unesenim, podacima. To činimo naredbom naredbenog retka:
+			
+			\begin{verbatim}
+			psql -d "<URI baze podataka>" -f backup.sql
+			\end{verbatim}
+			
+			koja briše sve postojeće tablice i restaurira stanje baze podataka spremljeno u datoteci backup.sql.
+			
+			\subsection{Izgradnja i Pokretanje Frontend-a}
+			
+			Frontend direktorij sadrži izvorni kod React aplikacije. U njemu izvršite naredbu za instalaciju ovisnosti 
+
+			\texttt{npm install}
+
+			Za pokretanje razvojnog servera namijenjenog za lokalni razvoj aplikacije koristi se naredbama:
+			
+			\begin{verbatim}
+			npm run start
+			\end{verbatim}
+			
+			Za izgradnju optimiziranog produkcijskog koda izvršite naredbu:
+			
+			\begin{verbatim}
+			npm run build
+			\end{verbatim}
+			
+			Na kraju, za pokretanje Express servera koji poslužuje frontend koristi se naredba:
+			
+			\begin{verbatim}
+			node app.js
+			\end{verbatim}
+			
+			Nakon ovog koraka u potpunosti smo podigli lokalno razvojno okruženje i aplikacija je dostupna na \url{localhost:3000}. Za uspješan rad potrebno je i konfigurirati varijable okruženja, što je opisano u sljedećem koraku za puštanje u pogon na servis Render.
+			
+			\subsection{Puštanje u pogon na Render Platformu}
+			
+			Kreirajte račun na platformi Render (\url{https://render.com/}). Nakon što se ulogirate, redom dodajte:
+			
+			\begin{itemize}
+					\item Novu PostgreSQL bazu podataka
+					\item Novi web servis za backend dio aplikacije
+					\begin{itemize}
+							\item Preporučuje se koristiti github repozitorij s izvornim kodom, s tim da za root direktorij postavite vrijednost /backend.
+							\item Za runtime odaberite Docker, a naredba za pokretanje je \texttt{gunicorn -w 4 -b 0.0.0.0:5000 run:app}.
+							\item U varijable okruženja dodajte sve potrebne varijable:
+							\begin{verbatim}
+							FLASK_ENV (production za produkciju, development za razvoj)
+							SECRET_KEY (vaš tajni ključ)
+							DB_CONNECT_URL_PROD (Render url za povezivanje 
+								s bazom podataka iz prethodnog koraka)
+							MAIL_API_KEY (API ključ dobiven od Mailjet platforme)
+							MAIL_SECRET (tajni ključ dobiven od Mailjet platforme)
+							FIREBASE_URL (url dobiven od Firebase platforme)
+							JWT_SECRET_KEY (tajni ključ za JWT token)
+							\end{verbatim}
+					\end{itemize}
+					\item Novi web servis za frontend dio aplikacije
+					\begin{itemize}
+							\item Preporučuje se koristiti github repozitorij s izvornim kodom, s tim da za root direktorij postavite vrijednost /frontend.
+							\item Za runtime odaberite Node.js, za build naredbu odaberite \texttt{npm install && npm run build}, a za start naredbu odaberite \texttt{node app.js}.
+							\item U varijable okruženja dodajte sve potrebne varijable:
+							\begin{verbatim}
+							REACT_APP_API_URL (Render url za povezivanje 
+								s backend poslužiteljem iz prethodnog koraka)
+							HOST (0.0.0.0)
+							PORT (3000)
+							\end{verbatim}
+					\end{itemize}
+			\end{itemize}
+			
+			Render će automatski otkriti promjene u repozitoriju i pustiti u pogon aplikaciju u slučaju da ste odabrali opcije za automatsko puštanje u pogon pri kreaciji servisa. U suprotnom, možete ručno pokrenuti puštanje u pogon. Aplikacija je sada dostupna na url-u dobivenom od Render platforme. Odlaskom na dobiveni url vidjet ćemo ekran za prijavu aplikacije ConnectiNET. Moguće je i direktno pristupiti backend poslužitelju na url-u dobivenom od Render platforme.
 			\eject 

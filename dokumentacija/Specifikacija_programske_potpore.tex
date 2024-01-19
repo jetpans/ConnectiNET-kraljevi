@@ -41,11 +41,10 @@
 				\begin{packed_enum}
 					
 					\item pregledati popis događaja
-					\item kontrolirati način prikaza popisa događaja
+					\item upravljati načinom prikaza popisa događaja
 					\begin{packed_enum}
 						\item filtrirati događaje po kategoriji, lokaciji, vremenu održavanja
 						\item sortirati događaje po kategoriji, udaljenosti, vremenu održavanja, cijeni, ocjeni
-						\item pretraživati događaje po ključnim riječima
 					\end{packed_enum}
 					\item pregledati detalje događaja
 					\item pregledati recenzije drugih posjetitelja
@@ -100,7 +99,6 @@
 					\item sve što prijavljeni korisnik može
 					\item vidjeti popis svih registriranih korisnika i njihovih osobnih podataka
 					\item dodavati nove administratore
-					\item pristupiti statistici o korištenju aplikacije
 					\item ukloniti recenzije koje krše pravila korištenja aplikacije
 					\item ukloniti događaje koji krše pravila korištenja aplikacije
 					\item ukloniti korisničke račune koji krše pravila korištenja aplikacije
@@ -142,7 +140,9 @@
 						\item[] \begin{packed_enum}
 
 							\item Korisnik odabire opciju za registraciju
+							\item Sustav vraća korisniku obrazac za registraciju
 							\item Korisnik unosi potrebne korisničke podatke
+							\item Sustav provjerava točnost unesenih podataka i da li je korisničko ime već zauzeto
 							\item Korisnik prima obavijest o uspješnoj registraciji 
 
 						\end{packed_enum}
@@ -165,7 +165,7 @@
 					\begin{packed_item}
 
 						\item \textbf{Glavni sudionik:} Korisnik
-						\item  \textbf{Cilj:} Dobiti pristup korisnickom sučelju
+						\item  \textbf{Cilj:} Dobiti pristup korisničkom sučelju
 						\item  \textbf{Sudionici:} Baza podataka
 						\item  \textbf{Preduvjet:} Registracija
 						\item  \textbf{Opis osnovnog tijeka:}
@@ -182,7 +182,7 @@
 
 						\item[] \begin{packed_item}
 
-							\item[2.a] Neispravno korisnicko ime/lozinka 
+							\item[2.a] Neispravno korisničko ime/lozinka 
 							\item[] \begin{packed_enum}
 
 								\item Sustav obavjestava korisnika o neuspjelom upisu i vraća ga na stranicu za prijavu
@@ -217,7 +217,7 @@
 						\item \textbf{Glavni sudionik:} Organizator, posjetitelj
 						\item  \textbf{Cilj:} Promijeniti osobne podatke
 						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Organizator je prijavljen
+						\item  \textbf{Preduvjet:} Organizator je prijavljen (vidi UC2)
 						\item  \textbf{Opis osnovnog tijeka:}
 
 						\item[] \begin{packed_enum}
@@ -256,11 +256,11 @@
 
 						\item[] \begin{packed_enum}
 
-							\item Korisnik pregledava osobne podatke
+							\item Korisnik pregledava osobne podatke (vidi UC3)
 							\item Otvara se stranica s osobnim podacima korisnika
 							\item Korisnik briše račun
 							\item Korisnicki račun se izbriše iz baze podataka
-							\item Otvara se stranica za registraciju
+							\item Otvara se stranica za prijavu
 						\end{packed_enum}
 
 						\item  \textbf{Opis mogućih odstupanja:}
@@ -304,9 +304,8 @@
 
 						\item[] \begin{packed_enum}
 
-							\item Korisnik ima mogućost filtriranja događaja po kategorijama, lokacijama te vremenu izvođenja događaja
-							\item Korisnik ima mogućnost sortiranja događaja po kategorijama, lokacijama te vremenu izvođenja događaja
-							\item Korisnik ima mogućnost traženja neke ključne riječi
+							\item Korisnik ima mogućost filtriranja događaja po kategorijama, lokacijama, vremenu izvođenja i cijeni događaja
+							\item Korisnik ima mogućnost sortiranja događaja po popularnosti (interesu), vremenu izvođenja te cijeni događaja
 
 						\end{packed_enum}
 
@@ -324,8 +323,8 @@
 
 						\item[] \begin{packed_enum}
 
-							\item Korisnik odabire događaj
-							\item Prikazuje mu se detalji o događaju poput naziva, vrste, lokacije, vremena početka, trajanja, foto/video galerije te popis recenzija
+							\item Korisnik odabire događaj (vidi UC6)
+							\item Prikazuje mu se detalji o događaju poput naziva, vrste, lokacije, vremena početka, trajanja, foto galerije te popis recenzija
 
 						\end{packed_enum}
 
@@ -343,7 +342,7 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Posjetitelj otvara stranicu s popisom događaja (vidi UC6)
 							\item Odabire događaj
 							\item Odabire stupanj interesa između „sigurno dolazim“, „možda dolazim“ i „ne dolazim“
 
@@ -362,7 +361,7 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Posjetitelj otvara stranicu s popisom događaja (vidi UC6)
 							\item Odabire događaj
 							\item Posjetitelj odabire opciju "Ostavi recenziju"
 							\item Posjetitelj piše recenziju
@@ -393,9 +392,9 @@
 						
 						\item[] \begin{packed_enum}
 	
-							\item Posjetitelj otvara stranicu s popisom događaja
+							\item Posjetitelj otvara stranicu s popisom događaja (vidi UC6)
 							\item Odabire događaj
-							\item Posjetitelj odabire opciju "Prikaži recenzije"
+							\item Posjetitelj odabire opciju "Prikaži sve recenzije"
 
 						\end{packed_enum}
 						
@@ -597,7 +596,7 @@
 						\item \textbf{Glavni sudionik:} Posjetitelj
 						\item  \textbf{Cilj:} Primanje obavijesti o događajima
 						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen i ***
+						\item  \textbf{Preduvjet:} Posjetitelj je prijavljen
 						\item  \textbf{Opis osnovnog tijeka:}
 						
 						\item[] \begin{packed_enum}
@@ -687,10 +686,8 @@
 							\item Svi korisnici s navedenim pretraživanjem u imenu se prikazuju
 							\item Administrator odabire željenog korisnika
 							\item Administrator odabire opciju "Recenzije"
-							\item Administrator upisuje ime događaja u tražilicu
-							\item Administrator odabire željeni događaj
-							\item Korisnikova recenzija odabranog događaja se prikazuje
-							\item Administrator odabire opciju "Ukloni recenziju"
+							\item Korisnikove recenzije za sve događaje se prikazuju
+							\item Administrator odabire opciju "Ukloni recenziju" na nekoj od recenzija
 							\item Administrator odabire opciju "Da, ukloni recenziju"
 							\item Recenzija je uklonjena
 						\end{packed_enum}
@@ -823,24 +820,7 @@
 						\end{packed_item}
 					\end{packed_item}
 
-					\noindent \underbar{\textbf{UC25 - Pregled statistike}}
-					\begin{packed_item}
-	
-						\item \textbf{Glavni sudionik:} Administrator
-						\item  \textbf{Cilj:} Pregled statistike
-						\item  \textbf{Sudionici:} Baza podataka
-						\item  \textbf{Preduvjet:} Administrator je prijavljen
-						\item  \textbf{Opis osnovnog tijeka:}
-						
-						\item[] \begin{packed_enum}
-	
-							\item Administrator odabire opciju "Administratorske postavke"
-							\item Administrator odabire opciju "Statistika"
-							\item Administratoru se prikažu različite statistike vezane za pretplate, događaje i korisnike
-						\end{packed_enum}
-					\end{packed_item}
-
-					\noindent \underbar{\textbf{UC26 - Uređivanje javnog profila}}
+					\noindent \underbar{\textbf{UC25 - Uređivanje javnog profila}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Organizator
@@ -852,8 +832,6 @@
 						\item[] \begin{packed_enum}
 	
 							\item Organizator odabire opciju "Osobni podatci"
-							\item Organizator odabire opciju "Javni profil"
-							\item Organizator odabire opciju "Uredi javni profil"
 							\item Organizator unosi podatke o sebi
 							\item Organizator odabire opciju "Potvrdi promjene"
 						\end{packed_enum}
@@ -871,7 +849,7 @@
 						\end{packed_item}
 					\end{packed_item}
 
-					\noindent \underbar{\textbf{UC27 - Skrivanje javnog profila}}
+					\noindent \underbar{\textbf{UC26 - Skrivanje javnog profila}}
 					\begin{packed_item}
 	
 						\item \textbf{Glavni sudionik:} Organizator
@@ -883,7 +861,6 @@
 						\item[] \begin{packed_enum}
 	
 							\item Organizator odabire opciju "Osobni podatci"
-							\item Organizator odabire opciju "Javni profil"
 							\item Organizator odabire opciju "Sakrij javni profil"
 							\item Organizator odabire opciju "Potvrdi"
 						\end{packed_enum}
@@ -908,21 +885,21 @@
 
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_posjetitelja.jpg}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalost_posjetitelja_new.png}
 						\caption{Dijagram obrasca uporabe, funkcionalnost posjetitelja}
 					\label{fig:my_image}
 					\end{figure}
 					
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_organizatora.jpg}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_organizatora_new.png}
 						\caption{Dijagram obrasca uporabe, funkcionalnost organizatora}
 					\label{fig:my_image}
 					\end{figure}
 
 					\begin{figure}[htbp]
 						\centering
-						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora.jpg}
+						\includegraphics[width=1\textwidth]{dijagrami/obrazac_funkcionalnost_administratora_new.png}
 						\caption{Dijagram obrasca uporabe, funkcionalnost administratora}
 					\label{fig:my_image}
 					\end{figure}
@@ -966,7 +943,7 @@
 
 				\begin{figure}[htbp]
 					\centering
-					\includegraphics[width=1\textwidth]{dijagrami/UC5-seq.jpg}
+					\includegraphics[width=1\textwidth]{dijagrami/UC5-seq.png}
 					\caption{Sekvencijski dijagram za UC5}
 				\label{fig:my_image}
 				\end{figure}
@@ -1023,7 +1000,7 @@
 				\item Izvršavanje dijela programa u kojem se pristupa bazi podataka ne smije trajati duže od nekoliko sekundi
 				\item Sustav treba biti implementiran kao web aplikacija koristeći objektno orijentirane jezike
 				\item Neispravno korištenje korisničkog sučelja ne smije narušiti funkcionalnost i rad sustava
-				\item Sustav treba biti jednostavan za korištenje, korisnici se trebaju znati koristiti korisničkim sučeljem bez opširnih uputa
+				\item Sustav treba biti jednostavan za korištenje, korisnici trebaju znati koristiti korisničko sučelje bez opširnih uputa
 				\item Nadogradnja sustava ne smije narušavati postojeće funkcionalnosti sustava
 				\item Sustav kao valutu koristi Euro
 				\item Veza s bazom podataka mora biti kvalitetno zaštićena, brza i otporna na vanjske greške

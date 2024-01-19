@@ -32,38 +32,40 @@ try:
     address.send_keys("Ulica 4")
 
     country = driver.find_element("xpath", "//*[@id='mui-component-select-country']")
+    time.sleep(1)
+
     country.click()
     country_ = driver.find_element("xpath", "//*[contains(text(), 'Croatia')]")
+    time.sleep(1)
+
     country_.click()
 
     type = driver.find_element("xpath", "//*[@id='mui-component-select-eventType']")
+    time.sleep(1)
     type.click()
     type_ = driver.find_element("xpath", "//*[contains(text(), 'Technology')]")
+    time.sleep(1)
     type_.click()
-
+    
     fromD = driver.find_element("xpath", "//*[@id=':r8:']")
-    fromD.send_keys("120320240000")
+    fromD.send_keys("12032024000012")
 
     toDate = driver.find_element("xpath", "//*[@id=':r9:']")
-    toDate.send_keys("120420240000")
-
-    price = driver.find_element("xpath", "//*[@name='priceOptions' and @value='paid']")
-    price.click()
-
-    fee = driver.find_element("xpath", "//*[@name='price']")
-    fee.clear()
-    fee.send_keys("5")
+    toDate.send_keys("12042024000012")
 
     butt = driver.find_element("xpath", "//*[contains(text(), 'Create Event')]")
+    time.sleep(1)
     butt.click()
 
     driver.implicitly_wait(20)
-    cancel = driver.find_element("xpath", "//*[@id='root']/div[2]/div/div[2]/button[2]")
+    cancel = driver.find_element("xpath", "//*[contains(text(), 'Cancel')]")
+    time.sleep(1)
     cancel.click()
     
     print("Create event successful!")
 except Exception as e:
     print("Create event failed.\n")
+    print(e)
 finally:
     # Close the browser window
     driver.quit()
